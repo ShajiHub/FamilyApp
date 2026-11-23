@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#19100A"
+    tools:context=".ToDoList">
+
+    <TextView
+        android:id="@+id/todotitle"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#AE5310"
+        android:text="To do list"
+        android:textAlignment="center"
+        android:textSize="34sp" />
+
+    <EditText
+        android:id="@+id/items"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@+id/todotitle"
+        android:hint="Add items"
+        android:inputType="textPersonName"
+        android:textColor="#F4F0F0"
+        android:textColorHint="#F8F3F3" />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/items"
+        android:backgroundTint="#7E580A"
+        android:text="Add"
+        app:iconTint="#BF6969" />
+
+    <ListView
+        android:id="@+id/Listitems"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/addButton"
+
+
+        android:background="#EADACE"
+        android:textColor="#F4F0F0" />
+
+
+</RelativeLayout>
