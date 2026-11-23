@@ -1,86 +1,181 @@
 package com.shajitha.familyapp;
 
-
+import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
-import java.util.ArrayList;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.divider.MaterialDividerItemDecoration;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.shajitha.familyapp.data.AppDatabase;
+import com.shajitha.familyapp.data.FamilyDao;
+import com.shajitha.familyapp.data.TodoTask;
+
+import java.util.List;
+import java.util.Objects;
+
+/** To-do List: add, edit, tick off and delete family tasks. Saved in the database. */
 public class ToDoList extends BaseActivity {
 
-    private static final String STORE_KEY = "todo_items";
-    private static final long REMOVE_DELAY_MS = 1000;
-
-    private ArrayList<String> itemList;
-    private ArrayAdapter<String> adapter;
-    private EditText itemInput;
-    private ListView list;
-    private final Handler handler = new Handler(Looper.getMainLooper());
+    private FamilyDao dao;
+    private TextInputEditText itemInput;
+    private TextInputLayout itemLayout;
+    private TextView summary, empty;
+    private View clearDone;
+    private final TaskAdapter adapter = new TaskAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do_list);
+        dao = AppDatabase.get(this).dao();
 
         itemInput = findViewById(R.id.items);
-        Button addItem = findViewById(R.id.addButton);
-        list = findViewById(R.id.Listitems);
-
-        // Saved items are loaded every time, so they survive closing the app and rotating the phone.
-        itemList = new ArrayList<>(FamilyStore.getStringList(this, STORE_KEY));
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, itemList);
-        list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        itemLayout = findViewById(R.id.itemsLayout);
+        summary = findViewById(R.id.todoSummary);
+        empty = findViewById(R.id.todoEmpty);
+        clearDone = findViewById(R.id.clearDone);
+        RecyclerView list = findViewById(R.id.Listitems);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.addItemDecoration(new MaterialDividerItemDecoration(this, MaterialDividerItemDecoration.VERTICAL));
         list.setAdapter(adapter);
 
-        addItem.setOnClickListener(v -> addItem());
+        findViewById(R.id.addButton).setOnClickListener(v -> addTask());
         itemInput.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                addItem();
+                addTask();
                 return true;
             }
             return false;
         });
+        clearDone.setOnClickListener(v -> Dialogs.confirmDelete(this, getString(R.string.todo_clear_done_title),
+                getString(R.string.todo_clear_done_message),
+                () -> AppDatabase.write(dao::deleteCompletedTasks)));
 
-        // Tapping an item ticks it, then removes it a second later.
-        list.setOnItemClickListener((parent, view, position, id) -> {
-            String value = itemList.get(position);
-            list.setItemChecked(position, true);
-            list.setEnabled(false);
+        dao.tasks().observe(this, this::show);
+    }
 
-            // Save straight away, so the item stays done even if the screen closes during the delay.
-            ArrayList<String> remaining = new ArrayList<>(itemList);
-            remaining.remove(position);
-            FamilyStore.putStringList(this, STORE_KEY, remaining);
+    private void show(List<TodoTask> tasks) {
+        adapter.submitList(tasks);
+        int done = 0;
+        for (TodoTask t : tasks) {
+            if (t.done) {
+                done++;
+            }
+        }
+        summary.setText(tasks.isEmpty() ? "" : getString(R.string.todo_summary, done, tasks.size()));
+        clearDone.setVisibility(done > 0 ? View.VISIBLE : View.GONE);
+        empty.setVisibility(tasks.isEmpty() ? View.VISIBLE : View.GONE);
+    }
 
-            handler.postDelayed(() -> {
-                list.setItemChecked(position, false);
-                adapter.remove(value);
-                list.setEnabled(true);
-            }, REMOVE_DELAY_MS);
+    private void addTask() {
+        String text = Dialogs.text(itemInput);
+        if (text.isEmpty()) {
+            itemLayout.setError(getString(R.string.todo_hint_empty));
+            return;
+        }
+        itemLayout.setError(null);
+        TodoTask task = new TodoTask();
+        task.title = text;
+        task.createdAt = System.currentTimeMillis();
+        AppDatabase.write(() -> dao.insert(task));
+        itemInput.setText("");
+    }
+
+    private void setDone(TodoTask task, boolean done) {
+        if (task.done == done) {
+            return;
+        }
+        TodoTask copy = copy(task);
+        copy.done = done;
+        AppDatabase.write(() -> dao.update(copy));
+    }
+
+    private void edit(TodoTask task) {
+        Dialogs.editText(this, R.string.todo_edit_title, R.string.todo_hint, task.title, null, text -> {
+            TodoTask copy = copy(task);
+            copy.title = text;
+            AppDatabase.write(() -> dao.update(copy));
         });
     }
 
-    private void addItem() {
-        String text = itemInput.getText().toString().trim();
-        if (text.isEmpty()) {
-            itemInput.setHint(R.string.todo_hint_empty);
-            return;
-        }
-        adapter.add(text);
-        FamilyStore.putStringList(this, STORE_KEY, itemList);
-        itemInput.setText("");
-        itemInput.setHint(R.string.todo_hint);
+    private void delete(TodoTask task) {
+        Dialogs.confirmDelete(this, getString(R.string.todo_delete_title), task.title,
+                () -> AppDatabase.write(() -> dao.delete(task)));
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+    private static TodoTask copy(TodoTask t) {
+        TodoTask c = new TodoTask();
+        c.id = t.id;
+        c.title = t.title;
+        c.done = t.done;
+        c.createdAt = t.createdAt;
+        return c;
+    }
+
+    private final class TaskAdapter extends ListAdapter<TodoTask, RowHolder> {
+        TaskAdapter() {
+            super(new DiffUtil.ItemCallback<TodoTask>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull TodoTask a, @NonNull TodoTask b) {
+                    return a.id == b.id;
+                }
+
+                @Override
+                public boolean areContentsTheSame(@NonNull TodoTask a, @NonNull TodoTask b) {
+                    return a.done == b.done && Objects.equals(a.title, b.title);
+                }
+            });
+        }
+
+        @NonNull
+        @Override
+        public RowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new RowHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_row, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RowHolder holder, int position) {
+            TodoTask task = getItem(position);
+            holder.title.setText(task.title);
+            holder.title.setPaintFlags(task.done
+                    ? holder.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG
+                    : holder.title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.title.setAlpha(task.done ? 0.6f : 1f);
+            holder.check.setOnCheckedChangeListener(null);
+            holder.check.setChecked(task.done);
+            holder.check.setContentDescription(task.title);
+            holder.check.setOnCheckedChangeListener((b, checked) -> setDone(task, checked));
+            holder.itemView.setOnClickListener(v -> holder.check.toggle());
+            holder.edit.setOnClickListener(v -> edit(task));
+            holder.delete.setOnClickListener(v -> delete(task));
+        }
+    }
+
+    /** Views of one list row (item_list_row.xml). */
+    static final class RowHolder extends RecyclerView.ViewHolder {
+        final CheckBox check;
+        final TextView title, subtitle;
+        final View edit, delete;
+
+        RowHolder(View itemView) {
+            super(itemView);
+            check = itemView.findViewById(R.id.rowCheck);
+            title = itemView.findViewById(R.id.rowTitle);
+            subtitle = itemView.findViewById(R.id.rowSubtitle);
+            edit = itemView.findViewById(R.id.rowEdit);
+            delete = itemView.findViewById(R.id.rowDelete);
+        }
     }
 }

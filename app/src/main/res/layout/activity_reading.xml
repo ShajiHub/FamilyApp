@@ -1,55 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingTop="@dimen/space_l"
+    android:paddingEnd="@dimen/screen_padding">
+
+    <!-- Totals -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+        app:strokeWidth="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/space_l">
+
+            <include
+                android:id="@+id/statBooks"
+                layout="@layout/item_stat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/statPages"
+                layout="@layout/item_stat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/statFinished"
+                layout="@layout/item_stat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/readingSummary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:textAlignment="center"
-        android:textSize="16sp" />
+        android:visibility="gone" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/readingAdd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginTop="@dimen/space_l"
+        android:text="@string/reading_add_book"
+        app:icon="@drawable/ic_add" />
 
-        <EditText
-            android:id="@+id/readingBook"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autofillHints=""
-            android:hint="@string/reading_book_hint"
-            android:inputType="textCapWords"
-            android:minHeight="48dp" />
-
-        <EditText
-            android:id="@+id/readingPages"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:hint="@string/reading_pages_hint"
-            android:imeOptions="actionDone"
-            android:inputType="number"
-            android:maxLength="5"
-            android:minHeight="48dp" />
-
-        <Button
-            android:id="@+id/readingAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/reading_add" />
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/readingList"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/readingList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/space_s"
+            android:paddingBottom="@dimen/space_xl" />
+
+        <TextView
+            android:id="@+id/readingEmpty"
+            style="@style/FamilyApp.Hint"
+            android:layout_marginTop="@dimen/space_xl"
+            android:gravity="center"
+            android:text="@string/reading_empty"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>

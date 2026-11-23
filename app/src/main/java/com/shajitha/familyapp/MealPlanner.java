@@ -1,152 +1,227 @@
 package com.shajitha.familyapp;
 
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.shajitha.familyapp.data.AppDatabase;
+import com.shajitha.familyapp.data.DataSetup;
+import com.shajitha.familyapp.data.FamilyDao;
+import com.shajitha.familyapp.data.Food;
+import com.shajitha.familyapp.data.MealSelection;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+/** Meal Planner: spin the wheel or pick today's lunch, and manage the family's food menu. */
 public class MealPlanner extends BaseActivity {
 
-    private static final String STORE_KEY = "meal_today";
+    static final int MIN_FOODS = 2;
+    static final int MAX_FOODS = 16;
+    private static final long SPIN_MS = 3000;
 
-    /**
-     * Middle of each slice on the wheel image, in degrees clockwise from the top.
-     * The slices are not all the same size, so these were measured from foodspinner.png.
-     * Same order as R.array.foodmenu.
-     */
-    private static final float[] SLICE_CENTERS = {353.5f, 39f, 84.4f, 128.5f, 172.7f, 217.9f, 263.5f, 308.6f};
-    /** How far from the middle of a slice the wheel may stop, so it still lands inside the slice. */
-    private static final float MAX_JITTER = 15f;
-
-    private Spinner spinnerMenu;
-    private ImageView spinBoard;
+    private FamilyDao dao;
+    private FoodWheelView wheel;
     private Button spin;
-    private TextView resultText;
-    private String[] meals;
+    private TextView resultText, menuTitle;
+    private MaterialAutoCompleteTextView menuChoice;
+    private LinearLayout foodList;
     private final Random random = new Random();
     private ObjectAnimator spinAnimator;
-    /** Menu position last shown, so the spinner's automatic first callback is ignored. */
-    private int shownPosition;
+    private List<Food> foods = new ArrayList<>();
+    @Nullable
+    private String todaysMeal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_planner);
+        dao = AppDatabase.get(this).dao();
 
-        meals = getResources().getStringArray(R.array.foodmenu);
-        spinnerMenu = findViewById(R.id.mealspinner1);
+        wheel = findViewById(R.id.spinBoard);
         spin = findViewById(R.id.spin);
-        spinBoard = findViewById(R.id.spinBoard);
         resultText = findViewById(R.id.spintext);
+        menuTitle = findViewById(R.id.menutxt);
+        menuChoice = findViewById(R.id.mealspinner1);
+        foodList = findViewById(R.id.foodList);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.foodmenu, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerMenu.setAdapter(adapter);
-
-        // Show today's lunch if one was already chosen.
-        int saved = savedMealForToday();
-        if (saved >= 0) {
-            spinnerMenu.setSelection(saved, false);
-            spinBoard.setRotation(-SLICE_CENTERS[saved]);
-            showResult(saved);
-        }
-
-        shownPosition = spinnerMenu.getSelectedItemPosition();
-
+        spin.setOnClickListener(v -> spinWheel());
+        findViewById(R.id.addFood).setOnClickListener(v -> addFood());
         // Picking from the menu also sets today's lunch.
-        spinnerMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != shownPosition) {
-                    shownPosition = position;
-                    saveMeal(position);
-                    spinBoard.setRotation(-SLICE_CENTERS[position]);
-                    showResult(position);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        menuChoice.setOnItemClickListener((parent, view, position, id) -> {
+            if (position < foods.size()) {
+                chooseMeal(foods.get(position).name);
+                wheel.showFood(position);
             }
         });
 
-        spin.setOnClickListener(view -> spinWheel());
+        dao.foods().observe(this, this::showFoods);
+        dao.mealOn(DataSetup.today()).observe(this, selection -> {
+            todaysMeal = selection == null ? null : selection.food;
+            if (!isSpinning()) {
+                showResult();
+            }
+        });
+    }
+
+    private boolean isSpinning() {
+        return spinAnimator != null && spinAnimator.isRunning();
+    }
+
+    private List<String> names() {
+        List<String> names = new ArrayList<>();
+        for (Food f : foods) {
+            names.add(f.name);
+        }
+        return names;
+    }
+
+    private void showFoods(List<Food> list) {
+        foods = list;
+        List<String> names = names();
+        wheel.setFoods(names);
+        menuChoice.setSimpleItems(names.toArray(new String[0]));
+        menuTitle.setText(getResources().getQuantityString(R.plurals.meal_menu_title, names.size(), names.size()));
+        spin.setEnabled(names.size() >= MIN_FOODS && !isSpinning());
+        findViewById(R.id.addFood).setEnabled(names.size() < MAX_FOODS);
+
+        foodList.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (Food food : list) {
+            View row = inflater.inflate(R.layout.item_list_row, foodList, false);
+            row.findViewById(R.id.rowCheck).setVisibility(View.GONE);
+            ((TextView) row.findViewById(R.id.rowTitle)).setText(food.name);
+            row.findViewById(R.id.rowEdit).setOnClickListener(v -> renameFood(food));
+            row.findViewById(R.id.rowDelete).setOnClickListener(v -> deleteFood(food));
+            foodList.addView(row);
+        }
+        if (!isSpinning()) {
+            showResult();
+        }
+    }
+
+    /** Shows today's lunch, and turns the wheel to it when it's on the menu. */
+    private void showResult() {
+        if (foods.size() < MIN_FOODS) {
+            resultText.setText(R.string.meal_need_more);
+        } else if (todaysMeal == null) {
+            resultText.setText(R.string.meal_prompt);
+        } else {
+            resultText.setText(getString(R.string.meal_result, todaysMeal));
+            int index = names().indexOf(todaysMeal);
+            if (index >= 0 && wheel.indexUnderPointer() != index) {
+                wheel.showFood(index);
+            }
+            menuChoice.setText(todaysMeal, false);
+        }
     }
 
     private void spinWheel() {
-        int winner = random.nextInt(meals.length);
-        float jitter = (random.nextFloat() * 2 - 1) * MAX_JITTER;
+        if (foods.size() < MIN_FOODS || isSpinning()) {
+            return;
+        }
+        int winner = random.nextInt(foods.size());
+        String meal = foods.get(winner).name;
+        // Stop somewhere inside the slice, not always in the middle.
+        float offset = (random.nextFloat() - 0.5f) * 0.7f;
 
-        // The pointer is at the top: turn the wheel so the winning slice ends up under it,
-        // after a few full turns for fun.
-        float current = spinBoard.getRotation() % 360;
-        spinBoard.setRotation(current);
-        float target = -(SLICE_CENTERS[winner] + jitter);
+        float current = wheel.getWheelRotation() % 360;
+        wheel.setWheelRotation(current);
+        float target = wheel.rotationFor(winner, offset);
         float delta = ((target - current) % 360 + 360) % 360;
-        int fullTurns = 4 + random.nextInt(3);
-        float end = current + fullTurns * 360 + delta;
+        float end = current + (4 + random.nextInt(3)) * 360 + delta;
 
         spin.setEnabled(false);
-        spinnerMenu.setEnabled(false);
+        menuChoice.setEnabled(false);
         resultText.setText(R.string.meal_spinning);
+        // Saved now, so the choice isn't lost if the screen is rotated during the spin.
+        chooseMeal(meal);
 
-        spinAnimator = ObjectAnimator.ofFloat(spinBoard, View.ROTATION, current, end);
-        spinAnimator.setDuration(3000);
+        spinAnimator = ObjectAnimator.ofFloat(wheel, FoodWheelView.WHEEL_ROTATION, current, end);
+        spinAnimator.setDuration(SPIN_MS);
         spinAnimator.setInterpolator(new DecelerateInterpolator(2f));
         spinAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                spin.setEnabled(true);
-                spinnerMenu.setEnabled(true);
-                saveMeal(winner);
-                shownPosition = winner;
-                spinnerMenu.setSelection(winner);
-                showResult(winner);
+                spin.setEnabled(foods.size() >= MIN_FOODS);
+                menuChoice.setEnabled(true);
+                todaysMeal = meal;
+                showResult();
             }
         });
         spinAnimator.start();
     }
 
-    private void showResult(int index) {
-        resultText.setText(getString(R.string.meal_result, meals[index]));
+    private void chooseMeal(String meal) {
+        MealSelection selection = new MealSelection();
+        selection.date = DataSetup.today();
+        selection.food = meal;
+        AppDatabase.write(() -> dao.save(selection));
     }
 
-    private static String today() {
-        return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
-    }
-
-    private void saveMeal(int index) {
-        FamilyStore.putString(this, STORE_KEY, today() + "|" + meals[index]);
-    }
-
-    /** Index of the meal chosen today, or -1 if none was chosen yet. */
-    private int savedMealForToday() {
-        String saved = FamilyStore.getString(this, STORE_KEY);
-        if (saved == null || !saved.startsWith(today() + "|")) {
-            return -1;
-        }
-        String meal = saved.substring(saved.indexOf('|') + 1);
-        for (int i = 0; i < meals.length; i++) {
-            if (meals[i].equals(meal)) {
-                return i;
+    /** Error message when the name is already on the menu (ignoring the food being renamed). */
+    @Nullable
+    private String duplicateError(String name, @Nullable Food except) {
+        for (Food f : foods) {
+            if (f != except && f.name.equalsIgnoreCase(name)) {
+                return getString(R.string.error_duplicate);
             }
         }
-        return -1;
+        return null;
+    }
+
+    private void addFood() {
+        if (foods.size() >= MAX_FOODS) {
+            return;
+        }
+        Dialogs.editText(this, R.string.meal_add_food, R.string.meal_food_hint, null,
+                name -> duplicateError(name, null),
+                name -> {
+                    Food food = new Food();
+                    food.name = name;
+                    AppDatabase.write(() -> {
+                        food.position = dao.nextFoodPosition();
+                        dao.insert(food);
+                    });
+                });
+    }
+
+    private void renameFood(Food food) {
+        Dialogs.editText(this, R.string.meal_rename_food, R.string.meal_food_hint, food.name,
+                name -> duplicateError(name, food),
+                name -> {
+                    Food copy = new Food();
+                    copy.id = food.id;
+                    copy.position = food.position;
+                    copy.name = name;
+                    String oldName = food.name;
+                    AppDatabase.write(() -> {
+                        dao.update(copy);
+                        // Keep today's lunch pointing at the renamed food.
+                        MealSelection today = dao.mealOnNow(DataSetup.today());
+                        if (today != null && today.food.equals(oldName)) {
+                            today.food = name;
+                            dao.save(today);
+                        }
+                    });
+                });
+    }
+
+    private void deleteFood(Food food) {
+        Dialogs.confirmDelete(this, getString(R.string.meal_delete_food), food.name,
+                () -> AppDatabase.write(() -> dao.delete(food)));
     }
 
     @Override

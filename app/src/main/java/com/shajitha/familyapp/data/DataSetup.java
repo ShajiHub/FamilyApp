@@ -40,6 +40,9 @@ public final class DataSetup {
     private DataSetup() {
     }
 
+    // commit() (not apply()) on purpose: each step must be recorded on disk before the next one,
+    // so a crash halfway can never cause defaults or old data to be added twice.
+    @android.annotation.SuppressLint("ApplySharedPref")
     @VisibleForTesting
     public static void run(Context context, AppDatabase db) {
         SharedPreferences meta = context.getSharedPreferences(META, Context.MODE_PRIVATE);

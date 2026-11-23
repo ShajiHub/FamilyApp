@@ -6,10 +6,28 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        style="@style/FamilyApp.SectionTitle"
-        android:layout_marginTop="0dp"
-        android:text="@string/timer_routines" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/FamilyApp.SectionTitle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/timer_routines" />
+
+        <Button
+            android:id="@+id/editTimes"
+            style="@style/Widget.FamilyApp.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/timer_edit_times"
+            app:icon="@drawable/ic_edit" />
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/presetGroup"
