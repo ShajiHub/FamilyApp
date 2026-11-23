@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#DFBDCD"
     android:paddingTop="20dp"
     tools:context=".CheckList">
 
@@ -17,13 +16,10 @@
 
         android:layout_marginBottom="8dp"
 
-        android:background="#79FFD600"
-
         android:paddingTop="42dp"
         android:text="Checklist"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="#006600"
         android:textSize="34sp"
 
         android:textStyle="bold"

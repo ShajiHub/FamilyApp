@@ -1,153 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#E8D46D"
-    tools:context=".FamAppTimer">
+    android:background="?android:attr/colorBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingEnd="@dimen/screen_padding">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="408dp"
-        android:layout_height="733dp"
-        android:layout_marginTop="2dp"
-        android:alpha="0.3"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/timerbg" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="132dp"
-        android:layout_height="78dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/boogaloo"
-        android:text="TIMER"
-        android:textAlignment="center"
-        android:textColor="#475785"
-        android:textSize="52sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/startstoptimer"
-        android:layout_width="117dp"
-        android:layout_height="86dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:backgroundTint="#00F61111"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/starttimer"
-        tools:ignore="SpeakableTextPresentCheck" />
-
-    <Button
-        android:id="@+id/getready"
-        style="@style/Widget.MaterialComponents.TimePicker.Button"
+    <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="150dp"
-        android:backgroundTint="#ECC473"
-        android:onClick="getready"
-        android:text="Get Ready"
-        android:textAlignment="center"
-        android:textColor="#081C8A"
-        android:textColorHighlight="#DF2121"
-        android:textColorHint="@color/teal_700"
-        android:textSize="24sp"
-        app:cornerRadius="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/watchmedia"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="#111423" />
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-    <Button
-        android:id="@+id/watchmedia"
-        style="@style/Widget.MaterialComponents.TimePicker.Button"
+        <include
+            layout="@layout/timer_dial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="#ECC473"
-        android:onClick="watchmedia"
-        android:text="Screen Time"
-        android:textAlignment="center"
-        android:textColor="#081C8A"
-        android:textColorHighlight="#DF2121"
-        android:textSize="24sp"
-        app:cornerRadius="15dp"
-        app:layout_constraintBottom_toBottomOf="@+id/getready"
-        app:layout_constraintEnd_toStartOf="@+id/cleanup"
-        app:layout_constraintStart_toEndOf="@+id/getready"
-        app:layout_constraintTop_toTopOf="@+id/getready"
-        app:strokeColor="#111423" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-    <Button
-        android:id="@+id/cleanup"
-        style="@style/Widget.MaterialComponents.TimePicker.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/space_l"
+            android:paddingBottom="@dimen/space_l">
 
-        android:backgroundTint="#ECC473"
-        android:onClick="cleanup"
-
-        android:text="Clean Up"
-        android:textAlignment="center"
-        android:textColor="#081C8A"
-        android:textColorHighlight="#DF2121"
-        android:textSize="24sp"
-        app:cornerRadius="15dp"
-        app:layout_constraintBottom_toBottomOf="@+id/watchmedia"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/watchmedia"
-        app:layout_constraintTop_toTopOf="@+id/watchmedia"
-        app:strokeColor="#111423" />
-
-    <TextView
-        android:id="@+id/timertext"
-        android:layout_width="388dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="28dp"
-        android:textAlignment="center"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/watchmedia"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.527"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <TextView
-        android:id="@+id/timer1"
-        android:layout_width="265dp"
-        android:layout_height="98dp"
-        android:layout_marginBottom="24dp"
-        android:text="00:00:00"
-        android:textColor="#192465"
-        android:textSize="64sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/resettimer"
-        android:layout_width="94dp"
-        android:layout_height="78dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/reset" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                layout="@layout/timer_controls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical" />
+        </FrameLayout>
+    </ScrollView>
+</LinearLayout>

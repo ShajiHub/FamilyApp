@@ -1,6 +1,5 @@
 package com.shajitha.familyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +12,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class ToDoList extends AppCompatActivity {
+public class ToDoList extends BaseActivity {
 
     private static final String STORE_KEY = "todo_items";
     private static final long REMOVE_DELAY_MS = 1000;
@@ -28,9 +27,6 @@ public class ToDoList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do_list);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         itemInput = findViewById(R.id.items);
         Button addItem = findViewById(R.id.addButton);

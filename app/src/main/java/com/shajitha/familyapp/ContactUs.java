@@ -1,13 +1,12 @@
 package com.shajitha.familyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 
-public class ContactUs extends AppCompatActivity {
+public class ContactUs extends BaseActivity {
 
     private static final long SLIDE_INTERVAL_MS = 1500;
 
@@ -35,9 +34,6 @@ public class ContactUs extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_us);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
         img1 = findViewById(R.id.img1);
         img2 = findViewById(R.id.img2);
     }

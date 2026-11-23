@@ -2,19 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#9AC7E3"
     android:orientation="vertical"
     android:padding="16dp">
-
-    <TextView
-        android:id="@+id/readingTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/boogaloo"
-        android:text="@string/reading_title"
-        android:textAlignment="center"
-        android:textColor="#1B3A4B"
-        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/readingSummary"
@@ -22,7 +11,6 @@
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:textAlignment="center"
-        android:textColor="#1B3A4B"
         android:textSize="16sp" />
 
     <LinearLayout
@@ -39,9 +27,7 @@
             android:autofillHints=""
             android:hint="@string/reading_book_hint"
             android:inputType="textCapWords"
-            android:minHeight="48dp"
-            android:textColor="#102030"
-            android:textColorHint="#4A6578" />
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/readingPages"
@@ -52,15 +38,12 @@
             android:imeOptions="actionDone"
             android:inputType="number"
             android:maxLength="5"
-            android:minHeight="48dp"
-            android:textColor="#102030"
-            android:textColorHint="#4A6578" />
+            android:minHeight="48dp" />
 
         <Button
             android:id="@+id/readingAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#1B3A4B"
             android:text="@string/reading_add" />
     </LinearLayout>
 

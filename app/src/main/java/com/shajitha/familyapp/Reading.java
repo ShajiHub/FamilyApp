@@ -1,7 +1,6 @@
 package com.shajitha.familyapp;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
@@ -20,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 /** Reading Log: keep track of the books the family has read and how many pages. */
-public class Reading extends AppCompatActivity {
+public class Reading extends BaseActivity {
 
     private static final String STORE_KEY = "reading_log";
 
@@ -34,9 +33,6 @@ public class Reading extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reading);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         bookInput = findViewById(R.id.readingBook);
         pagesInput = findViewById(R.id.readingPages);

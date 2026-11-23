@@ -9,15 +9,12 @@
         android:id="@+id/scheduleDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/boogaloo"
-        android:textColor="#1F4F49"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/scheduleMonthCount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#3C6E68"
         android:textSize="14sp" />
 
     <LinearLayout
@@ -35,15 +32,12 @@
             android:hint="@string/schedule_hint"
             android:imeOptions="actionDone"
             android:inputType="textCapSentences"
-            android:minHeight="48dp"
-            android:textColor="#102522"
-            android:textColorHint="#5B7C78" />
+            android:minHeight="48dp" />
 
         <Button
             android:id="@+id/scheduleAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#4D9E93"
             android:text="@string/schedule_add" />
     </LinearLayout>
 
@@ -63,7 +57,6 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="@string/schedule_empty"
-            android:textAlignment="center"
-            android:textColor="#5B7C78" />
+            android:textAlignment="center" />
     </FrameLayout>
 </LinearLayout>

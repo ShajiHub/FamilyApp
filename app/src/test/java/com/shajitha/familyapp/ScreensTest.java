@@ -56,17 +56,22 @@ public class ScreensTest {
     // ---------- Home ----------
 
     @Test
-    public void homeButtonsOpenTheirScreens() {
-        int[] buttons = {R.id.button, R.id.button2, R.id.button3, R.id.button4, R.id.button5,
-                R.id.button6, R.id.button7, R.id.button8, R.id.button9};
-        Class<?>[] screens = {AddEvents.class, MealPlanner.class, ToDoList.class, CheckList.class,
-                ActivitiesFun.class, viewCalendar.class, PhotoGallery.class, FamAppTimer.class, ContactUs.class};
+    public void homeTilesOpenTheirScreens() {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             scenario.onActivity(activity -> {
-                for (int i = 0; i < buttons.length; i++) {
-                    activity.findViewById(buttons[i]).performClick();
+                RecyclerView grid = activity.findViewById(R.id.homeGrid);
+                assertEquals("header + one tile per feature", MainActivity.TILES.size() + 1,
+                        grid.getAdapter().getItemCount());
+                for (int i = 0; i < MainActivity.TILES.size(); i++) {
+                    MainActivity.Tile tile = MainActivity.TILES.get(i);
+                    grid.scrollToPosition(i + 1);
+                    idle(50);
+                    RecyclerView.ViewHolder holder = grid.findViewHolderForAdapterPosition(i + 1);
+                    assertNotNull(holder);
+                    assertEquals(tile.id, holder.itemView.getId());
+                    holder.itemView.performClick();
                     Intent next = shadowOf(activity).getNextStartedActivity();
-                    assertEquals(screens[i].getName(), next.getComponent().getClassName());
+                    assertEquals(tile.screen.getName(), next.getComponent().getClassName());
                 }
             });
         }
@@ -93,7 +98,7 @@ public class ScreensTest {
                 activity.findViewById(R.id.getready).performClick();
                 assertEquals("00:15:00", ((TextView) activity.findViewById(R.id.timer1)).getText().toString());
                 activity.findViewById(R.id.startstoptimer).performClick();
-                idle(2_000);
+                idle(2_100);
                 assertEquals("00:14:58", ((TextView) activity.findViewById(R.id.timer1)).getText().toString());
             });
 

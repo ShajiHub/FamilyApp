@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Spacing used on every screen, so margins and padding are consistent. -->
+<resources>
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">12dp</dimen>
+    <dimen name="space_l">16dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
+    <!-- Side padding of screens: grows on tablets so content doesn't stretch too wide. -->
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="card_radius">16dp</dimen>
+    <dimen name="touch_target">48dp</dimen>
+    <dimen name="home_header_height">180dp</dimen>
+</resources>

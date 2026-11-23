@@ -1,30 +1,30 @@
 package com.shajitha.familyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+
 import java.util.Locale;
 
-public class FamAppTimer extends AppCompatActivity {
+public class FamAppTimer extends BaseActivity {
 
     private static final long GET_READY_MILLIS = 15 * 60 * 1000L;
     private static final long WATCH_MEDIA_MILLIS = 60 * 60 * 1000L;
     private static final long CLEAN_UP_MILLIS = 30 * 60 * 1000L;
-
-    private static final String PRESET_COLOR = "#E8D46D";
 
     // Keys for keeping the timer going when the phone is rotated.
     private static final String STATE_REMAINING = "remaining";
@@ -32,12 +32,34 @@ public class FamAppTimer extends AppCompatActivity {
     private static final String STATE_END_TIME = "endTime";
     private static final String STATE_LABEL = "label";
     private static final String STATE_PRESET = "preset";
+    private static final String STATE_TOTAL = "total";
 
-    TextView timertxt, timer1, startLabel;
-    ImageView startstop_timer, reset_timer;
+    TextView timertxt, timer1;
+    MaterialButton startstop_timer, reset_timer;
     Button getready, watchmedia, cleanup;
+    private MaterialButtonToggleGroup presetGroup;
+    private CircularProgressIndicator progress;
+    /** Length of the chosen routine, for the progress ring. */
+    private long totalMillis = 0;
 
-    private CountDownTimer countdownTimer;
+    /** Updates the display a few times a second while running. */
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Runnable ticker = new Runnable() {
+        @Override
+        public void run() {
+            remainingMillis = endTimeMillis - SystemClock.elapsedRealtime();
+            if (remainingMillis <= 0) {
+                remainingMillis = 0;
+                onTimeUp(true);
+                return;
+            }
+            updateTimer();
+            // Wake up exactly when the shown second changes.
+            long untilNextSecond = remainingMillis % 1000;
+            handler.postDelayed(this, untilNextSecond == 0 ? 1000 : untilNextSecond);
+        }
+    };
+
     private long remainingMillis = 0;
     private long endTimeMillis = 0;
     private boolean isTimerOn = false;
@@ -47,13 +69,11 @@ public class FamAppTimer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fam_app_timer);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         timertxt = findViewById(R.id.timertext);
         timer1 = findViewById(R.id.timer1);
-        startLabel = findViewById(R.id.textView11); // only in the portrait layout
+        presetGroup = findViewById(R.id.presetGroup);
+        progress = findViewById(R.id.timerProgress);
         getready = findViewById(R.id.getready);
         watchmedia = findViewById(R.id.watchmedia);
         cleanup = findViewById(R.id.cleanup);
@@ -78,6 +98,7 @@ public class FamAppTimer extends AppCompatActivity {
 
     private void restoreState(Bundle state) {
         remainingMillis = state.getLong(STATE_REMAINING);
+        totalMillis = state.getLong(STATE_TOTAL);
         timertxt.setText(state.getCharSequence(STATE_LABEL));
         selectedPresetId = state.getInt(STATE_PRESET, View.NO_ID);
         if (state.getBoolean(STATE_RUNNING)) {
@@ -100,6 +121,7 @@ public class FamAppTimer extends AppCompatActivity {
         outState.putLong(STATE_END_TIME, endTimeMillis);
         outState.putCharSequence(STATE_LABEL, timertxt.getText());
         outState.putInt(STATE_PRESET, selectedPresetId);
+        outState.putLong(STATE_TOTAL, totalMillis);
     }
 
     @Override
@@ -114,26 +136,18 @@ public class FamAppTimer extends AppCompatActivity {
             return;
         }
         cancelCountdown();
+        // The end time is fixed; the remaining time is always worked out from the clock,
+        // so the display never drifts.
         endTimeMillis = SystemClock.elapsedRealtime() + remainingMillis;
-        countdownTimer = new CountDownTimer(remainingMillis, 250) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                remainingMillis = millisUntilFinished;
-                updateTimer();
-            }
-
-            @Override
-            public void onFinish() {
-                remainingMillis = 0;
-                onTimeUp(true);
-            }
-        }.start();
+        handler.post(ticker);
         isTimerOn = true;
         updateButtons();
     }
 
     public void pauseTimer() {
         cancelCountdown();
+        remainingMillis = Math.max(0, endTimeMillis - SystemClock.elapsedRealtime());
+        updateTimer();
         isTimerOn = false;
         updateButtons();
     }
@@ -142,16 +156,18 @@ public class FamAppTimer extends AppCompatActivity {
         cancelCountdown();
         isTimerOn = false;
         remainingMillis = 0;
+        totalMillis = 0;
         selectedPresetId = View.NO_ID;
-        timertxt.setText("");
+        timertxt.setText(R.string.timer_choose_routine);
         updateTimer();
         updateButtons();
     }
 
     private void onTimeUp(boolean playSound) {
         isTimerOn = false;
-        countdownTimer = null;
+        cancelCountdown();
         selectedPresetId = View.NO_ID;
+        totalMillis = 0;
         timertxt.setText(R.string.timer_time_up);
         updateTimer();
         updateButtons();
@@ -169,10 +185,7 @@ public class FamAppTimer extends AppCompatActivity {
     }
 
     private void cancelCountdown() {
-        if (countdownTimer != null) {
-            countdownTimer.cancel();
-            countdownTimer = null;
-        }
+        handler.removeCallbacks(ticker);
     }
 
     public void updateTimer() {
@@ -182,18 +195,26 @@ public class FamAppTimer extends AppCompatActivity {
         long minutes = (totalSeconds / 60) % 60;
         long seconds = totalSeconds % 60;
         timer1.setText(String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds));
+        int fraction = totalMillis > 0 ? (int) (1000 * remainingMillis / totalMillis) : 0;
+        progress.setProgress(fraction);
     }
 
-    /** Highlights the chosen preset, and shows a pause icon while running and a start icon otherwise. */
+    /** Highlights the chosen routine, and shows Pause while running and Start/Resume otherwise. */
     private void updateButtons() {
-        for (Button preset : new Button[]{getready, watchmedia, cleanup}) {
-            boolean selected = preset.getId() == selectedPresetId;
-            preset.setBackgroundColor(selected ? Color.LTGRAY : Color.parseColor(PRESET_COLOR));
+        if (selectedPresetId == View.NO_ID) {
+            presetGroup.clearChecked();
+        } else {
+            presetGroup.check(selectedPresetId);
         }
-        startstop_timer.setImageResource(isTimerOn ? R.drawable.pause : R.drawable.starttimer);
-        if (startLabel != null) {
-            startLabel.setText(isTimerOn ? R.string.timer_pause : R.string.timer_start);
+        if (isTimerOn) {
+            startstop_timer.setText(R.string.timer_pause);
+            startstop_timer.setIconResource(R.drawable.ic_pause);
+        } else {
+            boolean paused = remainingMillis > 0 && remainingMillis < totalMillis;
+            startstop_timer.setText(paused ? R.string.timer_resume : R.string.timer_start);
+            startstop_timer.setIconResource(R.drawable.ic_play_arrow);
         }
+        reset_timer.setEnabled(remainingMillis > 0 || isTimerOn || totalMillis > 0);
         if (isTimerOn) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
@@ -207,6 +228,7 @@ public class FamAppTimer extends AppCompatActivity {
         selectedPresetId = preset.getId();
         timertxt.setText(labelRes);
         remainingMillis = millis;
+        totalMillis = millis;
         updateTimer();
         updateButtons();
     }

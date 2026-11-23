@@ -1,6 +1,35 @@
 <resources>
     <string name="app_name">FamilyApp</string>
 
+    <!-- Screen titles (title bar and Home tiles) -->
+    <string name="title_schedule">Monthly Schedule</string>
+    <string name="title_events">Calendar Events</string>
+    <string name="title_meals">Meal Planner</string>
+    <string name="title_timer">Timer</string>
+    <string name="title_todo">To-do List</string>
+    <string name="title_checklist">Checklists</string>
+    <string name="title_photos">Capture Moments</string>
+    <string name="title_activities">Kids Activities</string>
+    <string name="title_reading">Reading Log</string>
+    <string name="title_contact">Contact Us</string>
+
+    <!-- Home -->
+    <string name="home_header_description">Family App – Let\'s organize together</string>
+    <string name="home_greeting_morning">Good morning!</string>
+    <string name="home_greeting_afternoon">Good afternoon!</string>
+    <string name="home_greeting_evening">Good evening!</string>
+    <string name="home_subtitle">What would you like to organise today?</string>
+    <string name="home_schedule_sub">Plans and events for each day</string>
+    <string name="home_events_sub">Add to your phone\'s calendar</string>
+    <string name="home_meals_sub">Spin the wheel for lunch</string>
+    <string name="home_timer_sub">Get ready, screen time, clean up</string>
+    <string name="home_todo_sub">Family tasks to tick off</string>
+    <string name="home_checklist_sub">Packing and first-aid lists</string>
+    <string name="home_photos_sub">Take and keep family photos</string>
+    <string name="home_activities_sub">Indoor and outdoor ideas</string>
+    <string name="home_reading_sub">Books and pages read</string>
+    <string name="home_contact_sub">Get in touch and credits</string>
+
     <!-- Meal Planner: same order as the slices on the wheel, clockwise from the top. -->
     <string-array name="foodmenu">
         <item>Chicken wrap</item>
@@ -15,14 +44,28 @@
     <string name="meal_spinning">Spinning…</string>
     <string name="meal_result">Today\'s lunch: %1$s</string>
 
+    <!-- Calendar events -->
+    <string name="events_today">Today</string>
+    <string name="events_description">Add appointments, classes and other plans to your phone\'s calendar app, or keep family plans in the Monthly Schedule.</string>
+    <string name="events_add_to_phone">Add event to phone calendar</string>
+    <string name="events_open_schedule">Open Monthly Schedule</string>
+
     <!-- Timer -->
+    <string name="timer_zero">00:00:00</string>
+    <string name="timer_choose_routine">Choose a routine below</string>
+    <string name="timer_routines">Routines</string>
+    <string name="timer_get_ready_button">Get Ready · 15 min</string>
+    <string name="timer_watch_media_button">Screen Time · 60 min</string>
+    <string name="timer_clean_up_button">Clean Up · 30 min</string>
+    <string name="timer_resume">Resume</string>
+    <string name="timer_reset">Reset</string>
     <string name="timer_choose_first">Choose Get Ready, Screen Time or Clean Up first</string>
     <string name="timer_get_ready">Get Ready in</string>
     <string name="timer_watch_media">Watch or play media for</string>
     <string name="timer_clean_up">Clean up in</string>
     <string name="timer_time_up">Time Up!!!</string>
-    <string name="timer_start">Start Timer</string>
-    <string name="timer_pause">Pause Timer</string>
+    <string name="timer_start">Start</string>
+    <string name="timer_pause">Pause</string>
 
     <!-- To-do list -->
     <string name="todo_hint">Add items…</string>
@@ -60,9 +103,12 @@
     <!-- Kids activities -->
     <string name="activities_title">Kids Activities</string>
     <string name="activities_prompt">Tap a button for an idea!</string>
+    <string name="activities_intro">Bored? Get a quick idea for something fun to do together.</string>
     <string name="activities_indoor">Indoor idea</string>
     <string name="activities_outdoor">Outdoor idea</string>
     <string name="activities_reading">Reading Log</string>
+    <string name="activities_indoor_label">Indoor</string>
+    <string name="activities_outdoor_label">Outdoor</string>
     <string-array name="indoor_activities">
         <item>Build a blanket fort and read a story inside it</item>
         <item>Have a family board game tournament</item>

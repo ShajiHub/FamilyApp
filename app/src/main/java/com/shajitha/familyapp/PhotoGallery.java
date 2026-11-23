@@ -21,7 +21,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -39,7 +38,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /** Capture Moments: take photos with the camera app and keep them in a family gallery. */
-public class PhotoGallery extends AppCompatActivity {
+public class PhotoGallery extends BaseActivity {
 
     private static final String STATE_PENDING = "pendingPhoto";
     private static final String STATE_SHOWN = "shownPhoto";
@@ -61,9 +60,6 @@ public class PhotoGallery extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_gallery);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         preview = findViewById(R.id.imageView1);
         msg = findViewById(R.id.msg);

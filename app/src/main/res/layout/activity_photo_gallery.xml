@@ -2,19 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8EC"
     android:orientation="vertical"
     android:padding="12dp">
-
-    <TextView
-        android:id="@+id/photosTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/boogaloo"
-        android:text="@string/photos_title"
-        android:textAlignment="center"
-        android:textColor="#2B2B2B"
-        android:textSize="30sp" />
 
     <!-- Large view of the newest or tapped photo -->
     <ImageView
@@ -33,7 +22,6 @@
         android:paddingTop="4dp"
         android:text="@string/photos_smile"
         android:textAlignment="center"
-        android:textColor="#2B2B2B"
         android:textSize="22sp"
         android:visibility="gone" />
 
@@ -43,7 +31,6 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:paddingBottom="4dp"
-        android:textColor="#6B6B6B"
         android:textSize="14sp" />
 
     <!-- Saved photos, newest first -->
@@ -58,8 +45,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:backgroundTint="@color/black"
         android:text="@string/photos_take"
-        android:textColor="@android:color/white"
         android:textSize="18sp" />
 </LinearLayout>

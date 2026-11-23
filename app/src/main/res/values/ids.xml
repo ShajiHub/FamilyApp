@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home screen tiles -->
+    <item name="tile_schedule" type="id" />
+    <item name="tile_events" type="id" />
+    <item name="tile_meals" type="id" />
+    <item name="tile_timer" type="id" />
+    <item name="tile_todo" type="id" />
+    <item name="tile_checklist" type="id" />
+    <item name="tile_photos" type="id" />
+    <item name="tile_activities" type="id" />
+    <item name="tile_reading" type="id" />
+    <item name="tile_contact" type="id" />
+</resources>

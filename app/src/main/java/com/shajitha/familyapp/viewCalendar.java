@@ -1,7 +1,6 @@
 package com.shajitha.familyapp;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 /** Monthly Schedule: pick a day on the calendar and save plans for it. */
-public class viewCalendar extends AppCompatActivity {
+public class viewCalendar extends BaseActivity {
 
     private static final String KEY_PREFIX = "schedule_";
     private static final String STATE_DATE = "selectedDate";
@@ -34,9 +33,6 @@ public class viewCalendar extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_calendar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         CalendarView calendar = findViewById(R.id.calender);
         dateText = findViewById(R.id.scheduleDate);

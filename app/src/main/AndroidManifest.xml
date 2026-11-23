@@ -26,37 +26,48 @@
         android:theme="@style/Theme.FamilyApp">
         <activity
             android:name=".viewCalendar"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_schedule" />
         <activity
             android:name=".ActivitiesFun"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_activities" />
         <activity
             android:name=".ContactUs"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_contact" />
         <activity
             android:name=".CheckList"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_checklist" />
         <activity
             android:name=".PhotoGallery"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_photos" />
         <activity
             android:name=".AddEvents"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_events" />
         <activity
             android:name=".ToDoList"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_todo" />
         <activity
             android:name=".Reading"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_reading" />
         <activity
             android:name=".FamAppTimer"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_timer" />
         <activity
             android:name=".MealPlanner"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_meals" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.FamilyApp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -74,10 +85,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

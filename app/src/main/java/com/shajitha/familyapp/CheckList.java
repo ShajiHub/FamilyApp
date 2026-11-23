@@ -1,6 +1,5 @@
 package com.shajitha.familyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class CheckList extends AppCompatActivity {
+public class CheckList extends BaseActivity {
     private static final String STORE_KEY = "checklist_ticked";
 
     RecyclerView recyclerView;
@@ -21,9 +20,6 @@ public class CheckList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_list);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         recyclerView = findViewById(R.id.rView);
 

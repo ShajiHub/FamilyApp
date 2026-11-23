@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FamilyApp palette (dark mode). -->
+<resources>
+    <color name="fa_primary">#BCC2FF</color>
+    <color name="fa_on_primary">#0E2286</color>
+    <color name="fa_primary_container">#28399E</color>
+    <color name="fa_on_primary_container">#DFE0FF</color>
+
+    <color name="fa_secondary">#B6D29A</color>
+    <color name="fa_on_secondary">#223600</color>
+    <color name="fa_secondary_container">#385E12</color>
+    <color name="fa_on_secondary_container">#D2EEB4</color>
+
+    <color name="fa_tertiary">#FFB596</color>
+    <color name="fa_on_tertiary">#5A1B00</color>
+    <color name="fa_tertiary_container">#803409</color>
+    <color name="fa_on_tertiary_container">#FFDBCC</color>
+
+    <color name="fa_error">#FFB4AB</color>
+    <color name="fa_on_error">#690005</color>
+    <color name="fa_error_container">#93000A</color>
+    <color name="fa_on_error_container">#FFDAD6</color>
+
+    <color name="fa_background">#131318</color>
+    <color name="fa_on_background">#E5E1E6</color>
+    <color name="fa_surface">#131318</color>
+    <color name="fa_on_surface">#E5E1E6</color>
+    <color name="fa_surface_variant">#46464F</color>
+    <color name="fa_on_surface_variant">#C7C5D0</color>
+    <color name="fa_surface_container">#1F1F25</color>
+    <color name="fa_outline">#91909A</color>
+    <color name="fa_outline_variant">#46464F</color>
+
+    <color name="fa_accent4">#FFA9F6</color>
+    <color name="fa_accent4_container">#6F2675</color>
+</resources>

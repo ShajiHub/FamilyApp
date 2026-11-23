@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Routine buttons plus Start/Pause and Reset (used in portrait and landscape). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/FamilyApp.SectionTitle"
+        android:layout_marginTop="0dp"
+        android:text="@string/timer_routines" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/presetGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:singleSelection="true">
+
+        <Button
+            android:id="@+id/getready"
+            style="@style/Widget.FamilyApp.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="getready"
+            android:text="@string/timer_get_ready_button" />
+
+        <Button
+            android:id="@+id/watchmedia"
+            style="@style/Widget.FamilyApp.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="watchmedia"
+            android:text="@string/timer_watch_media_button" />
+
+        <Button
+            android:id="@+id/cleanup"
+            style="@style/Widget.FamilyApp.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="cleanup"
+            android:text="@string/timer_clean_up_button" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/startstoptimer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_s"
+            android:layout_weight="1"
+            android:text="@string/timer_start"
+            app:icon="@drawable/ic_play_arrow" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/resettimer"
+            style="@style/Widget.FamilyApp.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_weight="1"
+            android:text="@string/timer_reset"
+            app:icon="@drawable/ic_replay" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,6 +1,5 @@
 package com.shajitha.familyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -20,7 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-public class MealPlanner extends AppCompatActivity {
+public class MealPlanner extends BaseActivity {
 
     private static final String STORE_KEY = "meal_today";
 
@@ -47,9 +46,6 @@ public class MealPlanner extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_planner);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         meals = getResources().getStringArray(R.array.foodmenu);
         spinnerMenu = findViewById(R.id.mealspinner1);

@@ -1,6 +1,5 @@
 package com.shajitha.familyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -14,15 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class AddEvents extends AppCompatActivity {
+public class AddEvents extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_events);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         TextView dateToday = findViewById(R.id.datetoday);
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault());
