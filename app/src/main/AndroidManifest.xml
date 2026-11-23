@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Only for "Save to gallery" on Android 9 and older; newer versions need no permission. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <!-- The app works without a camera; only "Capture Moments" uses one. -->
     <uses-feature
         android:name="android.hardware.camera"

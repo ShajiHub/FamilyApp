@@ -73,6 +73,19 @@ public class ScreenshotTest {
                 dao.update(item);
             }
         }
+        // A few photos for Capture Moments, made from the app's own pictures.
+        int[] pictures = {R.drawable.b1, R.drawable.b3, R.drawable.a3, R.drawable.b2};
+        for (int i = 0; i < pictures.length; i++) {
+            android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeResource(c.getResources(), pictures[i]);
+            java.io.File f = new java.io.File(PhotoStore.folder(c), "FamilyApp_sample_" + i + ".jpg");
+            try (java.io.FileOutputStream out = new java.io.FileOutputStream(f)) {
+                bmp.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, out);
+            } catch (java.io.IOException e) {
+                throw new RuntimeException(e);
+            }
+            //noinspection ResultOfMethodCallIgnored
+            f.setLastModified(1_000_000L * (i + 1));
+        }
         com.shajitha.familyapp.data.MealSelection meal = new com.shajitha.familyapp.data.MealSelection();
         meal.date = today;
         meal.food = "Burger";

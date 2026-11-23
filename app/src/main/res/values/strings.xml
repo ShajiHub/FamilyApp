@@ -122,7 +122,6 @@
     <string name="no_calendar_app">No calendar app found on this phone</string>
 
     <!-- Monthly schedule -->
-    <string name="schedule_title">Monthly Schedule</string>
     <string name="schedule_add">Add event</string>
     <string name="schedule_empty">Nothing planned for this day</string>
     <string name="schedule_month_days">%1$s · on %2$s</string>
@@ -145,20 +144,63 @@
     <string name="error_required">Please fill in this field</string>
     <string name="error_duplicate">That is already on the list</string>
 
+    <!-- Contact Us
+         Contact details: fill these in with real details to show the Email and Phone cards.
+         They are empty because the original app had none, and none should be made up. -->
+    <string name="contact_email_address" translatable="false"></string>
+    <string name="contact_phone_number" translatable="false"></string>
+    <string name="contact_heading">We\'d love to hear from you</string>
+    <string name="contact_intro">Questions, ideas or feedback about FamilyApp? Send us a message.</string>
+    <string name="contact_email_label">Email</string>
+    <string name="contact_phone_label">Phone</string>
+    <string name="contact_form_title">Send a message</string>
+    <string name="contact_name">Your name</string>
+    <string name="contact_from">Your email</string>
+    <string name="contact_subject">Subject</string>
+    <string name="contact_message">Message</string>
+    <string name="contact_send">Send</string>
+    <string name="contact_clear">Clear</string>
+    <string name="contact_clear_title">Clear the form?</string>
+    <string name="contact_clear_message">Your unsent message will be deleted.</string>
+    <string name="contact_email_invalid">Please enter a valid email address</string>
+    <string name="contact_message_short">Please write a little more (at least 10 characters)</string>
+    <string name="contact_how_it_works">Send opens your email app with this message filled in. Your message is sent only when you tap Send in your email app.</string>
+    <string name="contact_opened_email_app">Your email app is open. Check the message and tap Send there to send it.</string>
+    <string name="contact_no_email_app">No email app found on this phone. Install or set up an email app to send messages.</string>
+    <string name="contact_no_phone_app">No phone app found on this device</string>
+    <string name="contact_thanks_title">Thank you</string>
+    <string name="contact_thanks">Thanks all for your time and patience</string>
+    <string name="contact_dedication">Dedicated to everyone\'s research, analysis, help and support.</string>
+    <string name="contact_family_photos">Family photos</string>
+    <string name="contact_slideshow">Slideshow</string>
+
     <!-- Capture Moments -->
-    <string name="photos_title">Capture Moments</string>
-    <string name="photos_take">SAY CHEESE</string>
+    <string name="photos_take">Take photo</string>
+    <string name="photos_import">Import</string>
     <string name="photos_smile">See Your Smile!!!</string>
-    <string name="photos_empty">No photos yet. Tap SAY CHEESE to take your first one.</string>
+    <string name="photos_selected">Selected photo</string>
+    <string name="photos_item">Photo %1$d of %2$d</string>
+    <string name="photos_empty">No photos yet. Take one or import from your phone.</string>
     <plurals name="photos_count">
         <item quantity="one">%1$d photo</item>
         <item quantity="other">%1$d photos</item>
     </plurals>
+    <plurals name="photos_imported">
+        <item quantity="one">%1$d photo imported</item>
+        <item quantity="other">%1$d photos imported</item>
+    </plurals>
+    <string name="photos_import_some_failed">%1$d imported, %2$d couldn\'t be read</string>
+    <string name="photos_share">Share</string>
+    <string name="photos_export">Save</string>
+    <string name="photos_exported">Saved to your gallery (Pictures/FamilyApp)</string>
+    <string name="photos_export_failed">Couldn\'t save to the gallery. Please try again.</string>
+    <string name="photos_export_needs_permission">Storage access is needed to save to the gallery</string>
+    <string name="photos_no_share_app">No app found to share with</string>
     <string name="no_camera_app">No camera app found on this phone</string>
     <string name="photo_delete_title">Delete this photo?</string>
+    <string name="photo_delete_message">It will be removed from FamilyApp. Copies saved to your gallery are not affected.</string>
 
     <!-- Kids activities -->
-    <string name="activities_title">Kids Activities</string>
     <string name="activities_prompt">Tap a button for an idea!</string>
     <string name="activities_intro">Bored? Get a quick idea for something fun to do together.</string>
     <string name="activities_indoor">Indoor idea</string>
@@ -196,7 +238,6 @@
     </string-array>
 
     <!-- Reading log -->
-    <string name="reading_title">Reading Log</string>
     <string name="reading_add_book">Add a book</string>
     <string name="reading_edit_book">Edit book</string>
     <string name="reading_book_hint">Book title</string>

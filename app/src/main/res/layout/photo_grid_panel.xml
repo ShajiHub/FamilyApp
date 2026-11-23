@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Saved photos, plus Take photo / Import. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/photosCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/space_s"
+        android:paddingBottom="@dimen/space_xs"
+        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/photoGrid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:layout_marginBottom="@dimen/space_l"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button1"
+            android:maxLines="1"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            app:iconPadding="6dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_s"
+            android:layout_weight="1"
+            android:text="@string/photos_take"
+            app:icon="@drawable/ic_photo_camera" />
+
+        <Button
+            android:id="@+id/importPhotos"
+            android:maxLines="1"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            app:iconPadding="6dp"
+            style="@style/Widget.FamilyApp.Button.Tonal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_weight="1"
+            android:text="@string/photos_import"
+            app:icon="@drawable/ic_photo_library" />
+    </LinearLayout>
+</LinearLayout>

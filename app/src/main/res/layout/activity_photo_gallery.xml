@@ -2,49 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingTop="@dimen/space_l"
+    android:paddingEnd="@dimen/screen_padding">
 
-    <!-- Large view of the newest or tapped photo -->
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:contentDescription="@string/photos_title"
-        android:scaleType="fitCenter"
-        android:src="@drawable/placeholder" />
-
-    <TextView
-        android:id="@+id/msg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:text="@string/photos_smile"
-        android:textAlignment="center"
-        android:textSize="22sp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/photosCount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="4dp"
-        android:textSize="14sp" />
-
-    <!-- Saved photos, newest first -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/photoGrid"
+    <include
+        layout="@layout/photo_preview_panel"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/photos_take"
-        android:textSize="18sp" />
+    <include
+        layout="@layout/photo_grid_panel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>

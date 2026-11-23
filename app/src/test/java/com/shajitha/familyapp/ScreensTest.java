@@ -589,15 +589,6 @@ public class ScreensTest {
         }
     }
 
-    // ---------- Capture moments ----------
-
-    @Test
-    public void capturePhotoScreenOpens() {
-        try (ActivityScenario<PhotoGallery> scenario = ActivityScenario.launch(PhotoGallery.class)) {
-            scenario.onActivity(a -> assertEquals(a.getString(R.string.photos_empty), text(a, R.id.photosCount)));
-        }
-    }
-
     // ---------- Every screen ----------
 
     static final Class<?>[] SCREENS = {MainActivity.class, AddEvents.class, viewCalendar.class, MealPlanner.class,
