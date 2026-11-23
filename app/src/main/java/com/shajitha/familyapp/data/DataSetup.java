@@ -40,32 +40,42 @@ public final class DataSetup {
     private DataSetup() {
     }
 
-    // commit() (not apply()) on purpose: each step must be recorded on disk before the next one,
-    // so a crash halfway can never cause defaults or old data to be added twice.
+    // commit() (not apply()) on purpose: the record must be on disk before anything else uses the
+    // database, so defaults or old data can never be added twice.
     @android.annotation.SuppressLint("ApplySharedPref")
     @VisibleForTesting
     public static void run(Context context, AppDatabase db) {
         SharedPreferences meta = context.getSharedPreferences(META, Context.MODE_PRIVATE);
+        boolean seedChecklist = !meta.getBoolean(SEEDED_CHECKLIST, false);
+        boolean seedFoods = !meta.getBoolean(SEEDED_FOODS, false);
+        boolean migrate = !meta.getBoolean(MIGRATED_V1, false);
+        if (!seedChecklist && !seedFoods && !migrate) {
+            return;
+        }
         FamilyDao dao = db.dao();
+        // All in one transaction: either everything is added, or nothing is.
         db.runInTransaction(() -> {
-            if (!meta.getBoolean(SEEDED_CHECKLIST, false)) {
+            if (seedChecklist) {
                 seedChecklist(dao);
-                meta.edit().putBoolean(SEEDED_CHECKLIST, true).commit();
             }
-            if (!meta.getBoolean(SEEDED_FOODS, false)) {
+            if (seedFoods) {
                 for (String name : context.getResources().getStringArray(R.array.foodmenu)) {
                     Food food = new Food();
                     food.name = name;
                     food.position = dao.nextFoodPosition();
                     dao.insert(food);
                 }
-                meta.edit().putBoolean(SEEDED_FOODS, true).commit();
             }
-            if (!meta.getBoolean(MIGRATED_V1, false)) {
+            if (migrate) {
                 migrateFromPreferences(context, dao);
-                meta.edit().putBoolean(MIGRATED_V1, true).commit();
             }
         });
+        // Recorded only after the transaction succeeded, so a crash halfway simply runs it again.
+        meta.edit()
+                .putBoolean(SEEDED_CHECKLIST, true)
+                .putBoolean(SEEDED_FOODS, true)
+                .putBoolean(MIGRATED_V1, true)
+                .commit();
     }
 
     private static void seedChecklist(FamilyDao dao) {
