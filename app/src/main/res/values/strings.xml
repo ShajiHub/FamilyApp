@@ -1,14 +1,103 @@
 <resources>
     <string name="app_name">FamilyApp</string>
 
+    <!-- Meal Planner: same order as the slices on the wheel, clockwise from the top. -->
     <string-array name="foodmenu">
-        <item>PanCake</item>
+        <item>Chicken wrap</item>
         <item>Burger</item>
         <item>Shawarma</item>
         <item>Poutine</item>
         <item>Mac and Cheese</item>
+        <item>Pancake</item>
         <item>Sushi</item>
         <item>Pizza</item>
     </string-array>
+    <string name="meal_spinning">Spinning…</string>
+    <string name="meal_result">Today\'s lunch: %1$s</string>
 
+    <!-- Timer -->
+    <string name="timer_choose_first">Choose Get Ready, Screen Time or Clean Up first</string>
+    <string name="timer_get_ready">Get Ready in</string>
+    <string name="timer_watch_media">Watch or play media for</string>
+    <string name="timer_clean_up">Clean up in</string>
+    <string name="timer_time_up">Time Up!!!</string>
+    <string name="timer_start">Start Timer</string>
+    <string name="timer_pause">Pause Timer</string>
+
+    <!-- To-do list -->
+    <string name="todo_hint">Add items…</string>
+    <string name="todo_hint_empty">Please enter an item…</string>
+
+    <!-- Calendar / events -->
+    <string name="event_default_title">Family event</string>
+    <string name="no_calendar_app">No calendar app found on this phone</string>
+
+    <!-- Monthly schedule -->
+    <string name="schedule_title">Monthly Schedule</string>
+    <string name="schedule_hint">Add a plan for this day…</string>
+    <string name="schedule_add">Add</string>
+    <string name="schedule_empty">Nothing planned for this day</string>
+    <plurals name="schedule_month_count">
+        <item quantity="one">%1$d plan this month</item>
+        <item quantity="other">%1$d plans this month</item>
+    </plurals>
+    <string name="delete_item_title">Delete this?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Capture Moments -->
+    <string name="photos_title">Capture Moments</string>
+    <string name="photos_take">SAY CHEESE</string>
+    <string name="photos_smile">See Your Smile!!!</string>
+    <string name="photos_empty">No photos yet. Tap SAY CHEESE to take your first one.</string>
+    <plurals name="photos_count">
+        <item quantity="one">%1$d photo</item>
+        <item quantity="other">%1$d photos</item>
+    </plurals>
+    <string name="no_camera_app">No camera app found on this phone</string>
+    <string name="photo_delete_title">Delete this photo?</string>
+
+    <!-- Kids activities -->
+    <string name="activities_title">Kids Activities</string>
+    <string name="activities_prompt">Tap a button for an idea!</string>
+    <string name="activities_indoor">Indoor idea</string>
+    <string name="activities_outdoor">Outdoor idea</string>
+    <string name="activities_reading">Reading Log</string>
+    <string-array name="indoor_activities">
+        <item>Build a blanket fort and read a story inside it</item>
+        <item>Have a family board game tournament</item>
+        <item>Bake cookies together and decorate them</item>
+        <item>Draw a comic strip about your day</item>
+        <item>Do a 10-minute family dance party</item>
+        <item>Make a puppet show with socks</item>
+        <item>Do a jigsaw puzzle together</item>
+        <item>Build the tallest tower you can with blocks or cups</item>
+        <item>Write and post a letter to a grandparent</item>
+        <item>Try a simple science experiment: baking soda and vinegar volcano</item>
+        <item>Play hide and seek</item>
+        <item>Make a family photo collage</item>
+    </string-array>
+    <string-array name="outdoor_activities">
+        <item>Go on a nature scavenger hunt: a leaf, a rock, a feather, a flower</item>
+        <item>Ride bikes or scooters around the block</item>
+        <item>Have a picnic in the park</item>
+        <item>Draw with sidewalk chalk</item>
+        <item>Play tag or a relay race</item>
+        <item>Fly a kite</item>
+        <item>Plant seeds or water the garden</item>
+        <item>Go cloud-watching and name the shapes</item>
+        <item>Visit the library and pick new books</item>
+        <item>Build a snowman or have a snowball fight (winter!)</item>
+        <item>Go for a family walk and count dogs</item>
+        <item>Blow bubbles and chase them</item>
+    </string-array>
+
+    <!-- Reading log -->
+    <string name="reading_title">Reading Log</string>
+    <string name="reading_book_hint">Book title</string>
+    <string name="reading_pages_hint">Pages</string>
+    <string name="reading_add">Add</string>
+    <string name="reading_need_title">Please enter the book title</string>
+    <string name="reading_summary">Books: %1$d · Pages read: %2$d</string>
+    <string name="reading_entry">%1$s — pages: %2$d (%3$s)</string>
 </resources>

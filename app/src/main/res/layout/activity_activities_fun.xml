@@ -1,50 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#353333"
-    tools:context=".ActivitiesFun">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Kids Activities"
-        android:textAlignment="center"
-        android:textColor="#F1DDDD"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView8"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="129dp"
-        android:text="Thinking ideas......"
-        android:textColor="#EFEBEB"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.531"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/boogaloo"
+            android:text="@string/activities_title"
+            android:textColor="#F1DDDD"
+            android:textSize="32sp" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="282dp"
-        android:layout_height="397dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="43dp"
-        android:layout_marginEnd="65dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
-        app:srcCompat="@drawable/checking" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/activities_title"
+            android:scaleType="fitCenter"
+            android:src="@drawable/checking" />
+
+        <!-- The current idea -->
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minHeight="96dp"
+            android:gravity="center"
+            android:text="@string/activities_prompt"
+            android:textColor="#EFEBEB"
+            android:textSize="22sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/indoorIdea"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#829DCA"
+                android:fontFamily="@font/boogaloo"
+                android:text="@string/activities_indoor"
+                android:textColor="#0E0E0E"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/outdoorIdea"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#85AE56"
+                android:fontFamily="@font/boogaloo"
+                android:text="@string/activities_outdoor"
+                android:textColor="#0E0E0E"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/readingLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#E8D46D"
+            android:fontFamily="@font/boogaloo"
+            android:text="@string/activities_reading"
+            android:textColor="#0E0E0E"
+            android:textSize="18sp" />
+    </LinearLayout>
+</ScrollView>

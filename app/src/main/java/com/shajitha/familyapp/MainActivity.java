@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(activitiesFun);
     }
 
+    // "Monthly Schedule" button: calendar with plans saved for each day.
+    public void monthlySchedule(View v) {
+        Intent schedule = new Intent(this, viewCalendar.class);
+        startActivity(schedule);
+    }
+
     public void contactUs(View v) {
         Intent contactus = new Intent(this, ContactUs.class);
         startActivity(contactus);

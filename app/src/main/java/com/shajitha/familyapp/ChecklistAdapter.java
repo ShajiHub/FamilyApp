@@ -3,137 +3,107 @@ package com.shajitha.familyapp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
+import java.util.Set;
 
 import static com.shajitha.familyapp.ChecklistItems.imageLayout;
 import static com.shajitha.familyapp.ChecklistItems.listLayout;
 
-public class ChecklistAdapter extends RecyclerView.Adapter {
+public class ChecklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    /** Called whenever an item is ticked or unticked. */
+    public interface OnCheckedChange {
+        void onChanged(ChecklistItems item, boolean checked);
+    }
 
-    List<ChecklistItems> itemClassList;
+    private final List<ChecklistItems> itemClassList;
+    private final Set<String> checkedKeys;
+    private final OnCheckedChange listener;
 
-
-    public ChecklistAdapter(List<ChecklistItems> itemClassList)
-    {
+    public ChecklistAdapter(List<ChecklistItems> itemClassList, Set<String> checkedKeys, OnCheckedChange listener) {
         this.itemClassList = itemClassList;
+        this.checkedKeys = checkedKeys;
+        this.listener = listener;
     }
 
-
-    //setLayout based on layoutType
     @Override
-    public int getItemViewType(int position)
-    {
-        switch (itemClassList.get(position).getchooseLayout()) {
-            case 1:
-                return listLayout;
-            case 2:
-                return imageLayout;
-            default:
-                return -1;
-        }
+    public int getItemViewType(int position) {
+        return itemClassList.get(position).getchooseLayout();
     }
-
 
     class listLayoutViewHolder extends RecyclerView.ViewHolder {
+        private final TextView textview;
+        private final CheckBox checkBox;
 
-        private TextView textview;
-        private LinearLayout linearLayout;
-
-        public listLayoutViewHolder(@NonNull View itemView)
-        {
+        listLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            // Find the Views
             textview = itemView.findViewById(R.id.text);
-            linearLayout = itemView.findViewById(R.id.linearlayout);
+            checkBox = itemView.findViewById(R.id.cbSelect);
         }
 
-        private void setView(String text)
-        {
-            textview.setText(text);
+        void bind(ChecklistItems item) {
+            textview.setText(item.getText());
+            // Clear the old listener first: rows are reused while scrolling.
+            checkBox.setOnCheckedChangeListener(null);
+            checkBox.setChecked(checkedKeys.contains(item.getKey()));
+            checkBox.setOnCheckedChangeListener((button, isChecked) -> {
+                if (isChecked) {
+                    checkedKeys.add(item.getKey());
+                } else {
+                    checkedKeys.remove(item.getKey());
+                }
+                listener.onChanged(item, isChecked);
+            });
+            // Tapping anywhere on the row ticks the box too.
+            itemView.setOnClickListener(v -> checkBox.toggle());
         }
     }
 
-
     class imageLayoutTwoViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView img;
+        private final TextView text1;
 
-        private ImageView img;
-        private TextView text1;
-        private LinearLayout linearLayout;
-
-        public imageLayoutTwoViewHolder(@NonNull View itemView)
-        {
+        imageLayoutTwoViewHolder(@NonNull View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.image);
             text1 = itemView.findViewById(R.id.text1);
-            linearLayout = itemView.findViewById(R.id.linearlayout);
         }
 
-        private void setViews(int image, String textOne)
-        {
-            img.setImageResource(image);
-            text1.setText(textOne);
-
+        void bind(ChecklistItems item) {
+            img.setImageResource(item.getimg());
+            text1.setText(item.getdispText());
         }
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder
-    onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-    {
-        switch (viewType) {
-            case listLayout:
-                View firstLayout = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.text_layout, parent, false);
-                return new listLayoutViewHolder(firstLayout);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if (viewType == imageLayout) {
+            return new imageLayoutTwoViewHolder(inflater.inflate(R.layout.image_and_text_layout, parent, false));
+        }
+        return new listLayoutViewHolder(inflater.inflate(R.layout.text_layout, parent, false));
+    }
 
-            case imageLayout:
-                View secondLayout = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.image_and_text_layout, parent, false);
-                return new imageLayoutTwoViewHolder(secondLayout);
-
-            default:
-                return null;
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ChecklistItems item = itemClassList.get(position);
+        if (item.getchooseLayout() == listLayout) {
+            ((listLayoutViewHolder) holder).bind(item);
+        } else {
+            ((imageLayoutTwoViewHolder) holder).bind(item);
         }
     }
 
-    // set views
-
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position)
-    {
-
-        switch (itemClassList.get(position).getchooseLayout()) {
-            case listLayout:
-                String text = itemClassList.get(position).getText();
-                ((listLayoutViewHolder)holder).setView(text);
-                break;
-
-            case imageLayout:
-
-                int img = itemClassList.get(position).getimg();
-                String dispText = itemClassList.get(position).getdispText();
-                ((imageLayoutTwoViewHolder)holder).setViews(img, dispText);
-                break;
-
-            default:
-                return;
-        }
-    }
-    @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return itemClassList.size();
     }
 }
-

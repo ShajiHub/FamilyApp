@@ -1,41 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="40dp"
-    android:paddingLeft="40dp"
-    android:paddingRight="40dp"
-    android:paddingTop="80dp"
-
-    tools:context=".viewCalendar">
+    android:background="#E3F1EF"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/cal1text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-
         android:background="#4D9E93"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:text="Calendar"
+        android:fontFamily="@font/boogaloo"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="@string/schedule_title"
         android:textAlignment="center"
-
-        android:textSize="24sp" />
+        android:textColor="#FFFFFF"
+        android:textSize="26sp" />
 
     <CalendarView
         android:id="@+id/calender"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/cal1text"
-        android:firstDayOfWeek="2"
-        android:maxDate="31/12/3020"
-        android:minDate="01/01/2020" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:firstDayOfWeek="2" />
 
-
-
-
-
-</RelativeLayout>
+    <include
+        layout="@layout/schedule_day_panel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

@@ -9,8 +9,11 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CheckList extends AppCompatActivity {
+    private static final String STORE_KEY = "checklist_ticked";
+
     RecyclerView recyclerView;
     LinearLayoutManager layoutManager;
 
@@ -18,7 +21,9 @@ public class CheckList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_list);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         recyclerView = findViewById(R.id.rView);
 
@@ -56,7 +61,19 @@ public class CheckList extends AppCompatActivity {
         items.add(new ChecklistItems(ChecklistItems.listLayout, "Adhesive plasters large/small"));
 
 
-        ChecklistAdapter adapter = new ChecklistAdapter(items);
+        // Remember which section each item belongs to, so ticks are saved per list.
+        String section = "";
+        for (ChecklistItems item : items) {
+            if (item.getchooseLayout() == ChecklistItems.imageLayout) {
+                section = item.getdispText();
+            } else {
+                item.setSection(section);
+            }
+        }
+
+        Set<String> ticked = FamilyStore.getStringSet(this, STORE_KEY);
+        ChecklistAdapter adapter = new ChecklistAdapter(items, ticked,
+                (item, checked) -> FamilyStore.putStringSet(this, STORE_KEY, ticked));
 
         recyclerView.setAdapter(adapter);
     }

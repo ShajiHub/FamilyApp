@@ -1,10 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#9AC7E3"
-    tools:context=".Reading">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/readingTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/boogaloo"
+        android:text="@string/reading_title"
+        android:textAlignment="center"
+        android:textColor="#1B3A4B"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/readingSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:textAlignment="center"
+        android:textColor="#1B3A4B"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/readingBook"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:hint="@string/reading_book_hint"
+            android:inputType="textCapWords"
+            android:minHeight="48dp"
+            android:textColor="#102030"
+            android:textColorHint="#4A6578" />
+
+        <EditText
+            android:id="@+id/readingPages"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:hint="@string/reading_pages_hint"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:maxLength="5"
+            android:minHeight="48dp"
+            android:textColor="#102030"
+            android:textColorHint="#4A6578" />
+
+        <Button
+            android:id="@+id/readingAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#1B3A4B"
+            android:text="@string/reading_add" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/readingList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

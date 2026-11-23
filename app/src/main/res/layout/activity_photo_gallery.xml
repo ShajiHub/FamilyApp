@@ -1,40 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhotoGallery">
+    android:background="#FFF8EC"
+    android:orientation="vertical"
+    android:padding="12dp">
 
-    <!--Button to open the image selector-->
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/photosTitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:backgroundTint="@color/black"
-        android:text="SAY CHEESE"
-        android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:fontFamily="@font/boogaloo"
+        android:text="@string/photos_title"
+        android:textAlignment="center"
+        android:textColor="#2B2B2B"
+        android:textSize="30sp" />
 
-    <!--ImageView to preview the selected image-->
+    <!-- Large view of the newest or tapped photo -->
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/button1"
-        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:contentDescription="@string/photos_title"
+        android:scaleType="fitCenter"
         android:src="@drawable/placeholder" />
 
     <TextView
         android:id="@+id/msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="40dp"
-        android:text="TextView"
+        android:paddingTop="4dp"
+        android:text="@string/photos_smile"
         android:textAlignment="center"
-        android:textSize="24sp"
-        android:visibility="invisible" />
+        android:textColor="#2B2B2B"
+        android:textSize="22sp"
+        android:visibility="gone" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/photosCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="#6B6B6B"
+        android:textSize="14sp" />
+
+    <!-- Saved photos, newest first -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/photoGrid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/black"
+        android:text="@string/photos_take"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+</LinearLayout>

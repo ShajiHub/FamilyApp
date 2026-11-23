@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Photos taken in "Capture Moments" are stored in the app's private Pictures folder. -->
+    <external-files-path
+        name="family_photos"
+        path="Pictures/" />
+    <!-- Fallback when shared storage is not available. -->
+    <files-path
+        name="family_photos_internal"
+        path="Pictures/" />
+</paths>
