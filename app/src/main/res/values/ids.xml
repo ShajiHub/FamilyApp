@@ -36,4 +36,5 @@
     <item name="today_timer" type="id" />
     <item name="menu_contact" type="id" />
     <item name="menu_about" type="id" />
+    <item name="menu_settings" type="id" />
 </resources>

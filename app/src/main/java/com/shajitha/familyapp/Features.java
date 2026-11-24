@@ -116,7 +116,7 @@ public final class Features {
             new Feature(Category.HOBBIES, R.id.feat_resources, R.string.feat_resources, R.string.feat_resources_sub, R.drawable.ic_share, null),
             // Family Hub
             new Feature(Category.FAMILY_HUB, R.id.feat_photos, R.string.title_photos, R.string.home_photos_sub, R.drawable.ic_photo_camera, PhotoGallery.class),
-            new Feature(Category.FAMILY_HUB, R.id.feat_members, R.string.feat_members, R.string.feat_members_sub, R.drawable.ic_family_restroom, null),
+            new Feature(Category.FAMILY_HUB, R.id.feat_members, R.string.feat_members, R.string.feat_members_sub, R.drawable.ic_family_restroom, FamilyMembersActivity.class),
             new Feature(Category.FAMILY_HUB, R.id.feat_rules, R.string.feat_rules, R.string.feat_rules_sub, R.drawable.ic_fact_check, null),
             // Learning Hub
             new Feature(Category.LEARNING, R.id.feat_reading, R.string.title_reading, R.string.home_reading_sub, R.drawable.ic_auto_stories, Reading.class),

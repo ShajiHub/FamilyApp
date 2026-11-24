@@ -338,4 +338,82 @@
     <string name="reading_summary">Books: %1$d · Pages read: %2$d</string>
     <string name="reading_empty">No books yet. Add the first one!</string>
     <string name="reading_delete_title">Delete this book?</string>
+
+    <!-- Family members -->
+    <string name="members_intro">Add the people in your family so tasks, events and reminders can be for someone. Only a name or nickname, an avatar and a role are saved, on this phone.</string>
+    <string name="members_add">Add family member</string>
+    <string name="members_edit">Edit family member</string>
+    <string name="members_empty">No family members yet. Everything works without them too: items are for "Everyone".</string>
+    <string name="members_name_hint">Name or nickname</string>
+    <string name="members_name_helper">A nickname is fine, especially for children.</string>
+    <string name="members_avatar">Avatar</string>
+    <string name="members_colour">Colour</string>
+    <string name="members_colour_item">Colour %1$d</string>
+    <string name="members_role">Role</string>
+    <string name="role_parent">Parent</string>
+    <string name="role_child">Child</string>
+    <string name="role_other">Other</string>
+    <string name="members_archive">Archive</string>
+    <string name="members_restore">Restore</string>
+    <string name="members_archived">Archived</string>
+    <string name="members_delete">Delete permanently</string>
+    <string name="members_delete_title">Delete %1$s permanently?</string>
+    <string name="members_delete_message">%1$s will be removed from FamilyApp. Their tasks, events and reminders are kept and will show as \"Everyone\". This can\'t be undone.</string>
+    <string name="members_everyone">Everyone</string>
+    <string name="members_for">For</string>
+
+    <!-- Settings -->
+    <string name="title_settings">Settings</string>
+    <string name="settings_reminders">Reminders</string>
+    <string name="settings_alerts">Reminder alerts</string>
+    <string name="settings_alerts_summary">Notifications before appointments, renewals and other reminders</string>
+    <string name="settings_alert_time">Alert time</string>
+    <string name="settings_lock_details">Show details on the lock screen</string>
+    <string name="settings_lock_details_summary">Off: the lock screen only says \"You have a reminder\" until the phone is unlocked</string>
+    <string name="settings_timer_alerts">Alert when the timer finishes</string>
+    <string name="settings_timer_alerts_summary">Even when FamilyApp is closed</string>
+    <string name="settings_exact_on">Exact timing is allowed.</string>
+    <string name="settings_exact_off">Exact timing isn\'t allowed, so the alert may be up to about 10 minutes late. You can allow \"Alarms &amp; reminders\" for FamilyApp.</string>
+    <string name="settings_exact_allow">Allow exact timing</string>
+    <string name="settings_blocked">Notifications are turned off for FamilyApp in Android settings, so alerts can\'t be shown. Reminders still appear inside the app.</string>
+    <string name="settings_open_android">Open Android settings</string>
+    <string name="settings_developer">For testing (debug builds only)</string>
+    <string name="settings_test_reminder_summary">Creates a reminder called \"Test reminder\" that alerts in about 1 minute, to check notifications on this phone. This section is not in the released app.</string>
+    <string name="settings_test_reminder">Send a test reminder in 1 minute</string>
+    <string name="settings_test_reminder_title">Test reminder</string>
+    <string name="settings_test_reminder_sent">Test reminder set for about 1 minute from now. You can lock the phone or close FamilyApp.</string>
+    <string name="settings_test_reminder_off">Test reminder set, but reminder alerts are off or not allowed, so nothing will be shown. Turn on Reminder alerts first.</string>
+    <string name="settings_privacy_note">Reminder notes never appear in notifications. Everything stays on this phone.</string>
+
+    <!-- Notifications -->
+    <string name="channel_reminders">Reminders</string>
+    <string name="channel_reminders_description">Appointments, renewals and other family reminders</string>
+    <string name="channel_timer">Timer</string>
+    <string name="channel_timer_description">When a routine timer finishes</string>
+    <string name="notify_private_text">You have a reminder</string>
+    <string name="notify_for_member">%1$s · for %2$s</string>
+    <string name="notify_action_done">Done</string>
+    <string name="notify_action_tomorrow">Tomorrow</string>
+    <string name="notify_due_today">Due today</string>
+    <string name="notify_due_tomorrow">Due tomorrow</string>
+    <string name="notify_overdue">Overdue</string>
+    <plurals name="notify_due_in">
+        <item quantity="one">Due in %1$d day</item>
+        <item quantity="other">Due in %1$d days</item>
+    </plurals>
+
+    <!-- Database recovery -->
+    <string name="problem_title">FamilyApp needs a moment</string>
+    <string name="problem_safe">Your information has not been deleted.</string>
+    <string name="problem_no_space">This version of FamilyApp updates how your information is stored. Before doing that it makes a safety copy, but there wasn\'t enough free space on the phone. Free up some space, then tap Try again.</string>
+    <string name="problem_backup_check">This version of FamilyApp updates how your information is stored. The safety copy made first didn\'t pass its check, so nothing was changed. Tap Try again. If this keeps happening, please contact us.</string>
+    <string name="problem_upgrade">Updating how your information is stored didn\'t work, so it was undone and your information is as it was before. A checked safety copy is also kept on this phone. Tap Try again, or wait for the next FamilyApp update.</string>
+    <string name="problem_newer">Your information was saved by a newer version of FamilyApp. Please update FamilyApp to open it.</string>
+    <string name="problem_dont">Please don\'t uninstall FamilyApp or clear its storage: that would delete your information and the safety copy.</string>
+    <string name="problem_retry">Try again</string>
+    <string name="problem_restore">Restore safety copy</string>
+    <string name="problem_restore_title">Restore the safety copy?</string>
+    <string name="problem_restore_message">This puts back the copy made just before the update. The current file is kept too, as an extra copy.</string>
+    <string name="problem_restored">Safety copy restored</string>
+    <string name="problem_restore_failed">The safety copy couldn\'t be restored. Your information has not been changed.</string>
 </resources>

@@ -24,6 +24,8 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import com.shajitha.familyapp.reminders.TimerAlarm;
+
 import java.util.Locale;
 
 /**
@@ -117,6 +119,18 @@ public class FamAppTimer extends BaseActivity {
 
         updatePresetLabels();
         restoreState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TimerAlarm.TimerState.screenVisible = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        TimerAlarm.TimerState.screenVisible = false;
     }
 
     @Override
@@ -270,10 +284,13 @@ public class FamAppTimer extends BaseActivity {
         handler.post(ticker);
         updateButtons();
         saveState();
+        // Alert when it finishes even if FamilyApp is closed (only if turned on in Settings).
+        TimerAlarm.schedule(this, endTimeMillis);
     }
 
     public void pauseTimer() {
         handler.removeCallbacks(ticker);
+        TimerAlarm.cancel(this);
         remainingMillis = Math.max(0, endTimeMillis - clock.now());
         isTimerOn = false;
         updateTimer();
@@ -283,6 +300,7 @@ public class FamAppTimer extends BaseActivity {
 
     public void resetTimer() {
         handler.removeCallbacks(ticker);
+        TimerAlarm.cancel(this);
         isTimerOn = false;
         timeUp = false;
         remainingMillis = 0;
@@ -296,6 +314,7 @@ public class FamAppTimer extends BaseActivity {
 
     private void onTimeUp(boolean playSound) {
         handler.removeCallbacks(ticker);
+        TimerAlarm.cancel(this);
         isTimerOn = false;
         timeUp = true;
         preset = null;
@@ -352,6 +371,7 @@ public class FamAppTimer extends BaseActivity {
 
     private void choosePreset(String key) {
         handler.removeCallbacks(ticker);
+        TimerAlarm.cancel(this);
         isTimerOn = false;
         timeUp = false;
         preset = key;

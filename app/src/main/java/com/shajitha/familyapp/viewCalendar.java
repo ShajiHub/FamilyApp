@@ -41,6 +41,8 @@ public class viewCalendar extends BaseActivity {
     private LinearLayout list;
     private int monthCount = 0;
     private List<String> monthDays = new ArrayList<>();
+    private List<com.shajitha.familyapp.data.FamilyMember> members = new ArrayList<>();
+    private List<ScheduleEvent> shownEvents = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,10 @@ public class viewCalendar extends BaseActivity {
         });
         add.setOnClickListener(v -> showEventDialog(null));
 
+        dao.allMembers().observe(this, all -> {
+            members = all;
+            showEvents(shownEvents);
+        });
         LiveData<List<ScheduleEvent>> events = Transformations.switchMap(selectedDay, dao::eventsOn);
         events.observe(this, this::showEvents);
         LiveData<String> month = Transformations.distinctUntilChanged(
@@ -109,6 +115,7 @@ public class viewCalendar extends BaseActivity {
     }
 
     private void showEvents(List<ScheduleEvent> events) {
+        shownEvents = events;
         list.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(this);
         for (ScheduleEvent event : events) {
@@ -116,6 +123,10 @@ public class viewCalendar extends BaseActivity {
             ((TextView) card.findViewById(R.id.eventTime)).setText(
                     event.time == null ? getString(R.string.event_all_day) : formatTime(event.time));
             ((TextView) card.findViewById(R.id.eventTitle)).setText(event.title);
+            com.shajitha.familyapp.data.FamilyMember member = Members.find(members, event.memberId);
+            TextView who = card.findViewById(R.id.eventMember);
+            who.setText(member == null ? "" : Members.label(member));
+            who.setVisibility(member == null ? View.GONE : View.VISIBLE);
             TextView notes = card.findViewById(R.id.eventNotes);
             notes.setText(event.notes);
             notes.setVisibility(event.notes == null || event.notes.isEmpty() ? View.GONE : View.VISIBLE);
@@ -146,6 +157,8 @@ public class viewCalendar extends BaseActivity {
         TextInputEditText title = view.findViewById(R.id.eventTitleInput);
         TextInputEditText time = view.findViewById(R.id.eventTimeInput);
         TextInputEditText notes = view.findViewById(R.id.eventNotesInput);
+        com.google.android.material.textfield.MaterialAutoCompleteTextView who = view.findViewById(R.id.eventMember);
+        Members.attachPicker(who, members, event == null ? null : event.memberId);
         final String[] chosenTime = {event == null ? null : event.time};
         if (event != null) {
             title.setText(event.title);
@@ -205,6 +218,7 @@ public class viewCalendar extends BaseActivity {
                 e.createdAt = System.currentTimeMillis();
             }
             e.title = titleText;
+            e.memberId = Members.selected(who);
             e.time = chosenTime[0];
             String notesText = Dialogs.text(notes);
             e.notes = notesText.isEmpty() ? null : notesText;

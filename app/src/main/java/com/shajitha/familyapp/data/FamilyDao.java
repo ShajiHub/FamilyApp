@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
@@ -121,4 +122,91 @@ public interface FamilyDao {
 
     @Delete
     void delete(Book book);
+
+    // ---------- Family members ----------
+    @Query("SELECT * FROM family_members WHERE archived = 0 ORDER BY position, id")
+    LiveData<List<FamilyMember>> activeMembers();
+
+    @Query("SELECT * FROM family_members ORDER BY archived, position, id")
+    LiveData<List<FamilyMember>> allMembers();
+
+    @Query("SELECT * FROM family_members ORDER BY archived, position, id")
+    List<FamilyMember> allMembersNow();
+
+    @Query("SELECT * FROM family_members WHERE id = :id")
+    FamilyMember memberNow(long id);
+
+    @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM family_members")
+    int nextMemberPosition();
+
+    @Insert
+    long insert(FamilyMember member);
+
+    @Update
+    void update(FamilyMember member);
+
+    @Query("UPDATE todo_tasks SET memberId = NULL WHERE memberId = :memberId")
+    void unassignTasks(long memberId);
+
+    @Query("UPDATE schedule_events SET memberId = NULL WHERE memberId = :memberId")
+    void unassignEvents(long memberId);
+
+    @Query("UPDATE reminders SET memberId = NULL WHERE memberId = :memberId")
+    void unassignReminders(long memberId);
+
+    @Query("UPDATE reminder_history SET memberId = NULL WHERE memberId = :memberId")
+    void unassignHistory(long memberId);
+
+    @Query("DELETE FROM family_members WHERE id = :memberId")
+    void deleteMemberRow(long memberId);
+
+    /**
+     * Permanently removes a member. Their tasks, events, reminders and history are kept and become
+     * "Everyone". All in one transaction: either everything happens or nothing does.
+     */
+    @Transaction
+    default void deleteMemberKeepingItems(long memberId) {
+        unassignTasks(memberId);
+        unassignEvents(memberId);
+        unassignReminders(memberId);
+        unassignHistory(memberId);
+        deleteMemberRow(memberId);
+    }
+
+    @Query("SELECT COUNT(*) FROM todo_tasks WHERE memberId = :memberId")
+    int taskCountFor(long memberId);
+
+    @Query("SELECT COUNT(*) FROM schedule_events WHERE memberId = :memberId")
+    int eventCountFor(long memberId);
+
+    // ---------- Reminders ----------
+    @Query("SELECT * FROM reminders WHERE status != 'ARCHIVED' ORDER BY status, dueDate, dueTime")
+    LiveData<List<Reminder>> reminders();
+
+    @Query("SELECT * FROM reminders WHERE status = 'ACTIVE'")
+    List<Reminder> activeRemindersNow();
+
+    @Query("SELECT * FROM reminders ORDER BY id")
+    List<Reminder> allRemindersNow();
+
+    @Query("SELECT * FROM reminders WHERE id = :id")
+    Reminder reminderNow(long id);
+
+    @Insert
+    long insert(Reminder reminder);
+
+    @Update
+    void update(Reminder reminder);
+
+    @Delete
+    void delete(Reminder reminder);
+
+    @Insert
+    long insert(ReminderHistory history);
+
+    @Query("SELECT * FROM reminder_history WHERE reminderId = :reminderId ORDER BY completedAt DESC, id DESC")
+    List<ReminderHistory> historyNow(long reminderId);
+
+    @Query("SELECT * FROM reminder_history ORDER BY completedAt DESC, id DESC")
+    List<ReminderHistory> allHistoryNow();
 }

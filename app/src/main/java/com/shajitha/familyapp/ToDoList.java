@@ -34,6 +34,7 @@ public class ToDoList extends BaseActivity {
     private TextView summary, empty;
     private View clearDone;
     private final TaskAdapter adapter = new TaskAdapter();
+    private List<com.shajitha.familyapp.data.FamilyMember> members = new java.util.ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,10 @@ public class ToDoList extends BaseActivity {
                 () -> AppDatabase.write(dao::deleteCompletedTasks)));
 
         dao.tasks().observe(this, this::show);
+        dao.allMembers().observe(this, all -> {
+            members = all;
+            adapter.notifyDataSetChanged();
+        });
     }
 
     private void show(List<TodoTask> tasks) {
@@ -102,12 +107,33 @@ public class ToDoList extends BaseActivity {
         AppDatabase.write(() -> dao.update(copy));
     }
 
+    /** Edit a task's text and who it is for. */
     private void edit(TodoTask task) {
-        Dialogs.editText(this, R.string.todo_edit_title, R.string.todo_hint, task.title, null, text -> {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_task, null);
+        TextInputLayout titleLayout = view.findViewById(R.id.taskTitleLayout);
+        TextInputEditText title = view.findViewById(R.id.taskTitleInput);
+        com.google.android.material.textfield.MaterialAutoCompleteTextView who = view.findViewById(R.id.taskMember);
+        title.setText(task.title);
+        Members.attachPicker(who, members, task.memberId);
+        androidx.appcompat.app.AlertDialog dialog = new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.todo_edit_title)
+                .setView(view)
+                .setPositiveButton(R.string.save, null)
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+        dialog.setOnShowListener(d -> dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String text = Dialogs.text(title);
+            if (text.isEmpty()) {
+                titleLayout.setError(getString(R.string.error_required));
+                return;
+            }
             TodoTask copy = copy(task);
             copy.title = text;
+            copy.memberId = Members.selected(who);
             AppDatabase.write(() -> dao.update(copy));
-        });
+            dialog.dismiss();
+        }));
+        Dialogs.showWithKeyboard(dialog);
     }
 
     private void delete(TodoTask task) {
@@ -121,6 +147,7 @@ public class ToDoList extends BaseActivity {
         c.title = t.title;
         c.done = t.done;
         c.createdAt = t.createdAt;
+        c.memberId = t.memberId;
         return c;
     }
 
@@ -134,7 +161,7 @@ public class ToDoList extends BaseActivity {
 
                 @Override
                 public boolean areContentsTheSame(@NonNull TodoTask a, @NonNull TodoTask b) {
-                    return a.done == b.done && Objects.equals(a.title, b.title);
+                    return a.done == b.done && Objects.equals(a.title, b.title) && Objects.equals(a.memberId, b.memberId);
                 }
             });
         }
@@ -153,6 +180,9 @@ public class ToDoList extends BaseActivity {
                     ? holder.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG
                     : holder.title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             holder.title.setAlpha(task.done ? 0.6f : 1f);
+            com.shajitha.familyapp.data.FamilyMember member = Members.find(members, task.memberId);
+            holder.subtitle.setText(member == null ? "" : Members.label(member));
+            holder.subtitle.setVisibility(member == null ? View.GONE : View.VISIBLE);
             holder.check.setOnCheckedChangeListener(null);
             holder.check.setChecked(task.done);
             holder.check.setContentDescription(task.title);

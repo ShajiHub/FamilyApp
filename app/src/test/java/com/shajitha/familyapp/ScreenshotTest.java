@@ -86,6 +86,26 @@ public class ScreenshotTest {
             //noinspection ResultOfMethodCallIgnored
             f.setLastModified(1_000_000L * (i + 1));
         }
+        String[][] people = {{"Mum", "👩", "PARENT", "0"}, {"Mia", "👧", "CHILD", "1"}, {"Sam", "👦", "CHILD", "2"}, {"Grandpa", "👴", "OTHER", "3"}};
+        long first = 0;
+        for (String[] p : people) {
+            com.shajitha.familyapp.data.FamilyMember m = new com.shajitha.familyapp.data.FamilyMember();
+            m.name = p[0];
+            m.avatar = p[1];
+            m.role = p[2];
+            m.colorIndex = Integer.parseInt(p[3]);
+            m.archived = p[0].equals("Grandpa");
+            long id = dao.insert(m);
+            if (first == 0) {
+                first = id;
+            }
+        }
+        for (com.shajitha.familyapp.data.TodoTask t : dao.tasksNow()) {
+            if (t.title.equals("Call grandma")) {
+                t.memberId = first;
+                dao.update(t);
+            }
+        }
         com.shajitha.familyapp.data.MealSelection meal = new com.shajitha.familyapp.data.MealSelection();
         meal.date = today;
         meal.food = "Burger";
@@ -99,7 +119,8 @@ public class ScreenshotTest {
 
     static final Class<?>[] SCREENS = {MainActivity.class, viewCalendar.class, AddEvents.class, MealPlanner.class,
             FamAppTimer.class, ToDoList.class, CheckList.class, PhotoGallery.class,
-            ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class};
+            ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class,
+            FamilyMembersActivity.class, SettingsActivity.class};
 
     static void capture(String prefix) {
         for (Class<?> screen : SCREENS) {

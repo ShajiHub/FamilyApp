@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/FamilyApp.Hint"
+        android:text="@string/members_intro" />
+
+    <Button
+        android:id="@+id/addMember"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        android:text="@string/members_add"
+        app:icon="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/membersEmpty"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_xl"
+        android:gravity="center"
+        android:text="@string/members_empty"
+        android:visibility="gone" />
+</LinearLayout>

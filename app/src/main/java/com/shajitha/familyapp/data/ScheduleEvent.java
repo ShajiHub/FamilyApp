@@ -27,4 +27,8 @@ public class ScheduleEvent {
     public String notes;
 
     public long createdAt;
+
+    /** Who it is for (a family member), or null for everyone. Added in database version 2. */
+    @androidx.annotation.Nullable
+    public Long memberId;
 }

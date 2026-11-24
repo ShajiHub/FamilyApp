@@ -27,6 +27,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.color.MaterialColors;
 import com.shajitha.familyapp.data.AppDatabase;
 import com.shajitha.familyapp.data.DataSetup;
+import com.shajitha.familyapp.data.DatabaseGuard;
+import com.shajitha.familyapp.reminders.Notifications;
+import com.shajitha.familyapp.reminders.Reminders;
 import com.shajitha.familyapp.data.FamilyDao;
 import com.shajitha.familyapp.data.MealSelection;
 import com.shajitha.familyapp.data.ScheduleEvent;
@@ -61,7 +64,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
+        // Open the saved information first. If it can't be opened safely (for example the backup
+        // before an upgrade couldn't be made), show the recovery screen instead. Nothing is deleted.
+        FamilyDao dao;
+        try {
+            dao = AppDatabase.get(this).dao();
+        } catch (DatabaseGuard.UnavailableException e) {
+            startActivity(new Intent(this, DatabaseProblemActivity.class)
+                    .putExtra(DatabaseProblemActivity.EXTRA_PROBLEM, e.problem.name()));
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_main);
+        startUpOnce();
 
         ((TextView) findViewById(R.id.homeGreeting)).setText(greeting());
         ((TextView) findViewById(R.id.todayTitle)).setText(getString(R.string.today_title,
@@ -73,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         grid.setLayoutManager(new GridLayoutManager(this, spanCount(this)));
         grid.setAdapter(new CategoryAdapter());
 
-        FamilyDao dao = AppDatabase.get(this).dao();
         String today = DataSetup.today();
         dao.eventsOn(today).observe(this, events -> {
             todaysEvents = events;
@@ -102,6 +116,19 @@ public class MainActivity extends AppCompatActivity {
         handler.removeCallbacks(timerRefresh);
     }
 
+    private static boolean startedUp;
+
+    /** Once per app start: notification categories, and reminder alerts scheduled again. */
+    private void startUpOnce() {
+        if (startedUp) {
+            return;
+        }
+        startedUp = true;
+        Notifications.ensureChannels(this);
+        Context app = getApplicationContext();
+        AppDatabase.write(() -> Reminders.rescheduleAll(app));
+    }
+
     private SharedPreferences timerPrefs() {
         return getSharedPreferences(FamAppTimer.PREFS, Context.MODE_PRIVATE);
     }
@@ -125,10 +152,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void showMenu(View anchor) {
         PopupMenu menu = new PopupMenu(this, anchor);
-        menu.getMenu().add(0, R.id.menu_contact, 0, R.string.title_contact);
-        menu.getMenu().add(0, R.id.menu_about, 1, R.string.title_about);
+        menu.getMenu().add(0, R.id.menu_settings, 0, R.string.title_settings);
+        menu.getMenu().add(0, R.id.menu_contact, 1, R.string.title_contact);
+        menu.getMenu().add(0, R.id.menu_about, 2, R.string.title_about);
         menu.setOnMenuItemClickListener(item -> {
-            Class<?> screen = item.getItemId() == R.id.menu_about ? AboutActivity.class : ContactUs.class;
+            Class<?> screen = item.getItemId() == R.id.menu_about ? AboutActivity.class
+                    : item.getItemId() == R.id.menu_settings ? SettingsActivity.class : ContactUs.class;
             startActivity(new Intent(this, screen));
             return true;
         });

@@ -382,7 +382,10 @@ public class ScreensTest {
                 // Edit the remaining task (now first, since done tasks go last).
                 waitFor(() -> !((CheckBox) row(rv, 0).itemView.findViewById(R.id.rowCheck)).isChecked());
                 row(rv, 0).itemView.findViewById(R.id.rowEdit).performClick();
-                typeAndSave("Call grandma tonight");
+                AlertDialog edit = dialog();
+                ((EditText) edit.findViewById(R.id.taskTitleInput)).setText("Call grandma tonight");
+                edit.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+                idle();
                 assertEquals("Call grandma tonight", dao().tasksNow().get(0).title);
 
                 // Delete: Cancel keeps it, Delete removes it.
@@ -687,7 +690,8 @@ public class ScreensTest {
 
     static final Class<?>[] SCREENS = {MainActivity.class, AddEvents.class, viewCalendar.class, MealPlanner.class,
             FamAppTimer.class, ToDoList.class, CheckList.class, PhotoGallery.class,
-            ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class};
+            ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class,
+            FamilyMembersActivity.class, SettingsActivity.class};
 
     /** Every hub, opened like the Home screen does. */
     static void openEveryHub(boolean rotate) {
