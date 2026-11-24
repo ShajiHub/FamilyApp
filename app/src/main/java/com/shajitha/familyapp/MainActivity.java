@@ -1,101 +1,115 @@
 package com.shajitha.familyapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import androidx.annotation.AttrRes;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.color.MaterialColors;
+import com.shajitha.familyapp.data.AppDatabase;
+import com.shajitha.familyapp.data.DataSetup;
+import com.shajitha.familyapp.data.FamilyDao;
+import com.shajitha.familyapp.data.MealSelection;
+import com.shajitha.familyapp.data.ScheduleEvent;
+import com.shajitha.familyapp.data.TodoTask;
 
-import java.util.Arrays;
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-/** Home screen: the header picture and a card for every feature. */
+/** Home: brand, a "Today" summary, and the six areas of the app. */
 public class MainActivity extends AppCompatActivity {
 
-    /** One feature card on the Home screen. */
-    static final class Tile {
-        final int id;
-        @StringRes final int title;
-        @StringRes final int subtitle;
-        @DrawableRes final int icon;
-        @AttrRes final int containerColor;
-        @AttrRes final int iconColor;
-        final Class<?> screen;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private LinearLayout todayRows;
+    private List<ScheduleEvent> todaysEvents;
+    private List<TodoTask> tasks;
+    private MealSelection todaysMeal;
 
-        Tile(int id, int title, int subtitle, int icon, int containerColor, int iconColor, Class<?> screen) {
-            this.id = id;
-            this.title = title;
-            this.subtitle = subtitle;
-            this.icon = icon;
-            this.containerColor = containerColor;
-            this.iconColor = iconColor;
-            this.screen = screen;
+    /** Refreshes the timer line every second while a timer runs. */
+    private final Runnable timerRefresh = new Runnable() {
+        @Override
+        public void run() {
+            showToday();
+            if (FamAppTimer.isRunning(timerPrefs())) {
+                handler.postDelayed(this, 1000);
+            }
         }
-    }
-
-    static final List<Tile> TILES = Arrays.asList(
-            new Tile(R.id.tile_schedule, R.string.title_schedule, R.string.home_schedule_sub, R.drawable.ic_calendar_month,
-                    com.google.android.material.R.attr.colorPrimaryContainer, com.google.android.material.R.attr.colorOnPrimaryContainer, viewCalendar.class),
-            new Tile(R.id.tile_events, R.string.title_events, R.string.home_events_sub, R.drawable.ic_event,
-                    com.google.android.material.R.attr.colorPrimaryContainer, com.google.android.material.R.attr.colorOnPrimaryContainer, AddEvents.class),
-            new Tile(R.id.tile_meals, R.string.title_meals, R.string.home_meals_sub, R.drawable.ic_restaurant,
-                    com.google.android.material.R.attr.colorTertiaryContainer, com.google.android.material.R.attr.colorOnTertiaryContainer, MealPlanner.class),
-            new Tile(R.id.tile_timer, R.string.title_timer, R.string.home_timer_sub, R.drawable.ic_timer,
-                    com.google.android.material.R.attr.colorTertiaryContainer, com.google.android.material.R.attr.colorOnTertiaryContainer, FamAppTimer.class),
-            new Tile(R.id.tile_todo, R.string.title_todo, R.string.home_todo_sub, R.drawable.ic_done_all,
-                    com.google.android.material.R.attr.colorSecondaryContainer, com.google.android.material.R.attr.colorOnSecondaryContainer, ToDoList.class),
-            new Tile(R.id.tile_checklist, R.string.title_checklist, R.string.home_checklist_sub, R.drawable.ic_fact_check,
-                    com.google.android.material.R.attr.colorSecondaryContainer, com.google.android.material.R.attr.colorOnSecondaryContainer, CheckList.class),
-            new Tile(R.id.tile_photos, R.string.title_photos, R.string.home_photos_sub, R.drawable.ic_photo_camera,
-                    R.attr.colorAccent4Container, R.attr.colorOnAccent4Container, PhotoGallery.class),
-            new Tile(R.id.tile_activities, R.string.title_activities, R.string.home_activities_sub, R.drawable.ic_sports_handball,
-                    R.attr.colorAccent4Container, R.attr.colorOnAccent4Container, ActivitiesFun.class),
-            new Tile(R.id.tile_reading, R.string.title_reading, R.string.home_reading_sub, R.drawable.ic_auto_stories,
-                    com.google.android.material.R.attr.colorPrimaryContainer, com.google.android.material.R.attr.colorOnPrimaryContainer, Reading.class),
-            new Tile(R.id.tile_contact, R.string.title_contact, R.string.home_contact_sub, R.drawable.ic_email,
-                    com.google.android.material.R.attr.colorSurfaceVariant, com.google.android.material.R.attr.colorOnSurfaceVariant, ContactUs.class)
-    );
-
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_TILE = 1;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ((TextView) findViewById(R.id.homeGreeting)).setText(greeting());
+        ((TextView) findViewById(R.id.todayTitle)).setText(getString(R.string.today_title,
+                DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date())));
+        todayRows = findViewById(R.id.todayRows);
+        findViewById(R.id.homeMenu).setOnClickListener(this::showMenu);
+
         RecyclerView grid = findViewById(R.id.homeGrid);
-        int columns = spanCount();
-        GridLayoutManager layoutManager = new GridLayoutManager(this, columns);
-        // The header spans the whole width; tiles fill the columns.
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return position == 0 ? columns : 1;
-            }
+        grid.setLayoutManager(new GridLayoutManager(this, spanCount(this)));
+        grid.setAdapter(new CategoryAdapter());
+
+        FamilyDao dao = AppDatabase.get(this).dao();
+        String today = DataSetup.today();
+        dao.eventsOn(today).observe(this, events -> {
+            todaysEvents = events;
+            showToday();
         });
-        grid.setLayoutManager(layoutManager);
-        grid.setAdapter(new HomeAdapter());
+        dao.tasks().observe(this, list -> {
+            tasks = list;
+            showToday();
+        });
+        dao.mealOn(today).observe(this, meal -> {
+            todaysMeal = meal;
+            showToday();
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.removeCallbacks(timerRefresh);
+        handler.post(timerRefresh);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(timerRefresh);
+    }
+
+    private SharedPreferences timerPrefs() {
+        return getSharedPreferences(FamAppTimer.PREFS, Context.MODE_PRIVATE);
     }
 
     /** 2 columns on phones, more on wide screens and in landscape. */
-    private int spanCount() {
-        int widthDp = getResources().getConfiguration().screenWidthDp;
-        return Math.max(2, Math.min(5, widthDp / 180));
+    static int spanCount(Context context) {
+        int widthDp = context.getResources().getConfiguration().screenWidthDp;
+        return Math.max(2, Math.min(4, widthDp / 200));
     }
 
     @StringRes
@@ -109,44 +123,103 @@ public class MainActivity extends AppCompatActivity {
         return R.string.home_greeting_evening;
     }
 
-    private final class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private void showMenu(View anchor) {
+        PopupMenu menu = new PopupMenu(this, anchor);
+        menu.getMenu().add(0, R.id.menu_contact, 0, R.string.title_contact);
+        menu.getMenu().add(0, R.id.menu_about, 1, R.string.title_about);
+        menu.setOnMenuItemClickListener(item -> {
+            Class<?> screen = item.getItemId() == R.id.menu_about ? AboutActivity.class : ContactUs.class;
+            startActivity(new Intent(this, screen));
+            return true;
+        });
+        menu.show();
+    }
 
-        @Override
-        public int getItemViewType(int position) {
-            return position == 0 ? TYPE_HEADER : TYPE_TILE;
+    // ---------- Today ----------
+
+    private void showToday() {
+        todayRows.removeAllViews();
+        // Events today
+        if (todaysEvents != null) {
+            String text;
+            if (todaysEvents.isEmpty()) {
+                text = getString(R.string.today_no_events);
+            } else {
+                ScheduleEvent next = todaysEvents.get(0);
+                text = getResources().getQuantityString(R.plurals.today_events, todaysEvents.size(),
+                        todaysEvents.size(), next.title);
+            }
+            addRow(R.id.today_events, R.drawable.ic_calendar_month, text, viewCalendar.class);
         }
+        // Tasks still to do
+        if (tasks != null) {
+            int open = 0;
+            for (TodoTask t : tasks) {
+                if (!t.done) {
+                    open++;
+                }
+            }
+            addRow(R.id.today_tasks, R.drawable.ic_done_all, open == 0 ? getString(R.string.today_no_tasks)
+                    : getResources().getQuantityString(R.plurals.today_tasks, open, open), ToDoList.class);
+        }
+        // Lunch
+        addRow(R.id.today_lunch, R.drawable.ic_restaurant, todaysMeal == null ? getString(R.string.today_no_lunch)
+                : getString(R.string.today_lunch, todaysMeal.food), MealPlanner.class);
+        // Timer, only while one is running or paused
+        SharedPreferences prefs = timerPrefs();
+        long left = FamAppTimer.remainingMillis(prefs, FamAppTimer.clock.now());
+        if (left > 0) {
+            String time = FamAppTimer.format(left);
+            addRow(R.id.today_timer, R.drawable.ic_timer, FamAppTimer.isRunning(prefs)
+                    ? getString(R.string.today_timer_running, time) : getString(R.string.today_timer_paused, time), FamAppTimer.class);
+        }
+    }
+
+    private void addRow(@IdRes int id, @DrawableRes int icon, String text, Class<?> screen) {
+        View row = LayoutInflater.from(this).inflate(R.layout.item_today_row, todayRows, false);
+        row.setId(id);
+        ((ImageView) row.findViewById(R.id.todayIcon)).setImageResource(icon);
+        ((TextView) row.findViewById(R.id.todayText)).setText(text);
+        row.setOnClickListener(v -> startActivity(new Intent(this, screen)));
+        todayRows.addView(row);
+    }
+
+    // ---------- Categories ----------
+
+    /** Binds a tile (item_home_tile.xml) with an icon in a coloured circle. */
+    static void bindTile(View view, int title, int subtitle, int icon, int containerAttr, int iconAttr) {
+        ((TextView) view.findViewById(R.id.tileTitle)).setText(title);
+        ((TextView) view.findViewById(R.id.tileSubtitle)).setText(subtitle);
+        ImageView iconView = view.findViewById(R.id.tileIcon);
+        iconView.setImageResource(icon);
+        iconView.setBackgroundTintList(ColorStateList.valueOf(MaterialColors.getColor(view, containerAttr)));
+        iconView.setImageTintList(ColorStateList.valueOf(MaterialColors.getColor(view, iconAttr)));
+    }
+
+    private final class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private final Features.Category[] categories = Features.Category.values();
 
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            int layout = viewType == TYPE_HEADER ? R.layout.item_home_header : R.layout.item_home_tile;
-            return new RecyclerView.ViewHolder(inflater.inflate(layout, parent, false)) {
+            return new RecyclerView.ViewHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_home_tile, parent, false)) {
             };
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            Features.Category category = categories[position];
             View view = holder.itemView;
-            if (position == 0) {
-                ((TextView) view.findViewById(R.id.homeGreeting)).setText(greeting());
-                return;
-            }
-            Tile tile = TILES.get(position - 1);
-            view.setId(tile.id);
-            ((TextView) view.findViewById(R.id.tileTitle)).setText(tile.title);
-            ((TextView) view.findViewById(R.id.tileSubtitle)).setText(tile.subtitle);
-            ImageView icon = view.findViewById(R.id.tileIcon);
-            icon.setImageResource(tile.icon);
-            icon.setBackgroundTintList(ColorStateList.valueOf(MaterialColors.getColor(view, tile.containerColor)));
-            icon.setImageTintList(ColorStateList.valueOf(MaterialColors.getColor(view, tile.iconColor)));
-            view.setContentDescription(getString(tile.title) + ". " + getString(tile.subtitle));
-            view.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, tile.screen)));
+            view.setId(category.id);
+            bindTile(view, category.title, category.subtitle, category.icon, category.containerColor, category.iconColor);
+            view.setContentDescription(getString(category.title) + ". " + getString(category.subtitle));
+            view.setOnClickListener(v -> startActivity(HubActivity.intent(MainActivity.this, category)));
         }
 
         @Override
         public int getItemCount() {
-            return TILES.size() + 1;
+            return categories.length;
         }
     }
 }

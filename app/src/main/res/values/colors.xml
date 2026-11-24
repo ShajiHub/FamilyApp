@@ -1,43 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FamilyApp palette (light). Indigo comes from the "Family App" header, green from the original home screen. -->
+<!-- Shajis Creative Labs palette (light), from the approved logos.
+     Forest #06422D, Leaf #548A57 (buttons use #4E8151 for contrast), Sage #B6CAB8,
+     Gold #B88C26 (text uses #8B6A1C for contrast), Cream #F8F3EB, Deep Green #204926. -->
 <resources>
-    <color name="fa_primary">#3D4DB7</color>
+    <color name="fa_primary">#06422D</color>
     <color name="fa_on_primary">#FFFFFF</color>
-    <color name="fa_primary_container">#DFE0FF</color>
-    <color name="fa_on_primary_container">#000F5C</color>
+    <color name="fa_primary_container">#B6CAB8</color>
+    <color name="fa_on_primary_container">#06422D</color>
 
-    <color name="fa_secondary">#4F7A28</color>
+    <color name="fa_secondary">#4E8151</color>
     <color name="fa_on_secondary">#FFFFFF</color>
-    <color name="fa_secondary_container">#D2EEB4</color>
-    <color name="fa_on_secondary_container">#112000</color>
+    <color name="fa_secondary_container">#DCE8DD</color>
+    <color name="fa_on_secondary_container">#204926</color>
 
-    <color name="fa_tertiary">#A04A1E</color>
+    <color name="fa_tertiary">#8B6A1C</color>
     <color name="fa_on_tertiary">#FFFFFF</color>
-    <color name="fa_tertiary_container">#FFDBCC</color>
-    <color name="fa_on_tertiary_container">#380D00</color>
+    <color name="fa_tertiary_container">#F3E3BD</color>
+    <color name="fa_on_tertiary_container">#4A3709</color>
 
     <color name="fa_error">#BA1A1A</color>
     <color name="fa_on_error">#FFFFFF</color>
     <color name="fa_error_container">#FFDAD6</color>
     <color name="fa_on_error_container">#410002</color>
 
-    <color name="fa_background">#FBF8F3</color>
-    <color name="fa_on_background">#1C1B1F</color>
-    <color name="fa_surface">#FBF8F3</color>
-    <color name="fa_on_surface">#1C1B1F</color>
-    <color name="fa_surface_variant">#E4E1EC</color>
-    <color name="fa_on_surface_variant">#46464F</color>
-    <color name="fa_surface_container">#FFFFFF</color>
-    <color name="fa_outline">#777680</color>
-    <color name="fa_outline_variant">#D3D0DA</color>
+    <color name="fa_background">#F8F3EB</color>
+    <color name="fa_on_background">#1B2A20</color>
+    <color name="fa_surface">#F8F3EB</color>
+    <color name="fa_on_surface">#1B2A20</color>
+    <color name="fa_surface_variant">#E4EAE2</color>
+    <color name="fa_on_surface_variant">#4A5A4D</color>
+    <color name="fa_surface_container">#FFFDF8</color>
+    <color name="fa_outline">#73806F</color>
+    <color name="fa_outline_variant">#D3DBCF</color>
 
     <!-- Title bar and status bar (stay dark with white text in both modes) -->
-    <color name="fa_bar">#3D4DB7</color>
+    <color name="fa_bar">#06422D</color>
     <color name="fa_on_bar">#FFFFFF</color>
 
     <!-- Extra accent for the Home tiles -->
-    <color name="fa_accent4">#8A3E8F</color>
-    <color name="fa_accent4_container">#FFD6FA</color>
+    <color name="fa_accent4">#2E5A31</color>
+    <color name="fa_accent4_container">#E3EED6</color>
+
+    <!-- Brand colours exactly as in the logos (decoration, splash, icon background) -->
+    <color name="brand_forest">#06422D</color>
+    <color name="brand_leaf">#548A57</color>
+    <color name="brand_sage">#B6CAB8</color>
+    <color name="brand_gold">#B88C26</color>
+    <color name="brand_cream">#F8F3EB</color>
+    <color name="brand_deep_green">#204926</color>
+    <color name="ic_launcher_background">#F8F2EA</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

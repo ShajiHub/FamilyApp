@@ -1,14 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Home screen tiles -->
-    <item name="tile_schedule" type="id" />
-    <item name="tile_events" type="id" />
-    <item name="tile_meals" type="id" />
-    <item name="tile_timer" type="id" />
-    <item name="tile_todo" type="id" />
-    <item name="tile_checklist" type="id" />
-    <item name="tile_photos" type="id" />
-    <item name="tile_activities" type="id" />
-    <item name="tile_reading" type="id" />
-    <item name="tile_contact" type="id" />
+    <!-- Home categories -->
+    <item name="cat_daily_life" type="id" />
+    <item name="cat_family_planner" type="id" />
+    <item name="cat_checklists" type="id" />
+    <item name="cat_hobbies" type="id" />
+    <item name="cat_family_hub" type="id" />
+    <item name="cat_learning" type="id" />
+    <!-- Features (cards inside the hubs) -->
+    <item name="feat_todo" type="id" />
+    <item name="feat_meals" type="id" />
+    <item name="feat_timer" type="id" />
+    <item name="feat_chores" type="id" />
+    <item name="feat_habits" type="id" />
+    <item name="feat_schedule" type="id" />
+    <item name="feat_events" type="id" />
+    <item name="feat_reminders" type="id" />
+    <item name="feat_library" type="id" />
+    <item name="feat_checklists" type="id" />
+    <item name="feat_templates" type="id" />
+    <item name="feat_activities" type="id" />
+    <item name="feat_projects" type="id" />
+    <item name="feat_business" type="id" />
+    <item name="feat_resources" type="id" />
+    <item name="feat_photos" type="id" />
+    <item name="feat_members" type="id" />
+    <item name="feat_rules" type="id" />
+    <item name="feat_reading" type="id" />
+    <item name="feat_math" type="id" />
+    <item name="feat_coding" type="id" />
+    <!-- Home: Today rows and menu -->
+    <item name="today_events" type="id" />
+    <item name="today_tasks" type="id" />
+    <item name="today_lunch" type="id" />
+    <item name="today_timer" type="id" />
+    <item name="menu_contact" type="id" />
+    <item name="menu_about" type="id" />
 </resources>

@@ -1,7 +1,88 @@
 <resources>
     <string name="app_name">FamilyApp</string>
 
-    <!-- Screen titles (title bar and Home tiles) -->
+    <!-- Shajis Creative Labs branding -->
+    <string name="brand_byline">by Shajis Creative Labs</string>
+    <string name="brand_tagline">Organize Life. Learn Together. Grow Together.</string>
+    <string name="coming_soon">Coming soon</string>
+
+    <!-- Home categories -->
+    <string name="cat_daily_life">Daily Life</string>
+    <string name="cat_daily_life_sub">Tasks, meals, routines and timer</string>
+    <string name="cat_daily_life_intro">Everyday family routines: to-dos, meals, chores, healthy habits and timers.</string>
+    <string name="cat_family_planner">Family Planner</string>
+    <string name="cat_family_planner_sub">Calendar and reminders</string>
+    <string name="cat_family_planner_intro">Plan the family\'s days: events, appointments, renewals and reminders.</string>
+    <string name="cat_checklists">Smart Checklists</string>
+    <string name="cat_checklists_sub">Packing, school, seasons and more</string>
+    <string name="cat_checklists_intro">Reusable lists for school, travel, seasons, shopping and emergencies.</string>
+    <string name="cat_hobbies">Hobbies &amp; Business</string>
+    <string name="cat_hobbies_sub">Activities, projects and ideas</string>
+    <string name="cat_hobbies_intro">Explore activities and hobbies, plan creative projects and try small business ideas.</string>
+    <string name="cat_family_hub">Family Hub</string>
+    <string name="cat_family_hub_sub">Photos, members and family rules</string>
+    <string name="cat_family_hub_intro">The family\'s shared space: moments, members, rules and goals.</string>
+    <string name="cat_learning">Learning Hub</string>
+    <string name="cat_learning_sub">Reading now, more lessons later</string>
+    <string name="cat_learning_intro">Keep track of reading. Lessons in maths, programming and digital skills are coming later.</string>
+
+    <!-- Planned features (shown as "Coming soon") -->
+    <string name="feat_chores">Chores</string>
+    <string name="feat_chores_sub">Household jobs for everyone</string>
+    <string name="feat_habits">Healthy Habits</string>
+    <string name="feat_habits_sub">Water, sleep, exercise and more</string>
+    <string name="feat_reminders">Reminders &amp; Renewals</string>
+    <string name="feat_reminders_sub">Appointments, cards and documents</string>
+    <string name="feat_library">Library</string>
+    <string name="feat_library_sub">Library cards and books due</string>
+    <string name="feat_templates">Checklist Templates</string>
+    <string name="feat_templates_sub">School, seasons, travel, holidays</string>
+    <string name="feat_projects">Hobby Projects</string>
+    <string name="feat_projects_sub">Goals, milestones and progress</string>
+    <string name="feat_business">Passion to Business</string>
+    <string name="feat_business_sub">Turn a hobby into a small business</string>
+    <string name="feat_resources">Resource Library</string>
+    <string name="feat_resources_sub">Saved links, tutorials and notes</string>
+    <string name="feat_members">Family Members</string>
+    <string name="feat_members_sub">Profiles for everyone at home</string>
+    <string name="feat_rules">Rules &amp; Meetings</string>
+    <string name="feat_rules_sub">Household rules, discussions, goals</string>
+    <string name="feat_math">Mathematics</string>
+    <string name="feat_math_sub">Practice and puzzles</string>
+    <string name="feat_coding">Programming</string>
+    <string name="feat_coding_sub">Python, Java and the web</string>
+
+    <!-- Home: Today -->
+    <string name="home_menu">More options</string>
+    <string name="home_explore">Explore</string>
+    <string name="today_title">Today · %1$s</string>
+    <string name="today_no_events">No events today</string>
+    <plurals name="today_events">
+        <item quantity="one">%1$d event today: %2$s</item>
+        <item quantity="other">%1$d events today · first: %2$s</item>
+    </plurals>
+    <string name="today_no_tasks">No tasks to do</string>
+    <plurals name="today_tasks">
+        <item quantity="one">%1$d task to do</item>
+        <item quantity="other">%1$d tasks to do</item>
+    </plurals>
+    <string name="today_no_lunch">Lunch not chosen yet</string>
+    <string name="today_lunch">Lunch: %1$s</string>
+    <string name="today_timer_running">Timer running · %1$s left</string>
+    <string name="today_timer_paused">Timer paused · %1$s left</string>
+
+    <!-- About -->
+    <string name="title_about">About FamilyApp</string>
+    <string name="about_logo_description">Shajis Creative Labs logo</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_purpose_title">What FamilyApp is for</string>
+    <string name="about_purpose">FamilyApp helps families organise everyday life, build healthy habits, share responsibilities, keep track of important dates, explore hobbies and learn together. It is designed for parents and children to use side by side.</string>
+    <string name="about_privacy_title">Your privacy</string>
+    <string name="about_privacy">• Everything you enter stays on this phone. FamilyApp has no account, no ads and no tracking.\n• It works offline. Sharing, email and opening links use other apps on your phone, only when you choose to.\n• Photos you save to the gallery stay in your phone\'s gallery.\n• Android may include FamilyApp\'s data in your phone\'s backup if backup is turned on in your phone\'s settings.\n• Uninstalling FamilyApp or clearing its storage deletes the data saved in the app.</string>
+    <string name="about_developer_title">Developer</string>
+    <string name="about_credits_title">Credits</string>
+    <string name="about_credits">FamilyApp is developed by Shajis Creative Labs.\nFont: Poppins, SIL Open Font License 1.1.\nIcons: Material Icons, Apache License 2.0.\nBuilt with open-source AndroidX, Material Components and Room libraries (Apache License 2.0).</string>
+
     <string name="title_schedule">Monthly Schedule</string>
     <string name="title_events">Calendar Events</string>
     <string name="title_meals">Meal Planner</string>
@@ -14,11 +95,9 @@
     <string name="title_contact">Contact Us</string>
 
     <!-- Home -->
-    <string name="home_header_description">Family App – Let\'s organize together</string>
     <string name="home_greeting_morning">Good morning!</string>
     <string name="home_greeting_afternoon">Good afternoon!</string>
     <string name="home_greeting_evening">Good evening!</string>
-    <string name="home_subtitle">What would you like to organise today?</string>
     <string name="home_schedule_sub">Plans and events for each day</string>
     <string name="home_events_sub">Add to your phone\'s calendar</string>
     <string name="home_meals_sub">Spin the wheel for lunch</string>

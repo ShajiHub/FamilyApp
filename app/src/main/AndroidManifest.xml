@@ -70,9 +70,16 @@
             android:exported="false"
             android:label="@string/title_meals" />
         <activity
+            android:name=".HubActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false"
+            android:label="@string/title_about" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.FamilyApp.NoActionBar">
+            android:theme="@style/Theme.FamilyApp.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

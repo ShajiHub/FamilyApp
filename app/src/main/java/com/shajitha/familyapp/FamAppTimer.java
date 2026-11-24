@@ -125,6 +125,28 @@ public class FamAppTimer extends BaseActivity {
         handler.removeCallbacks(ticker);
     }
 
+    // ---------- For the Home screen ----------
+
+    /** Whether a timer is counting down right now. */
+    static boolean isRunning(SharedPreferences prefs) {
+        return prefs.getBoolean(S_RUNNING, false) && prefs.getLong(S_END, 0) > clock.now();
+    }
+
+    /** Time left on a running or paused timer, or 0 when no timer is set. */
+    static long remainingMillis(SharedPreferences prefs, long now) {
+        if (prefs.getBoolean(S_RUNNING, false)) {
+            return Math.max(0, prefs.getLong(S_END, 0) - now);
+        }
+        return prefs.getString(S_PRESET, null) == null ? 0 : prefs.getLong(S_REMAINING, 0);
+    }
+
+    /** 00:12:40 */
+    static String format(long millis) {
+        long totalSeconds = (millis + 999) / 1000;
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d",
+                totalSeconds / 3600, (totalSeconds / 60) % 60, totalSeconds % 60);
+    }
+
     // ---------- Settings ----------
 
     static int minutes(SharedPreferences prefs, String key) {
@@ -296,12 +318,8 @@ public class FamAppTimer extends BaseActivity {
     }
 
     public void updateTimer() {
-        // Round up so the display shows 00:00:01 until the very end.
-        long totalSeconds = (remainingMillis + 999) / 1000;
-        long hours = totalSeconds / 3600;
-        long minutes = (totalSeconds / 60) % 60;
-        long seconds = totalSeconds % 60;
-        timer1.setText(String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds));
+        // Rounds up, so the display shows 00:00:01 until the very end.
+        timer1.setText(format(remainingMillis));
         int fraction = totalMillis > 0 ? (int) (1000 * remainingMillis / totalMillis) : 0;
         progress.setProgress(fraction);
     }

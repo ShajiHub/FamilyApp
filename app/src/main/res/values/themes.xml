@@ -72,4 +72,12 @@
         <item name="android:statusBarColor">@color/fa_background</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">@bool/light_status_bar</item>
     </style>
+
+    <!-- Splash screen while the app starts: the vine "S" on Forest Green, then the Home screen. -->
+    <style name="Theme.FamilyApp.Starting" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenBackground">@color/brand_forest</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/ic_launcher_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.FamilyApp.NoActionBar</item>
+    </style>
 </resources>

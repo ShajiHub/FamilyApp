@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import com.shajitha.familyapp.data.ScheduleEvent;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -143,19 +144,112 @@ public class ScreensTest {
     // ---------- Home ----------
 
     @Test
-    public void homeTilesOpenTheirScreens() {
+    public void homeCategoriesOpenTheirHubs() {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             scenario.onActivity(activity -> {
                 RecyclerView grid = activity.findViewById(R.id.homeGrid);
-                assertEquals(MainActivity.TILES.size() + 1, grid.getAdapter().getItemCount());
-                for (int i = 0; i < MainActivity.TILES.size(); i++) {
-                    MainActivity.Tile tile = MainActivity.TILES.get(i);
-                    RecyclerView.ViewHolder holder = row(grid, i + 1);
-                    assertEquals(tile.id, holder.itemView.getId());
+                Features.Category[] categories = Features.Category.values();
+                assertEquals(6, grid.getAdapter().getItemCount());
+                for (int i = 0; i < categories.length; i++) {
+                    RecyclerView.ViewHolder holder = row(grid, i);
+                    assertEquals(categories[i].id, holder.itemView.getId());
                     holder.itemView.performClick();
                     Intent next = shadowOf(activity).getNextStartedActivity();
-                    assertEquals(tile.screen.getName(), next.getComponent().getClassName());
+                    assertEquals(HubActivity.class.getName(), next.getComponent().getClassName());
+                    assertEquals(categories[i].name(), next.getStringExtra(HubActivity.EXTRA_CATEGORY));
                 }
+            });
+        }
+    }
+
+    @Test
+    public void everyExistingScreenIsReachableFromAHub() {
+        // Every screen that existed before the new Home must still be reachable.
+        List<Class<?>> reachable = new java.util.ArrayList<>();
+        for (Features.Feature f : Features.ALL) {
+            if (f.screen != null) {
+                reachable.add(f.screen);
+            }
+        }
+        for (Class<?> screen : new Class<?>[]{viewCalendar.class, AddEvents.class, MealPlanner.class, FamAppTimer.class,
+                ToDoList.class, CheckList.class, PhotoGallery.class, ActivitiesFun.class, Reading.class}) {
+            assertTrue(screen.getSimpleName(), reachable.contains(screen));
+        }
+        for (Features.Category category : Features.Category.values()) {
+            try (ActivityScenario<HubActivity> scenario = ActivityScenario.launch(HubActivity.intent(context(), category))) {
+                scenario.onActivity(hub -> {
+                    assertEquals(hub.getString(category.title), hub.getTitle().toString());
+                    RecyclerView grid = hub.findViewById(R.id.hubGrid);
+                    List<Features.Feature> features = Features.in(category);
+                    assertFalse("every hub has features", features.isEmpty());
+                    for (Features.Feature f : features) {
+                        assertEquals(category, f.category);
+                    }
+                    assertEquals(features.size() + 1, grid.getAdapter().getItemCount());
+                    for (int i = 0; i < features.size(); i++) {
+                        Features.Feature f = features.get(i);
+                        View tile = row(grid, i + 1).itemView;
+                        assertEquals(f.id, tile.getId());
+                        tile.performClick();
+                        Intent next = shadowOf(hub).getNextStartedActivity();
+                        if (f.isAvailable()) {
+                            assertEquals(f.screen.getName(), next.getComponent().getClassName());
+                        } else {
+                            assertNull("coming soon does nothing", next);
+                            assertEquals(View.VISIBLE, tile.findViewById(R.id.tileBadge).getVisibility());
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    @Test
+    public void homeTodaySummaryShowsTodaysData() {
+        FamilyDao dao = dao();
+        com.shajitha.familyapp.data.ScheduleEvent e = new com.shajitha.familyapp.data.ScheduleEvent();
+        e.date = DataSetup.today();
+        e.time = "08:30";
+        e.title = "Swimming";
+        dao.insert(e);
+        TodoTask t = new TodoTask();
+        t.title = "Pack bags";
+        dao.insert(t);
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            scenario.onActivity(a -> {
+                idle();
+                assertEquals("1 event today: Swimming", ((TextView) a.findViewById(R.id.today_events).findViewById(R.id.todayText)).getText());
+                assertEquals("1 task to do", ((TextView) a.findViewById(R.id.today_tasks).findViewById(R.id.todayText)).getText());
+                assertEquals(a.getString(R.string.today_no_lunch), ((TextView) a.findViewById(R.id.today_lunch).findViewById(R.id.todayText)).getText());
+                assertNull("no timer line when no timer is set", a.findViewById(R.id.today_timer));
+                a.findViewById(R.id.today_tasks).performClick();
+                assertEquals(ToDoList.class.getName(), shadowOf(a).getNextStartedActivity().getComponent().getClassName());
+            });
+        }
+        // A running timer shows on Home.
+        try (ActivityScenario<FamAppTimer> scenario = ActivityScenario.launch(FamAppTimer.class)) {
+            scenario.onActivity(a -> {
+                a.findViewById(R.id.getready).performClick();
+                a.findViewById(R.id.startstoptimer).performClick();
+            });
+        }
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            scenario.onActivity(a -> {
+                idle(1_000);
+                String timer = ((TextView) a.findViewById(R.id.today_timer).findViewById(R.id.todayText)).getText().toString();
+                assertTrue(timer, timer.startsWith("Timer running · 00:14:5"));
+            });
+        }
+    }
+
+    @Test
+    public void aboutPageShowsBrandingAndVersion() {
+        try (ActivityScenario<AboutActivity> scenario = ActivityScenario.launch(AboutActivity.class)) {
+            scenario.onActivity(a -> {
+                assertEquals("Version " + BuildConfig.VERSION_NAME, text(a, R.id.aboutVersion));
+                assertEquals("no contact details invented", View.GONE, a.findViewById(R.id.aboutContactDetails).getVisibility());
+                a.findViewById(R.id.aboutContact).performClick();
+                assertEquals(ContactUs.class.getName(), shadowOf(a).getNextStartedActivity().getComponent().getClassName());
             });
         }
     }
@@ -593,7 +687,19 @@ public class ScreensTest {
 
     static final Class<?>[] SCREENS = {MainActivity.class, AddEvents.class, viewCalendar.class, MealPlanner.class,
             FamAppTimer.class, ToDoList.class, CheckList.class, PhotoGallery.class,
-            ActivitiesFun.class, Reading.class, ContactUs.class};
+            ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class};
+
+    /** Every hub, opened like the Home screen does. */
+    static void openEveryHub(boolean rotate) {
+        for (Features.Category category : Features.Category.values()) {
+            try (ActivityScenario<HubActivity> scenario = ActivityScenario.launch(HubActivity.intent(context(), category))) {
+                if (rotate) {
+                    scenario.recreate();
+                }
+                idle(200);
+            }
+        }
+    }
 
     @Test
     public void everyScreenSurvivesRotation() {
@@ -605,6 +711,7 @@ public class ScreensTest {
                 idle(500);
             }
         }
+        openEveryHub(true);
     }
 
     @Test
@@ -617,6 +724,7 @@ public class ScreensTest {
                 idle(500);
             }
         }
+        openEveryHub(false);
     }
 
     @Test
@@ -629,6 +737,7 @@ public class ScreensTest {
                 idle(500);
             }
         }
+        openEveryHub(false);
     }
 
     @Test
@@ -641,5 +750,6 @@ public class ScreensTest {
                 idle(500);
             }
         }
+        openEveryHub(false);
     }
 }

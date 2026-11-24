@@ -99,11 +99,21 @@ public class ScreenshotTest {
 
     static final Class<?>[] SCREENS = {MainActivity.class, viewCalendar.class, AddEvents.class, MealPlanner.class,
             FamAppTimer.class, ToDoList.class, CheckList.class, PhotoGallery.class,
-            ActivitiesFun.class, Reading.class, ContactUs.class};
+            ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class};
 
     static void capture(String prefix) {
         for (Class<?> screen : SCREENS) {
             capture(prefix, screen, null);
+        }
+        for (Features.Category category : Features.Category.values()) {
+            android.content.Intent intent = HubActivity.intent(
+                    androidx.test.core.app.ApplicationProvider.getApplicationContext(), category);
+            try (ActivityScenario<Activity> scenario = ActivityScenario.launch(intent)) {
+                scenario.onActivity(activity -> {
+                    shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(300));
+                    save(activity, prefix + "_Hub_" + category.name());
+                });
+            }
         }
     }
 
