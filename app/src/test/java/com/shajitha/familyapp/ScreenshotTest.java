@@ -33,6 +33,10 @@ public class ScreenshotTest {
     public void setUp() {
         com.shajitha.familyapp.data.AppDatabase.useDirectExecutorsForTests();
         com.shajitha.familyapp.data.AppDatabase.resetForTests();
+        androidx.work.testing.WorkManagerTestInitHelper.initializeTestWorkManager(
+                androidx.test.core.app.ApplicationProvider.getApplicationContext(),
+                new androidx.work.Configuration.Builder().setMinimumLoggingLevel(android.util.Log.ERROR)
+                        .setExecutor(new androidx.work.testing.SynchronousExecutor()).build());
         addSampleData();
     }
 
@@ -73,19 +77,6 @@ public class ScreenshotTest {
                 dao.update(item);
             }
         }
-        // A few photos for Capture Moments, made from the app's own pictures.
-        int[] pictures = {R.drawable.b1, R.drawable.b3, R.drawable.a3, R.drawable.b2};
-        for (int i = 0; i < pictures.length; i++) {
-            android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeResource(c.getResources(), pictures[i]);
-            java.io.File f = new java.io.File(PhotoStore.folder(c), "FamilyApp_sample_" + i + ".jpg");
-            try (java.io.FileOutputStream out = new java.io.FileOutputStream(f)) {
-                bmp.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, out);
-            } catch (java.io.IOException e) {
-                throw new RuntimeException(e);
-            }
-            //noinspection ResultOfMethodCallIgnored
-            f.setLastModified(1_000_000L * (i + 1));
-        }
         String[][] people = {{"Mum", "👩", "PARENT", "0"}, {"Mia", "👧", "CHILD", "1"}, {"Sam", "👦", "CHILD", "2"}, {"Grandpa", "👴", "OTHER", "3"}};
         long first = 0;
         for (String[] p : people) {
@@ -106,6 +97,48 @@ public class ScreenshotTest {
                 dao.update(t);
             }
         }
+        // Chores, habits and a drawing.
+        String[][] chores = {{"Make the bed", "DAY"}, {"Feed the pet", "DAY"}, {"Vacuum", "WEEK"}, {"Take out the recycling", "WEEK"}};
+        for (String[] ch : chores) {
+            com.shajitha.familyapp.data.Reminder r = com.shajitha.familyapp.reminders.Reminders.create(ch[0],
+                    com.shajitha.familyapp.data.Reminder.TYPE_CHORE, today, first == 0 ? null : first + (ch[0].length() % 2));
+            r.repeatUnit = ch[1];
+            r.alertDays = "";
+            long id = com.shajitha.familyapp.reminders.Reminders.save(c, r);
+            if (ch[0].equals("Feed the pet")) {
+                com.shajitha.familyapp.reminders.Reminders.complete(c, id);
+            }
+        }
+        String[] habits = {"Drink water", "Play outside", "Read for 20 minutes"};
+        for (String hb : habits) {
+            com.shajitha.familyapp.data.Reminder r = com.shajitha.familyapp.reminders.Reminders.create(hb,
+                    com.shajitha.familyapp.data.Reminder.TYPE_HABIT, today, null);
+            r.repeatUnit = "DAY";
+            r.alertDays = hb.startsWith("Read") ? "0" : "";
+            r.alertTime = hb.startsWith("Read") ? "19:00" : null;
+            long id = com.shajitha.familyapp.reminders.Reminders.save(c, r);
+            com.shajitha.familyapp.data.Recurrence.Day d = com.shajitha.familyapp.data.Recurrence.Day.parse(today);
+            for (int back = 0; back < 7; back++) {
+                if ((back + hb.length()) % 3 != 0) {
+                    com.shajitha.familyapp.reminders.Reminders.checkIn(c, id, d.plusDays(-back).toString());
+                }
+            }
+        }
+        com.shajitha.familyapp.data.DrawingEntry drawing = new com.shajitha.familyapp.data.DrawingEntry();
+        drawing.name = "Our garden";
+        drawing.template = "garden";
+        drawing.createdAt = drawing.updatedAt = System.currentTimeMillis();
+        drawing.id = dao.insert(drawing);
+        com.shajitha.familyapp.whiteboard.Drawing art = new com.shajitha.familyapp.whiteboard.Drawing("garden");
+        art.add(new com.shajitha.familyapp.whiteboard.Drawing.Element(com.shajitha.familyapp.whiteboard.Drawing.Kind.STAR,
+                0xFFFDD835, 0.01f, true, new float[]{0.1f, 0.05f, 0.3f, 0.2f}));
+        art.add(new com.shajitha.familyapp.whiteboard.Drawing.Element(com.shajitha.familyapp.whiteboard.Drawing.Kind.BRUSH,
+                0xFFE53935, 0.03f, false, new float[]{0.2f, 0.7f, 0.35f, 0.65f, 0.5f, 0.72f, 0.65f, 0.66f}));
+        try {
+            com.shajitha.familyapp.whiteboard.DrawingStore.save(c, drawing.id, art);
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
         com.shajitha.familyapp.data.MealSelection meal = new com.shajitha.familyapp.data.MealSelection();
         meal.date = today;
         meal.food = "Burger";
@@ -117,8 +150,9 @@ public class ScreenshotTest {
         com.shajitha.familyapp.data.AppDatabase.resetForTests();
     }
 
-    static final Class<?>[] SCREENS = {MainActivity.class, viewCalendar.class, AddEvents.class, MealPlanner.class,
-            FamAppTimer.class, ToDoList.class, CheckList.class, PhotoGallery.class,
+    static final Class<?>[] SCREENS = {MainActivity.class, viewCalendar.class, MealPlanner.class,
+            FamAppTimer.class, ToDoList.class, CheckList.class, ChoresActivity.class, HabitsActivity.class,
+            com.shajitha.familyapp.whiteboard.WhiteboardActivity.class,
             ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class,
             FamilyMembersActivity.class, SettingsActivity.class};
 

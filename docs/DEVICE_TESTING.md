@@ -1,6 +1,6 @@
 # Testing FamilyApp on a device or emulator
 
-The automated tests (`./gradlew testDebugUnitTest`) run every screen on a simulated phone. They cannot use the real camera, Photo Picker, share sheet, email app, calendar app or notification sound, and they cannot show how things feel to use. Please check these on an Android Studio emulator (Pixel 8, API 35, Google Play image) or a real phone.
+The automated tests (`./gradlew testDebugUnitTest`) run every screen on a simulated phone. They cannot use the real email app, calendar app or notification sound, and they cannot show how things feel to use. Please check these on an Android Studio emulator (Pixel 8, API 35, Google Play image) or a real phone.
 
 Mark each item ✅ or ❌. For any ❌, note what you did, take a screenshot, and copy any red error from **Logcat**.
 
@@ -10,11 +10,10 @@ If the previous version (1.1) is installed with some data in it:
 
 - [ ] Install this version over it, without uninstalling.
 - [ ] Your to-do tasks, checklist ticks, schedule plans, today's lunch and reading entries are all still there.
-- [ ] Photos taken with the previous version are still in Capture Moments.
 
 ## 1. Look and feel
 
-- [ ] Home: header picture, greeting, 10 feature cards; text is clear, nothing is cut off.
+- [ ] Home: header picture, greeting, Today summary and six area cards; text is clear, nothing is cut off.
 - [ ] Every screen uses the same font, colours and button style.
 - [ ] The Back arrow in the title bar returns to the previous screen on every screen.
 - [ ] Rotate each screen to landscape: nothing overlaps or is cut off.
@@ -29,9 +28,9 @@ If the previous version (1.1) is installed with some data in it:
 - [ ] Delete an event: Cancel keeps it, Delete removes it.
 - [ ] The line under the date shows how many events are in the month and on which days.
 
-## 3. Calendar Events
+## 3. Also add to phone calendar
 
-- [ ] "Add event to phone calendar" opens the phone's calendar app with "Family event" at the next full hour. (A new emulator may ask you to set up an account first.)
+- [ ] On an event in Monthly Schedule, the calendar button ("Also add to phone calendar") opens the phone's calendar app with the event's title, date, time and notes filled in. (A new emulator may ask you to set up an account first.)
 
 ## 4. Meal Planner
 
@@ -64,14 +63,9 @@ If the previous version (1.1) is installed with some data in it:
 - [ ] Untick all (↺) asks first and keeps the items.
 - [ ] "New checklist" creates your own list.
 
-## 8. Capture Moments
+## 8. Creative Whiteboard
 
-- [ ] Take photo: the real camera opens; take a picture and confirm. It appears large with "See Your Smile!!!", at full quality, the right way up.
-- [ ] Take photo, then press Back in the camera: nothing is added, no crash.
-- [ ] Import: the Photo Picker opens; choose several photos; they appear in the grid.
-- [ ] Share: the share sheet opens with the photo attached (try sending it to yourself).
-- [ ] Save: shows "Saved to your gallery"; the photo appears in the Photos/Gallery app under Pictures/FamilyApp.
-- [ ] Delete (button or long-press a thumbnail) asks first; the gallery copy from "Save" is not affected.
+See `docs/PHASE3_DEVICE_TESTING.md`.
 
 ## 9. Kids Activities and Reading Log
 

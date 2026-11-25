@@ -64,6 +64,15 @@ public class SettingsActivity extends BaseActivity {
         timerAlerts.setOnCheckedChangeListener((b, on) -> onSwitch(timerAlerts, on));
         lockDetails.setOnCheckedChangeListener((b, on) -> ReminderSettings.setLockScreenDetails(this, on));
 
+        // Gentle, optional sounds
+        MaterialSwitch timerSound = setUpSwitch(R.id.settingTimerSound, R.string.settings_timer_sound, R.string.settings_timer_sound_summary);
+        MaterialSwitch reminderSound = setUpSwitch(R.id.settingReminderSound, R.string.settings_reminder_sound, R.string.settings_reminder_sound_summary);
+        timerSound.setChecked(ReminderSettings.timerSound(this));
+        reminderSound.setChecked(ReminderSettings.reminderSound(this));
+        timerSound.setOnCheckedChangeListener((b, on) -> ReminderSettings.setTimerSound(this, on));
+        reminderSound.setOnCheckedChangeListener((b, on) -> ReminderSettings.setReminderSound(this, on));
+        findViewById(R.id.previewChime).setOnClickListener(v -> com.shajitha.familyapp.reminders.Sounds.playChime(this));
+
         findViewById(R.id.settingAlertTime).setOnClickListener(v -> pickAlertTime());
         findViewById(R.id.exactAllow).setOnClickListener(v -> openExactAlarmSettings());
         findViewById(R.id.openNotificationSettings).setOnClickListener(v -> openNotificationSettings());

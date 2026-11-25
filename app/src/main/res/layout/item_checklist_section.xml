@@ -51,13 +51,4 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/checklist_untick_all"
         app:icon="@drawable/ic_replay" />
-
-    <Button
-        android:id="@+id/sectionAdd"
-        style="@style/Widget.FamilyApp.IconButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/checklist_add_item"
-        app:icon="@drawable/ic_add"
-        app:iconTint="?attr/colorPrimary" />
 </LinearLayout>

@@ -31,29 +31,70 @@ import java.util.TimeZone;
  */
 public final class Notifications {
 
-    public static final String CHANNEL_REMINDERS = "reminders";
-    public static final String CHANNEL_TIMER = "timer";
+    // Channels with the gentle chime, and quiet ones for when sounds are turned off in Settings.
+    public static final String CHANNEL_REMINDERS = "reminders_gentle";
+    public static final String CHANNEL_REMINDERS_QUIET = "reminders_quiet";
+    public static final String CHANNEL_TIMER = "timer_gentle";
+    public static final String CHANNEL_TIMER_QUIET = "timer_quiet";
+    /** Phase 2 channels (default sound), replaced by the gentle ones above. */
+    private static final String[] OLD_CHANNELS = {"reminders", "timer"};
     static final int TIMER_NOTIFICATION_ID = 1;
     private static final int REMINDER_ID_BASE = 10_000;
 
     private Notifications() {
     }
 
-    /** Creates the two notification categories people can switch off in Android settings. */
+    /** Creates the notification categories people can switch off in Android settings. */
     public static void ensureChannels(@NonNull Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
         NotificationManager manager = context.getSystemService(NotificationManager.class);
+        for (String old : OLD_CHANNELS) {
+            manager.deleteNotificationChannel(old);
+        }
+        android.net.Uri chime = Sounds.chimeUri(context);
+        android.media.AudioAttributes notificationAudio = new android.media.AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
+        android.media.AudioAttributes alarmAudio = new android.media.AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_ALARM)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
+
         NotificationChannel reminders = new NotificationChannel(CHANNEL_REMINDERS,
                 context.getString(R.string.channel_reminders), NotificationManager.IMPORTANCE_DEFAULT);
         reminders.setDescription(context.getString(R.string.channel_reminders_description));
         reminders.setLockscreenVisibility(NotificationCompat.VISIBILITY_PRIVATE);
+        reminders.setSound(chime, notificationAudio);
+
+        NotificationChannel remindersQuiet = new NotificationChannel(CHANNEL_REMINDERS_QUIET,
+                context.getString(R.string.channel_reminders_quiet), NotificationManager.IMPORTANCE_LOW);
+        remindersQuiet.setDescription(context.getString(R.string.channel_reminders_description));
+        remindersQuiet.setLockscreenVisibility(NotificationCompat.VISIBILITY_PRIVATE);
+        remindersQuiet.setSound(null, null);
+
         NotificationChannel timer = new NotificationChannel(CHANNEL_TIMER,
                 context.getString(R.string.channel_timer), NotificationManager.IMPORTANCE_HIGH);
         timer.setDescription(context.getString(R.string.channel_timer_description));
+        timer.setSound(chime, alarmAudio);
+
+        NotificationChannel timerQuiet = new NotificationChannel(CHANNEL_TIMER_QUIET,
+                context.getString(R.string.channel_timer_quiet), NotificationManager.IMPORTANCE_DEFAULT);
+        timerQuiet.setDescription(context.getString(R.string.channel_timer_description));
+        timerQuiet.setSound(null, null);
+
         manager.createNotificationChannel(reminders);
+        manager.createNotificationChannel(remindersQuiet);
         manager.createNotificationChannel(timer);
+        manager.createNotificationChannel(timerQuiet);
+    }
+
+    static String reminderChannel(Context context) {
+        return ReminderSettings.reminderSound(context) ? CHANNEL_REMINDERS : CHANNEL_REMINDERS_QUIET;
+    }
+
+    static String timerChannel(Context context) {
+        return ReminderSettings.timerSound(context) ? CHANNEL_TIMER : CHANNEL_TIMER_QUIET;
     }
 
     /** Whether FamilyApp may show notifications at all (permission on Android 13+ and the user's settings). */
@@ -78,7 +119,8 @@ public final class Notifications {
         boolean details = ReminderSettings.lockScreenDetails(context);
 
         // What the lock screen shows when details are hidden.
-        NotificationCompat.Builder publicVersion = new NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+        String channel = reminderChannel(context);
+        NotificationCompat.Builder publicVersion = new NotificationCompat.Builder(context, channel)
                 .setSmallIcon(R.drawable.ic_event)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.notify_private_text));
@@ -87,12 +129,13 @@ public final class Notifications {
         PendingIntent openApp = PendingIntent.getActivity(context, 0, open,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder b = new NotificationCompat.Builder(context, CHANNEL_REMINDERS)
+        NotificationCompat.Builder b = new NotificationCompat.Builder(context, channel)
                 .setSmallIcon(R.drawable.ic_event)
                 .setContentTitle(r.title) // notes are never included
                 .setContentText(text)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(ReminderSettings.reminderSound(context) ? NotificationCompat.PRIORITY_DEFAULT : NotificationCompat.PRIORITY_LOW)
+                .setSilent(!ReminderSettings.reminderSound(context))
                 .setContentIntent(openApp)
                 .setAutoCancel(true)
                 .setVisibility(details ? NotificationCompat.VISIBILITY_PUBLIC : NotificationCompat.VISIBILITY_PRIVATE)
@@ -136,7 +179,7 @@ public final class Notifications {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent openTimer = PendingIntent.getActivity(context, 1, open,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder b = new NotificationCompat.Builder(context, CHANNEL_TIMER)
+        NotificationCompat.Builder b = new NotificationCompat.Builder(context, timerChannel(context))
                 .setSmallIcon(R.drawable.ic_timer)
                 .setContentTitle(context.getString(R.string.timer_time_up))
                 .setContentText(routine)

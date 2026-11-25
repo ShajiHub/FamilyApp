@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Android 6-11 backup. FamilyApp's data is included (as the owner decided); these are left out:
-     the pre-upgrade copy and the older version 1.1 data (both only for recovery on this phone),
+     the pre-upgrade copies and the older version 1.1 data (both only for recovery on this phone),
      and WorkManager's schedule, which rebuilds itself. -->
 <full-backup-content>
     <exclude domain="database" path="family-v1-backup.db" />
+        <exclude domain="database" path="family-v2-backup.db" />
     <exclude domain="database" path="family-replaced.db" />
     <exclude domain="database" path="androidx.work.workdb" />
     <exclude domain="database" path="androidx.work.workdb-wal" />

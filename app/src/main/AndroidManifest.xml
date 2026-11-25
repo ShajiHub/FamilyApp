@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Only for "Save to gallery" on Android 9 and older; newer versions need no permission. -->
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
 
     <!-- Reminder and Timer notifications. Android 13+ asks the user; FamilyApp only asks when
          alerts are turned on in Settings. -->
@@ -15,16 +11,9 @@
     <!-- Set the Timer alarm again after the phone restarts. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!-- The app works without a camera; only "Capture Moments" uses one. -->
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
 
-    <!-- Lets the app find a camera app and a calendar app on Android 11+. -->
+    <!-- Lets the app find a calendar app on Android 11+ ("Add to phone calendar"). -->
     <queries>
-        <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
         <intent>
             <action android:name="android.intent.action.INSERT" />
             <data android:mimeType="vnd.android.cursor.dir/event" />
@@ -57,14 +46,6 @@
             android:exported="false"
             android:label="@string/title_checklist" />
         <activity
-            android:name=".PhotoGallery"
-            android:exported="false"
-            android:label="@string/title_photos" />
-        <activity
-            android:name=".AddEvents"
-            android:exported="false"
-            android:label="@string/title_events" />
-        <activity
             android:name=".ToDoList"
             android:exported="false"
             android:label="@string/title_todo" />
@@ -80,6 +61,22 @@
             android:name=".MealPlanner"
             android:exported="false"
             android:label="@string/title_meals" />
+        <activity
+            android:name=".ChoresActivity"
+            android:exported="false"
+            android:label="@string/feat_chores" />
+        <activity
+            android:name=".HabitsActivity"
+            android:exported="false"
+            android:label="@string/feat_habits" />
+        <activity
+            android:name=".whiteboard.WhiteboardActivity"
+            android:exported="false"
+            android:label="@string/title_whiteboard" />
+        <activity
+            android:name=".whiteboard.DrawingActivity"
+            android:exported="false"
+            android:label="@string/title_whiteboard" />
         <activity
             android:name=".FamilyMembersActivity"
             android:exported="false"
@@ -125,17 +122,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <!-- Shares photo files with the camera app so it can save full-size pictures. -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
     </application>
 
 </manifest>

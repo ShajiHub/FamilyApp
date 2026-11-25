@@ -37,5 +37,14 @@ public final class Migrations {
         }
     };
 
-    public static final Migration[] ALL = {MIGRATION_1_2};
+    /** Version 2 to 3: Creative Whiteboard drawings. */
+    public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `drawings` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`name` TEXT NOT NULL, `template` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)");
+        }
+    };
+
+    public static final Migration[] ALL = {MIGRATION_1_2, MIGRATION_2_3};
 }

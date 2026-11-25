@@ -171,8 +171,9 @@ public class ScreensTest {
                 reachable.add(f.screen);
             }
         }
-        for (Class<?> screen : new Class<?>[]{viewCalendar.class, AddEvents.class, MealPlanner.class, FamAppTimer.class,
-                ToDoList.class, CheckList.class, PhotoGallery.class, ActivitiesFun.class, Reading.class}) {
+        for (Class<?> screen : new Class<?>[]{viewCalendar.class, MealPlanner.class, FamAppTimer.class,
+                ToDoList.class, CheckList.class, ActivitiesFun.class, Reading.class, ChoresActivity.class,
+                HabitsActivity.class, FamilyMembersActivity.class, com.shajitha.familyapp.whiteboard.WhiteboardActivity.class}) {
             assertTrue(screen.getSimpleName(), reachable.contains(screen));
         }
         for (Features.Category category : Features.Category.values()) {
@@ -426,10 +427,16 @@ public class ScreensTest {
                 assertTrue(((CheckBox) row(rv, 1).itemView.findViewById(R.id.rowCheck)).isChecked());
                 assertEquals("1 of 7 packed", ((TextView) row(rv, 0).itemView.findViewById(R.id.sectionProgress)).getText());
 
-                // Add an item to Winter.
-                row(rv, 0).itemView.findViewById(R.id.sectionAdd).performClick();
-                typeAndSave("Hand warmers");
+                // Add an item to Winter with its "Add new item" field (row 8, after the 7 items).
+                View addRow = row(rv, 8).itemView;
+                ((EditText) addRow.findViewById(R.id.addItemInput)).setText("  ");
+                addRow.findViewById(R.id.addItemButton).performClick(); // blank: ignored
+                ((EditText) addRow.findViewById(R.id.addItemInput)).setText("Hand warmers");
+                addRow.findViewById(R.id.addItemButton).performClick();
+                idle();
                 assertEquals("1 of 8 packed", ((TextView) row(rv, 0).itemView.findViewById(R.id.sectionProgress)).getText());
+                assertTrue(dao().checklistItemsNow().stream().anyMatch(i -> i.title.equals("Hand warmers") && i.section.equals("Winter Checklist")));
+                assertEquals("field cleared", "", ((EditText) row(rv, 9).itemView.findViewById(R.id.addItemInput)).getText().toString());
 
                 // Rename and delete "Thermal wear" (row 2).
                 row(rv, 2).itemView.findViewById(R.id.rowEdit).performClick();
@@ -593,6 +600,13 @@ public class ScreensTest {
                 idle();
                 assertEquals("Swimming lesson", dao().allEventsNow().get(0).title);
                 assertEquals("Bring goggles", dao().allEventsNow().get(0).notes);
+                // "Also add to phone calendar" (replaces the old Calendar Events screen)
+                list.getChildAt(0).findViewById(R.id.eventPhone).performClick();
+                Intent phone = shadowOf(a).getNextStartedActivity();
+                assertEquals(Intent.ACTION_INSERT, phone.getAction());
+                assertEquals("Swimming lesson", phone.getStringExtra(android.provider.CalendarContract.Events.TITLE));
+                assertEquals("Bring goggles", phone.getStringExtra(android.provider.CalendarContract.Events.DESCRIPTION));
+                assertTrue(phone.getBooleanExtra(android.provider.CalendarContract.EXTRA_EVENT_ALL_DAY, false));
             });
         }
         try (ActivityScenario<viewCalendar> scenario = ActivityScenario.launch(viewCalendar.class)) {
@@ -604,23 +618,6 @@ public class ScreensTest {
                 confirm(true);
                 assertTrue(dao().allEventsNow().isEmpty());
                 assertEquals(View.VISIBLE, a.findViewById(R.id.scheduleEmpty).getVisibility());
-            });
-        }
-    }
-
-    // ---------- Events ----------
-
-    @Test
-    public void addEventOpensTheCalendarApp() {
-        try (ActivityScenario<AddEvents> scenario = ActivityScenario.launch(AddEvents.class)) {
-            scenario.onActivity(a -> {
-                a.findViewById(R.id.button10).performClick();
-                Intent event = shadowOf(a).getNextStartedActivity();
-                assertEquals(Intent.ACTION_INSERT, event.getAction());
-                assertFalse("events should not repeat", event.hasExtra("rrule"));
-                a.findViewById(R.id.button11).performClick();
-                assertEquals(viewCalendar.class.getName(),
-                        shadowOf(a).getNextStartedActivity().getComponent().getClassName());
             });
         }
     }
@@ -688,8 +685,9 @@ public class ScreensTest {
 
     // ---------- Every screen ----------
 
-    static final Class<?>[] SCREENS = {MainActivity.class, AddEvents.class, viewCalendar.class, MealPlanner.class,
-            FamAppTimer.class, ToDoList.class, CheckList.class, PhotoGallery.class,
+    static final Class<?>[] SCREENS = {MainActivity.class, viewCalendar.class, MealPlanner.class,
+            FamAppTimer.class, ToDoList.class, CheckList.class, ChoresActivity.class, HabitsActivity.class,
+            com.shajitha.familyapp.whiteboard.WhiteboardActivity.class,
             ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class,
             FamilyMembersActivity.class, SettingsActivity.class};
 

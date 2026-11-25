@@ -20,14 +20,14 @@ import java.util.concurrent.Executors;
  * in {@link Migrations} that only adds, and {@link DatabaseGuard} makes and checks a backup first.
  */
 @Database(entities = {ScheduleEvent.class, TodoTask.class, ChecklistItem.class, Food.class,
-        MealSelection.class, Book.class, FamilyMember.class, Reminder.class, ReminderHistory.class},
-        version = 2, exportSchema = true)
+        MealSelection.class, Book.class, FamilyMember.class, Reminder.class, ReminderHistory.class,
+        DrawingEntry.class}, version = 3, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract FamilyDao dao();
 
     public static final String NAME = "family.db";
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
     private static volatile AppDatabase instance;
     /** Set when the database must not be opened; the Home screen then shows the recovery screen. */
     @Nullable

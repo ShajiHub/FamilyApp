@@ -2,9 +2,6 @@ package com.shajitha.familyapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -328,11 +325,10 @@ public class FamAppTimer extends BaseActivity {
         }
     }
 
+    /** The gentle chime, unless sounds are turned off in Settings. */
     private void playAlert() {
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone ringtone = RingtoneManager.getRingtone(this, sound);
-        if (ringtone != null) {
-            ringtone.play();
+        if (com.shajitha.familyapp.reminders.ReminderSettings.timerSound(this)) {
+            com.shajitha.familyapp.reminders.Sounds.playChime(this);
         }
     }
 

@@ -69,15 +69,18 @@ public class CheckList extends BaseActivity {
         return 0;
     }
 
-    private void addItem(String section) {
-        Dialogs.editText(this, R.string.checklist_add_item, R.string.checklist_item_hint, null, null, text -> {
-            ChecklistItem item = new ChecklistItem();
-            item.section = section;
-            item.title = text;
-            AppDatabase.write(() -> {
-                item.position = dao.nextChecklistPosition(section);
-                dao.insert(item);
-            });
+    /** Adds an item typed into a list's "Add new item" field. */
+    void addItem(String section, String text) {
+        String title = text.trim();
+        if (title.isEmpty()) {
+            return;
+        }
+        ChecklistItem item = new ChecklistItem();
+        item.section = section;
+        item.title = title.length() > 120 ? title.substring(0, 120) : title;
+        AppDatabase.write(() -> {
+            item.position = dao.nextChecklistPosition(section);
+            dao.insert(item);
         });
     }
 
@@ -135,9 +138,18 @@ public class CheckList extends BaseActivity {
         return c;
     }
 
-    /** Rows: a heading per section, its items, and a "New checklist" button at the end. */
+    /** Marks the "Add new item" row at the end of a section. */
+    private static final class AddRow {
+        final String section;
+
+        AddRow(String section) {
+            this.section = section;
+        }
+    }
+
+    /** Rows: a heading per section, its items, an "Add new item" field, and a "New checklist" button at the end. */
     private final class ChecklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private static final int HEADER = 0, ITEM = 1, FOOTER = 2;
+        private static final int HEADER = 0, ITEM = 1, FOOTER = 2, ADD = 3;
         private final List<Object> rows = new ArrayList<>();
         private final Map<String, int[]> progress = new LinkedHashMap<>();
 
@@ -175,6 +187,7 @@ public class CheckList extends BaseActivity {
                 progress.put(e.getKey(), new int[]{done, sectionItems.size()});
                 rows.add(e.getKey());
                 rows.addAll(sectionItems);
+                rows.add(new AddRow(e.getKey()));
             }
             rows.add(FOOTER);
             notifyDataSetChanged();
@@ -195,6 +208,9 @@ public class CheckList extends BaseActivity {
             if (row instanceof String) {
                 return HEADER;
             }
+            if (row instanceof AddRow) {
+                return ADD;
+            }
             return row instanceof ChecklistItem ? ITEM : FOOTER;
         }
 
@@ -205,7 +221,8 @@ public class CheckList extends BaseActivity {
             if (viewType == ITEM) {
                 return new ToDoList.RowHolder(inflater.inflate(R.layout.item_list_row, parent, false));
             }
-            int layout = viewType == HEADER ? R.layout.item_checklist_section : R.layout.item_checklist_footer;
+            int layout = viewType == HEADER ? R.layout.item_checklist_section
+                    : viewType == ADD ? R.layout.item_checklist_add : R.layout.item_checklist_footer;
             return new RecyclerView.ViewHolder(inflater.inflate(layout, parent, false)) {
             };
         }
@@ -234,7 +251,6 @@ public class CheckList extends BaseActivity {
                 View reset = view.findViewById(R.id.sectionReset);
                 reset.setVisibility(p[0] > 0 ? View.VISIBLE : View.INVISIBLE);
                 reset.setOnClickListener(v -> untickAll(section));
-                view.findViewById(R.id.sectionAdd).setOnClickListener(v -> addItem(section));
             } else if (row instanceof ChecklistItem) {
                 ChecklistItem item = (ChecklistItem) row;
                 ToDoList.RowHolder h = (ToDoList.RowHolder) holder;
@@ -246,6 +262,24 @@ public class CheckList extends BaseActivity {
                 h.itemView.setOnClickListener(v -> h.check.toggle());
                 h.edit.setOnClickListener(v -> editItem(item));
                 h.delete.setOnClickListener(v -> deleteItem(item));
+            } else if (row instanceof AddRow) {
+                String section = ((AddRow) row).section;
+                android.widget.EditText input = view.findViewById(R.id.addItemInput);
+                input.setText("");
+                ((com.google.android.material.textfield.TextInputLayout) view.findViewById(R.id.addItemLayout))
+                        .setHint(getString(R.string.checklist_add_to, displayName(section)));
+                Runnable add = () -> {
+                    addItem(section, input.getText().toString());
+                    input.setText("");
+                };
+                view.findViewById(R.id.addItemButton).setOnClickListener(v -> add.run());
+                input.setOnEditorActionListener((v, actionId, event) -> {
+                    if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                        add.run();
+                        return true;
+                    }
+                    return false;
+                });
             } else {
                 view.findViewById(R.id.newChecklist).setOnClickListener(v -> newChecklist());
             }

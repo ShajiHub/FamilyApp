@@ -69,6 +69,16 @@ public final class DatabaseGuard {
         return context.getDatabasePath(dbName.replace(".db", "") + "-v" + version + "-backup.db");
     }
 
+    /** The newest safety copy older than {@code belowVersion}, or -1 if there is none. */
+    public static int newestBackupVersion(Context context, String dbName, int belowVersion) {
+        for (int v = belowVersion - 1; v >= 1; v--) {
+            if (backupFile(context, dbName, v).exists()) {
+                return v;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Call before opening the database. Returns normally if it is safe to open (no upgrade needed,
      * or a verified backup was made); throws {@link UnavailableException} otherwise.

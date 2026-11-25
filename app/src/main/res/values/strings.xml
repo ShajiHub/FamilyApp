@@ -20,8 +20,8 @@
     <string name="cat_hobbies_sub">Activities, projects and ideas</string>
     <string name="cat_hobbies_intro">Explore activities and hobbies, plan creative projects and try small business ideas.</string>
     <string name="cat_family_hub">Family Hub</string>
-    <string name="cat_family_hub_sub">Photos, members and family rules</string>
-    <string name="cat_family_hub_intro">The family\'s shared space: moments, members, rules and goals.</string>
+    <string name="cat_family_hub_sub">Members, rules and goals</string>
+    <string name="cat_family_hub_intro">The family\'s shared space: members, rules and goals.</string>
     <string name="cat_learning">Learning Hub</string>
     <string name="cat_learning_sub">Reading now, more lessons later</string>
     <string name="cat_learning_intro">Keep track of reading. Lessons in maths, programming and digital skills are coming later.</string>
@@ -78,18 +78,16 @@
     <string name="about_purpose_title">What FamilyApp is for</string>
     <string name="about_purpose">FamilyApp helps families organise everyday life, build healthy habits, share responsibilities, keep track of important dates, explore hobbies and learn together. It is designed for parents and children to use side by side.</string>
     <string name="about_privacy_title">Your privacy</string>
-    <string name="about_privacy">• Everything you enter stays on this phone. FamilyApp has no account, no ads and no tracking.\n• It works offline. Sharing, email and opening links use other apps on your phone, only when you choose to.\n• Photos you save to the gallery stay in your phone\'s gallery.\n• Android may include FamilyApp\'s data in your phone\'s backup if backup is turned on in your phone\'s settings.\n• Uninstalling FamilyApp or clearing its storage deletes the data saved in the app.</string>
+    <string name="about_privacy">• Everything you enter stays on this phone. FamilyApp has no account, no ads and no tracking.\n• It works offline. Sharing, email and opening links use other apps on your phone, only when you choose to.\n• Pictures you save to the Gallery from the Creative Whiteboard stay in your phone\'s Gallery.\n• Android may include FamilyApp\'s data in your phone\'s backup if backup is turned on in your phone\'s settings.\n• Uninstalling FamilyApp or clearing its storage deletes the data saved in the app.</string>
     <string name="about_developer_title">Developer</string>
     <string name="about_credits_title">Credits</string>
     <string name="about_credits">FamilyApp is developed by Shajis Creative Labs.\nFont: Poppins, SIL Open Font License 1.1.\nIcons: Material Icons, Apache License 2.0.\nBuilt with open-source AndroidX, Material Components and Room libraries (Apache License 2.0).</string>
 
     <string name="title_schedule">Monthly Schedule</string>
-    <string name="title_events">Calendar Events</string>
     <string name="title_meals">Meal Planner</string>
     <string name="title_timer">Timer</string>
     <string name="title_todo">To-do List</string>
     <string name="title_checklist">Checklists</string>
-    <string name="title_photos">Capture Moments</string>
     <string name="title_activities">Kids Activities</string>
     <string name="title_reading">Reading Log</string>
     <string name="title_contact">Contact Us</string>
@@ -99,12 +97,10 @@
     <string name="home_greeting_afternoon">Good afternoon!</string>
     <string name="home_greeting_evening">Good evening!</string>
     <string name="home_schedule_sub">Plans and events for each day</string>
-    <string name="home_events_sub">Add to your phone\'s calendar</string>
     <string name="home_meals_sub">Spin the wheel for lunch</string>
     <string name="home_timer_sub">Get ready, screen time, clean up</string>
     <string name="home_todo_sub">Family tasks to tick off</string>
     <string name="home_checklist_sub">Packing and first-aid lists</string>
-    <string name="home_photos_sub">Take and keep family photos</string>
     <string name="home_activities_sub">Indoor and outdoor ideas</string>
     <string name="home_reading_sub">Books and pages read</string>
     <string name="home_contact_sub">Get in touch and credits</string>
@@ -153,11 +149,8 @@
     <string name="checklist_new">New checklist</string>
     <string name="checklist_name_hint">Checklist name</string>
 
-    <!-- Calendar events -->
-    <string name="events_today">Today</string>
-    <string name="events_description">Add appointments, classes and other plans to your phone\'s calendar app, or keep family plans in the Monthly Schedule.</string>
-    <string name="events_add_to_phone">Add event to phone calendar</string>
-    <string name="events_open_schedule">Open Monthly Schedule</string>
+    <!-- Phone calendar -->
+    <string name="events_add_to_phone">Also add to phone calendar</string>
 
     <!-- Timer -->
     <string name="timer_zero">00:00:00</string>
@@ -197,7 +190,6 @@
     <string name="todo_delete_title">Delete this task?</string>
 
     <!-- Calendar / events -->
-    <string name="event_default_title">Family event</string>
     <string name="no_calendar_app">No calendar app found on this phone</string>
 
     <!-- Monthly schedule -->
@@ -252,32 +244,6 @@
     <string name="contact_dedication">Dedicated to everyone\'s research, analysis, help and support.</string>
     <string name="contact_family_photos">Family photos</string>
     <string name="contact_slideshow">Slideshow</string>
-
-    <!-- Capture Moments -->
-    <string name="photos_take">Take photo</string>
-    <string name="photos_import">Import</string>
-    <string name="photos_smile">See Your Smile!!!</string>
-    <string name="photos_selected">Selected photo</string>
-    <string name="photos_item">Photo %1$d of %2$d</string>
-    <string name="photos_empty">No photos yet. Take one or import from your phone.</string>
-    <plurals name="photos_count">
-        <item quantity="one">%1$d photo</item>
-        <item quantity="other">%1$d photos</item>
-    </plurals>
-    <plurals name="photos_imported">
-        <item quantity="one">%1$d photo imported</item>
-        <item quantity="other">%1$d photos imported</item>
-    </plurals>
-    <string name="photos_import_some_failed">%1$d imported, %2$d couldn\'t be read</string>
-    <string name="photos_share">Share</string>
-    <string name="photos_export">Save</string>
-    <string name="photos_exported">Saved to your gallery (Pictures/FamilyApp)</string>
-    <string name="photos_export_failed">Couldn\'t save to the gallery. Please try again.</string>
-    <string name="photos_export_needs_permission">Storage access is needed to save to the gallery</string>
-    <string name="photos_no_share_app">No app found to share with</string>
-    <string name="no_camera_app">No camera app found on this phone</string>
-    <string name="photo_delete_title">Delete this photo?</string>
-    <string name="photo_delete_message">It will be removed from FamilyApp. Copies saved to your gallery are not affected.</string>
 
     <!-- Kids activities -->
     <string name="activities_prompt">Tap a button for an idea!</string>
@@ -416,4 +382,164 @@
     <string name="problem_restore_message">This puts back the copy made just before the update. The current file is kept too, as an extra copy.</string>
     <string name="problem_restored">Safety copy restored</string>
     <string name="problem_restore_failed">The safety copy couldn\'t be restored. Your information has not been changed.</string>
+
+    <!-- Repeat choices -->
+    <string name="repeat_once">Once</string>
+    <string name="repeat_daily">Every day</string>
+    <string name="repeat_weekly">Every week</string>
+    <string name="repeat_fortnightly">Every 2 weeks</string>
+    <string name="repeat_monthly">Every month</string>
+
+    <!-- Chores and habits (shared) -->
+    <string name="routine_ideas">Ideas</string>
+    <string name="routine_title_hint">Chore</string>
+    <string name="routine_repeat">Repeat</string>
+    <string name="routine_date">Date</string>
+    <string name="routine_remind">Remind me</string>
+    <string name="routine_time">Reminder time</string>
+
+    <!-- Chores -->
+    <string name="chores_intro">Household jobs everyone can help with. Tick them off to collect stars – it\'s about helping, not perfect scores.</string>
+    <string name="chores_add">Add a chore</string>
+    <string name="chores_edit">Edit chore</string>
+    <string name="chores_empty">No chores yet. Tap an idea above or add your own.</string>
+    <string name="chores_filter_all">All</string>
+    <string name="chores_stars">⭐ This week: %1$s</string>
+    <string name="chores_stars_none">⭐ Finished chores this week will show here. Every bit of help counts!</string>
+    <string name="chores_overdue">Waiting</string>
+    <string name="chores_today">Today</string>
+    <string name="chores_later">Coming up</string>
+    <string name="chores_done">Done recently</string>
+    <string name="chores_tomorrow">Do it tomorrow</string>
+    <string name="chores_mark_done">Mark %1$s as done</string>
+    <string name="chores_delete_title">Delete this chore?</string>
+    <string name="chores_delete_message">%1$s will be removed. Stars already earned are kept.</string>
+    <string-array name="chore_ideas">
+        <item>Make the bed</item>
+        <item>Tidy toys</item>
+        <item>Put clothes in the laundry basket</item>
+        <item>Set the table</item>
+        <item>Feed the pet</item>
+        <item>Water the plants</item>
+        <item>Pack the school bag</item>
+        <item>Wash the dishes</item>
+        <item>Do the laundry</item>
+        <item>Vacuum</item>
+        <item>Take out the recycling</item>
+        <item>Clean the bathroom</item>
+    </string-array>
+
+    <!-- Healthy habits -->
+    <string name="habits_intro">Small daily habits for everyone. Tick today when it\'s done and watch the week fill up.</string>
+    <string name="habits_add">Add a habit</string>
+    <string name="habits_edit">Edit habit</string>
+    <string name="habits_title_hint">Habit</string>
+    <string name="habits_empty">No habits yet. Tap an idea above or add your own.</string>
+    <string name="habits_stars">🌱 Today: %1$d of %2$d habits done</string>
+    <string name="habits_stars_none">🌱 Your family\'s daily habits will show here.</string>
+    <string name="habits_done_today">%1$s done today</string>
+    <string name="habits_day_done">%1$s: done</string>
+    <string name="habits_day_not_done">%1$s: not done</string>
+    <string name="habits_progress">%1$d of the last 7 days</string>
+    <string name="habits_delete_title">Delete this habit?</string>
+    <string name="habits_delete_message">%1$s will be removed. Days already ticked are kept.</string>
+    <string-array name="habit_ideas">
+        <item>Drink water</item>
+        <item>Eat fruit and vegetables</item>
+        <item>Play outside</item>
+        <item>Brush teeth morning and night</item>
+        <item>Read for 20 minutes</item>
+        <item>Bedtime on time</item>
+        <item>Screen-free hour</item>
+        <item>Stretch or move for 15 minutes</item>
+    </string-array>
+
+    <!-- Home: Today (chores, habits) -->
+    <string name="today_no_chores">No chores due today</string>
+    <plurals name="today_chores">
+        <item quantity="one">%1$d chore to do</item>
+        <item quantity="other">%1$d chores to do</item>
+    </plurals>
+    <string name="today_chores_overdue">%1$s (%2$d waiting from before)</string>
+    <string name="today_habits">%1$d of %2$d habits done today</string>
+
+    <!-- Checklists: add field -->
+    <string name="checklist_add_new">Add new item</string>
+    <string name="checklist_add_to">Add to %1$s</string>
+
+    <!-- Sounds -->
+    <string name="settings_sounds">Sounds</string>
+    <string name="settings_timer_sound">Timer chime</string>
+    <string name="settings_timer_sound_summary">A gentle chime when a timer finishes</string>
+    <string name="settings_reminder_sound">Reminder chime</string>
+    <string name="settings_reminder_sound_summary">Off: reminders arrive quietly</string>
+    <string name="settings_preview_chime">Play the chime</string>
+    <string name="channel_reminders_quiet">Reminders (quiet)</string>
+    <string name="channel_timer_quiet">Timer (quiet)</string>
+
+    <!-- Creative Whiteboard -->
+    <string name="title_whiteboard">Creative Whiteboard</string>
+    <string name="feat_whiteboard_sub">Draw, paint and create</string>
+    <string name="whiteboard_intro">Draw with pencils, brushes, shapes and colours. Start from a blank page or a garden, nature, space or roads scene. Drawings are saved on this phone and can be changed any time.</string>
+    <string name="whiteboard_new">New drawing</string>
+    <string name="whiteboard_empty">No drawings yet. Tap New drawing to start!</string>
+    <string name="whiteboard_choose_template">Start with…</string>
+    <string name="whiteboard_default_name">%1$s %2$d</string>
+    <string name="whiteboard_copy_name">Copy of %1$s</string>
+    <string name="whiteboard_copy_failed">The drawing couldn\'t be copied completely.</string>
+    <string name="whiteboard_rename">Rename</string>
+    <string name="whiteboard_duplicate">Duplicate</string>
+    <string name="whiteboard_name_hint">Drawing name</string>
+    <string name="whiteboard_name_too_long">Please use 60 characters or fewer</string>
+    <string name="whiteboard_delete_title">Delete this drawing?</string>
+    <string name="whiteboard_delete_message">%1$s will be deleted from FamilyApp. Pictures already saved to the Gallery are not affected.</string>
+    <string name="whiteboard_undo">Undo</string>
+    <string name="whiteboard_redo">Redo</string>
+    <string name="whiteboard_export">Save to Gallery</string>
+    <string name="whiteboard_exported">Saved to your Gallery (Pictures/FamilyApp)</string>
+    <string name="whiteboard_export_failed">Couldn\'t save to the Gallery. Your drawing is still safe in FamilyApp.</string>
+    <string name="whiteboard_clear">Clear</string>
+    <string name="whiteboard_clear_title">Clear the whole drawing?</string>
+    <string name="whiteboard_clear_message">You can use Undo to bring it back.</string>
+    <string name="whiteboard_saved">Saved</string>
+    <string name="whiteboard_save_failed">The drawing couldn\'t be saved. Please try again.</string>
+    <string name="whiteboard_full">This drawing is full. Start a new one to keep drawing.</string>
+    <string name="whiteboard_damaged_title">This drawing can\'t be opened</string>
+    <string name="whiteboard_damaged_message">Its file seems to be damaged. It has been left as it is, and your other drawings are fine.</string>
+    <string name="whiteboard_size">Size</string>
+    <string name="whiteboard_fill">Fill</string>
+    <string name="whiteboard_colour">Colour: %1$s</string>
+    <string name="whiteboard_canvas_description">Drawing area</string>
+    <string name="tool_pencil">Pencil</string>
+    <string name="tool_brush">Brush</string>
+    <string name="tool_eraser">Eraser</string>
+    <string name="tool_line">Line</string>
+    <string name="tool_rect">Rectangle</string>
+    <string name="tool_oval">Circle</string>
+    <string name="tool_star">Star</string>
+    <string-array name="colour_names">
+        <item>Black</item>
+        <item>White</item>
+        <item>Red</item>
+        <item>Orange</item>
+        <item>Yellow</item>
+        <item>Light green</item>
+        <item>Green</item>
+        <item>Sky blue</item>
+        <item>Blue</item>
+        <item>Purple</item>
+        <item>Pink</item>
+        <item>Brown</item>
+        <item>Grey</item>
+    </string-array>
+    <string name="template_blank">Blank page</string>
+    <string name="template_garden">Garden and flowers</string>
+    <string name="template_nature">Trees and nature</string>
+    <string name="template_space">Space and stars</string>
+    <string name="template_roads">Roads and cars</string>
+    <string name="idea_blank">Idea: draw your favourite place, or your family!</string>
+    <string name="idea_garden">Idea: plant a flower bed, add a butterfly and a watering can.</string>
+    <string name="idea_nature">Idea: add birds in the trees, a river, or a picnic on the grass.</string>
+    <string name="idea_space">Idea: draw a rocket, an astronaut, or your own planet.</string>
+    <string name="idea_roads">Idea: draw cars waiting at the lights, a bus, and people on the crossing.</string>
 </resources>

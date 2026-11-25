@@ -180,7 +180,7 @@ public class DatabaseMigrationTest {
                 db.execSQL("CREATE TABLE half_done (id INTEGER)");
                 throw new IllegalStateException("simulated upgrade failure");
             }
-        }};
+        }, Migrations.MIGRATION_2_3};
         try {
             AppDatabase.get(context);
             fail("should not open");
@@ -198,6 +198,41 @@ public class DatabaseMigrationTest {
     }
 
     @Test
+    public void version1UpgradesAllTheWayTo3() throws Exception {
+        createVersion1("chain.db");
+        SupportSQLiteDatabase v3 = helper.runMigrationsAndValidate("chain.db", 3, true,
+                Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3);
+        assertEquals(List.of("3"), rows(v3, "SELECT COUNT(*) FROM todo_tasks"));
+        assertEquals(List.of("0"), rows(v3, "SELECT COUNT(*) FROM drawings"));
+        v3.close();
+    }
+
+    @Test
+    public void version2UpgradesTo3WithItsOwnCheckedBackup() throws Exception {
+        SupportSQLiteDatabase v2 = helper.createDatabase(AppDatabase.NAME, 2);
+        v2.execSQL("INSERT INTO family_members (id, name, avatar, colorIndex, role, position, archived, createdAt) "
+                + "VALUES (1, 'Mia', '👧', 1, 'CHILD', 0, 0, 1)");
+        v2.execSQL("INSERT INTO todo_tasks (id, title, done, createdAt, memberId) VALUES (1, 'Tidy room', 0, 1, 1)");
+        v2.execSQL("INSERT INTO reminders (id, title, type, memberId, dueDate, dueTime, notes, repeatUnit, repeatInterval, "
+                + "anchorDay, alertDays, alertTime, snoozedUntil, status, completedAt, createdAt, updatedAt) VALUES "
+                + "(1, 'Library books', 'LIBRARY', 1, '2026-12-05', NULL, NULL, 'NONE', 1, 5, '2', NULL, NULL, 'ACTIVE', NULL, 1, 1)");
+        v2.execSQL("INSERT INTO reminder_history (id, reminderId, title, memberId, dueDate, completedAt) VALUES (1, 1, 'Library books', 1, '2026-11-01', 5)");
+        v2.close();
+
+        FamilyDao dao = AppDatabase.get(context).dao();
+        File backup = DatabaseGuard.backupFile(context, AppDatabase.NAME, 2);
+        assertTrue("version-2 safety copy made", backup.exists());
+        assertTrue(DatabaseGuard.verify(backup, 2, null));
+        assertEquals("Mia", dao.allMembersNow().get(0).name);
+        assertEquals(Long.valueOf(1), dao.tasksNow().get(0).memberId);
+        assertEquals("Library books", dao.reminderNow(1).title);
+        assertEquals(1, dao.historyNow(1).size());
+        assertTrue(dao.drawingsNow().isEmpty());
+        assertEquals("the recovery screen offers the newest copy", 2,
+                DatabaseGuard.newestBackupVersion(context, AppDatabase.NAME, AppDatabase.VERSION));
+    }
+
+    @Test
     public void dataFromANewerVersionIsNeverTouched() {
         File file = context.getDatabasePath(AppDatabase.NAME);
         //noinspection ResultOfMethodCallIgnored
@@ -205,7 +240,7 @@ public class DatabaseMigrationTest {
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(file, null);
         db.execSQL("CREATE TABLE future (x TEXT)");
         db.execSQL("INSERT INTO future VALUES ('keep me')");
-        db.setVersion(3);
+        db.setVersion(AppDatabase.VERSION + 1);
         db.close();
         try {
             AppDatabase.get(context);
@@ -214,7 +249,7 @@ public class DatabaseMigrationTest {
             assertEquals(DatabaseGuard.Problem.NEWER_VERSION, e.problem);
         }
         SQLiteDatabase check = SQLiteDatabase.openDatabase(file.getPath(), null, SQLiteDatabase.OPEN_READONLY);
-        assertEquals(3, check.getVersion());
+        assertEquals(AppDatabase.VERSION + 1, check.getVersion());
         try (Cursor c = check.rawQuery("SELECT x FROM future", null)) {
             assertTrue(c.moveToFirst());
             assertEquals("keep me", c.getString(0));

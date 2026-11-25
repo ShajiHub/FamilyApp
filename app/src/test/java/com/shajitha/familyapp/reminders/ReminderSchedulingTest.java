@@ -408,4 +408,38 @@ public class ReminderSchedulingTest {
         assertEquals(Reminder.STATUS_ACTIVE, dao.reminderNow(id).status);
         assertTrue(dao.historyNow(id).isEmpty());
     }
+
+    // ---------- Gentle sounds ----------
+
+    @Test
+    public void gentleChannelsReplaceTheOldOnesAndQuietIsOptional() {
+        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.createNotificationChannel(new android.app.NotificationChannel("reminders", "old", NotificationManager.IMPORTANCE_DEFAULT));
+        Notifications.ensureChannels(context);
+        assertNull("old channel removed", nm.getNotificationChannel("reminders"));
+        assertNotNull(nm.getNotificationChannel(Notifications.CHANNEL_REMINDERS).getSound());
+        assertNull(nm.getNotificationChannel(Notifications.CHANNEL_REMINDERS_QUIET).getSound());
+        assertNotNull(nm.getNotificationChannel(Notifications.CHANNEL_TIMER).getSound());
+        assertNull(nm.getNotificationChannel(Notifications.CHANNEL_TIMER_QUIET).getSound());
+
+        assertTrue("chime on by default", ReminderSettings.reminderSound(context));
+        Reminder r = Reminders.create("Dentist", Reminder.TYPE_APPOINTMENT, "2027-03-05", null);
+        assertEquals(Notifications.CHANNEL_REMINDERS, Notifications.buildReminder(context, r, null, now).build().getChannelId());
+        ReminderSettings.setReminderSound(context, false);
+        assertEquals(Notifications.CHANNEL_REMINDERS_QUIET, Notifications.buildReminder(context, r, null, now).build().getChannelId());
+
+        ReminderSettings.setTimerAlerts(context, true);
+        ReminderSettings.setTimerSound(context, false);
+        Notifications.showTimerFinished(context, "Clean Up");
+        assertEquals(Notifications.CHANNEL_TIMER_QUIET, shown().get(0).getChannelId());
+    }
+
+    @Test
+    public void choresAndHabitsCanHaveNoAlerts() throws Exception {
+        Reminder r = Reminders.create("Tidy toys", Reminder.TYPE_CHORE, "2027-03-05", null);
+        r.alertDays = "";
+        long id = Reminders.save(context, r);
+        assertEquals("", dao.reminderNow(id).alertDays);
+        assertNull("nothing scheduled", pending(id));
+    }
 }

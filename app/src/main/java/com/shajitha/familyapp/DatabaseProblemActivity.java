@@ -19,8 +19,6 @@ import com.shajitha.familyapp.data.DatabaseGuard;
 public class DatabaseProblemActivity extends AppCompatActivity {
 
     static final String EXTRA_PROBLEM = "problem";
-    /** The version the data was upgraded from; its backup can be restored. */
-    private static final int BACKUP_VERSION = AppDatabase.VERSION - 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +51,15 @@ public class DatabaseProblemActivity extends AppCompatActivity {
         findViewById(R.id.problemRetry).setOnClickListener(v -> retry());
         findViewById(R.id.problemContact).setOnClickListener(v -> startActivity(new Intent(this, ContactUs.class)));
         View restore = findViewById(R.id.problemRestore);
-        boolean hasBackup = DatabaseGuard.backupFile(this, AppDatabase.NAME, BACKUP_VERSION).exists();
+        // The newest safety copy (from the version the data was upgraded from).
+        int backupVersion = DatabaseGuard.newestBackupVersion(this, AppDatabase.NAME, AppDatabase.VERSION);
+        boolean hasBackup = backupVersion > 0;
         restore.setVisibility(hasBackup && problem != DatabaseGuard.Problem.NEWER_VERSION ? View.VISIBLE : View.GONE);
         restore.setOnClickListener(v -> new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.problem_restore_title)
                 .setMessage(R.string.problem_restore_message)
                 .setPositiveButton(R.string.problem_restore, (d, w) -> {
-                    boolean ok = DatabaseGuard.restoreBackup(this, AppDatabase.NAME, BACKUP_VERSION);
+                    boolean ok = DatabaseGuard.restoreBackup(this, AppDatabase.NAME, backupVersion);
                     Toast.makeText(this, ok ? R.string.problem_restored : R.string.problem_restore_failed, Toast.LENGTH_LONG).show();
                     if (ok) {
                         retry();

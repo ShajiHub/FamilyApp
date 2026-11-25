@@ -55,6 +55,14 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/eventPhone"
+            style="@style/Widget.FamilyApp.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/events_add_to_phone"
+            app:icon="@drawable/ic_event" />
+
+        <Button
             android:id="@+id/eventEdit"
             style="@style/Widget.FamilyApp.IconButton"
             android:layout_width="wrap_content"

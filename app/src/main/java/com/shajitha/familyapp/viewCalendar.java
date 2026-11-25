@@ -132,12 +132,44 @@ public class viewCalendar extends BaseActivity {
             notes.setVisibility(event.notes == null || event.notes.isEmpty() ? View.GONE : View.VISIBLE);
             card.setOnClickListener(v -> showEventDialog(event));
             card.findViewById(R.id.eventEdit).setOnClickListener(v -> showEventDialog(event));
+            card.findViewById(R.id.eventPhone).setOnClickListener(v -> addToPhoneCalendar(event));
             card.findViewById(R.id.eventDelete).setOnClickListener(v -> Dialogs.confirmDelete(this,
                     getString(R.string.event_delete_title), event.title,
                     () -> AppDatabase.write(() -> dao.delete(event))));
             list.addView(card);
         }
         empty.setVisibility(events.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * "Also add to phone calendar": opens the phone's calendar app with this event filled in.
+     * FamilyApp keeps its own copy; the calendar app saves its copy only if the person taps Save there.
+     */
+    void addToPhoneCalendar(ScheduleEvent event) {
+        com.shajitha.familyapp.data.Recurrence.Day day = com.shajitha.familyapp.data.Recurrence.Day.parse(event.date);
+        if (day == null) {
+            return;
+        }
+        Calendar start = Calendar.getInstance();
+        start.clear();
+        boolean allDay = event.time == null;
+        int[] t = com.shajitha.familyapp.data.Recurrence.parseTime(event.time);
+        start.set(day.year, day.month - 1, day.day, allDay ? 0 : t[0], allDay ? 0 : t[1], 0);
+        long begin = start.getTimeInMillis();
+        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_INSERT)
+                .setData(android.provider.CalendarContract.Events.CONTENT_URI)
+                .putExtra(android.provider.CalendarContract.Events.TITLE, event.title)
+                .putExtra(android.provider.CalendarContract.EXTRA_EVENT_ALL_DAY, allDay)
+                .putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
+                .putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME, begin + (allDay ? 24 : 1) * 60 * 60 * 1000L);
+        if (event.notes != null) {
+            intent.putExtra(android.provider.CalendarContract.Events.DESCRIPTION, event.notes);
+        }
+        try {
+            startActivity(intent);
+        } catch (android.content.ActivityNotFoundException e) {
+            android.widget.Toast.makeText(this, R.string.no_calendar_app, android.widget.Toast.LENGTH_SHORT).show();
+        }
     }
 
     /** Shows "17:30" or "5:30 PM", following the phone's 12/24-hour setting. */

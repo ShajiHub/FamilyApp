@@ -15,6 +15,8 @@ public final class ReminderSettings {
     static final String KEY_ALERT_TIME = "alert_time";
     static final String KEY_LOCK_DETAILS = "lock_screen_details";
     static final String KEY_TIMER_ALERTS = "timer_alerts";
+    static final String KEY_TIMER_SOUND = "timer_sound";
+    static final String KEY_REMINDER_SOUND = "reminder_sound";
     public static final String DEFAULT_ALERT_TIME = "09:00";
 
     private ReminderSettings() {
@@ -59,6 +61,24 @@ public final class ReminderSettings {
 
     public static void setTimerAlerts(Context context, boolean on) {
         prefs(context).edit().putBoolean(KEY_TIMER_ALERTS, on).apply();
+    }
+
+    /** Gentle chime when the Timer finishes (on by default; can be turned off). */
+    public static boolean timerSound(Context context) {
+        return prefs(context).getBoolean(KEY_TIMER_SOUND, true);
+    }
+
+    public static void setTimerSound(Context context, boolean on) {
+        prefs(context).edit().putBoolean(KEY_TIMER_SOUND, on).apply();
+    }
+
+    /** Gentle chime with reminder notifications (on by default; off = silent notifications). */
+    public static boolean reminderSound(Context context) {
+        return prefs(context).getBoolean(KEY_REMINDER_SOUND, true);
+    }
+
+    public static void setReminderSound(Context context, boolean on) {
+        prefs(context).edit().putBoolean(KEY_REMINDER_SOUND, on).apply();
     }
 
     /** Suggested advance alerts (days before) for a new reminder of this type; always editable. */

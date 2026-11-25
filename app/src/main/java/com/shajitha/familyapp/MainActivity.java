@@ -48,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private List<ScheduleEvent> todaysEvents;
     private List<TodoTask> tasks;
     private MealSelection todaysMeal;
+    private List<com.shajitha.familyapp.data.Reminder> chores;
+    private List<com.shajitha.familyapp.data.Reminder> habits;
+    private List<com.shajitha.familyapp.data.ReminderHistory> habitsToday;
 
     /** Refreshes the timer line every second while a timer runs. */
     private final Runnable timerRefresh = new Runnable() {
@@ -99,6 +102,18 @@ public class MainActivity extends AppCompatActivity {
         });
         dao.mealOn(today).observe(this, meal -> {
             todaysMeal = meal;
+            showToday();
+        });
+        dao.remindersOfType(com.shajitha.familyapp.data.Reminder.TYPE_CHORE).observe(this, list -> {
+            chores = list;
+            showToday();
+        });
+        dao.remindersOfType(com.shajitha.familyapp.data.Reminder.TYPE_HABIT).observe(this, list -> {
+            habits = list;
+            showToday();
+        });
+        dao.historyOfTypeSince(com.shajitha.familyapp.data.Reminder.TYPE_HABIT, today).observe(this, list -> {
+            habitsToday = list;
             showToday();
         });
     }
@@ -190,6 +205,40 @@ public class MainActivity extends AppCompatActivity {
             }
             addRow(R.id.today_tasks, R.drawable.ic_done_all, open == 0 ? getString(R.string.today_no_tasks)
                     : getResources().getQuantityString(R.plurals.today_tasks, open, open), ToDoList.class);
+        }
+        // Chores due today (and overdue), only when the family uses chores
+        if (chores != null) {
+            String todayKey = DataSetup.today();
+            int dueToday = 0, overdue = 0, active = 0;
+            for (com.shajitha.familyapp.data.Reminder r : chores) {
+                if (!com.shajitha.familyapp.data.Reminder.STATUS_ACTIVE.equals(r.status)) {
+                    continue;
+                }
+                active++;
+                int cmp = r.dueDate.compareTo(todayKey);
+                if (cmp < 0) {
+                    overdue++;
+                } else if (cmp == 0) {
+                    dueToday++;
+                }
+            }
+            if (active > 0) {
+                int total = dueToday + overdue;
+                String text = total == 0 ? getString(R.string.today_no_chores)
+                        : getResources().getQuantityString(R.plurals.today_chores, total, total);
+                if (overdue > 0) {
+                    text = getString(R.string.today_chores_overdue, text, overdue);
+                }
+                addRow(R.id.today_chores, R.drawable.ic_home, text, ChoresActivity.class);
+            }
+        }
+        // Habits done today
+        if (habits != null && habitsToday != null) {
+            int[] progress = HabitsActivity.todayProgress(habits, habitsToday);
+            if (progress[1] > 0) {
+                addRow(R.id.today_habits, R.drawable.ic_wb_sunny,
+                        getString(R.string.today_habits, progress[0], progress[1]), HabitsActivity.class);
+            }
         }
         // Lunch
         addRow(R.id.today_lunch, R.drawable.ic_restaurant, todaysMeal == null ? getString(R.string.today_no_lunch)

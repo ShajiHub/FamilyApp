@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Top of the Chores and Habits screens: intro, encouragement, filter, suggestions, Add. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/routineIntro"
+        style="@style/FamilyApp.Hint" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/routineStarsCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        app:cardBackgroundColor="?attr/colorTertiaryContainer"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/routineStars"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/space_l"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="?attr/colorOnTertiaryContainer" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/routineFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
+    <TextView
+        style="@style/FamilyApp.SectionTitle"
+        android:layout_marginTop="@dimen/space_m"
+        android:text="@string/routine_ideas" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/routineSuggestions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/routineAdd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        app:icon="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/routineEmpty"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_xl"
+        android:gravity="center"
+        android:visibility="gone" />
+</LinearLayout>

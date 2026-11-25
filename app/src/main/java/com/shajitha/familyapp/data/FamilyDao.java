@@ -209,4 +209,45 @@ public interface FamilyDao {
 
     @Query("SELECT * FROM reminder_history ORDER BY completedAt DESC, id DESC")
     List<ReminderHistory> allHistoryNow();
+
+    // ---------- Chores and habits (reminders of type CHORE / HABIT) ----------
+    @Query("SELECT * FROM reminders WHERE type = :type AND status != 'ARCHIVED' ORDER BY status, dueDate, title")
+    LiveData<List<Reminder>> remindersOfType(String type);
+
+    @Query("SELECT * FROM reminders WHERE type = :type AND status != 'ARCHIVED' ORDER BY status, dueDate, title")
+    List<Reminder> remindersOfTypeNow(String type);
+
+    /** Completions of every reminder of a type on or after a day (yyyy-MM-dd). */
+    @Query("SELECT h.* FROM reminder_history h JOIN reminders r ON h.reminderId = r.id "
+            + "WHERE r.type = :type AND h.dueDate >= :fromDate ORDER BY h.dueDate, h.id")
+    LiveData<List<ReminderHistory>> historyOfTypeSince(String type, String fromDate);
+
+    @Query("SELECT h.* FROM reminder_history h JOIN reminders r ON h.reminderId = r.id "
+            + "WHERE r.type = :type AND h.dueDate >= :fromDate ORDER BY h.dueDate, h.id")
+    List<ReminderHistory> historyOfTypeSinceNow(String type, String fromDate);
+
+    @Query("SELECT * FROM reminder_history WHERE reminderId = :reminderId AND dueDate = :date LIMIT 1")
+    ReminderHistory historyOn(long reminderId, String date);
+
+    @Delete
+    void delete(ReminderHistory history);
+
+    // ---------- Creative Whiteboard ----------
+    @Query("SELECT * FROM drawings ORDER BY updatedAt DESC, id DESC")
+    LiveData<List<DrawingEntry>> drawings();
+
+    @Query("SELECT * FROM drawings ORDER BY updatedAt DESC, id DESC")
+    List<DrawingEntry> drawingsNow();
+
+    @Query("SELECT * FROM drawings WHERE id = :id")
+    DrawingEntry drawingNow(long id);
+
+    @Insert
+    long insert(DrawingEntry drawing);
+
+    @Update
+    void update(DrawingEntry drawing);
+
+    @Delete
+    void delete(DrawingEntry drawing);
 }

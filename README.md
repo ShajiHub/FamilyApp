@@ -1,6 +1,6 @@
 # FamilyApp
 
-FamilyApp is an Android app that helps a family organise everyday life in one place: schedules, meals, routines, to-dos, checklists, reading and photos.
+FamilyApp is an Android app that helps a family organise everyday life in one place: schedules, meals, chores, healthy habits, to-dos, checklists, reading and drawing.
 
 It is written in Java with XML layouts, works fully offline, needs no account, and uses only free, open-source components.
 
@@ -14,23 +14,27 @@ It is written in Java with XML layouts, works fully offline, needs no account, a
   <img src="docs/screenshots/checklists.png" width="180" alt="Checklists">
   <img src="docs/screenshots/reading_log.png" width="180" alt="Reading Log">
   <img src="docs/screenshots/timer.png" width="180" alt="Timer">
-  <img src="docs/screenshots/photos.png" width="180" alt="Capture Moments">
+
 </p>
 
 ## Features
 
 | Feature | Screen | What it does |
 |---|---|---|
-| **Monthly Schedule** | `viewCalendar` | Pick a day and add events with a title, optional time and notes. Edit or delete them; see which days of the month have events. |
-| **Calendar Events** | `AddEvents` | Shows today's date and opens the phone's calendar app with a new one-hour event ready to fill in. |
-| **Meal Planner** | `MealPlanner` | Spin the wheel to pick today's school lunch, or choose it from a dropdown. The family's own menu: add, rename and delete foods (2–16); the wheel always shows the current menu and lands on the food it announces. |
-| **Timer** | `FamAppTimer` | Countdown timers for **Get Ready**, **Screen Time** and **Clean Up**, with editable lengths. Start, Pause, Resume and Reset; plays a sound when time is up. Keeps time after rotating the phone or closing the app. |
-| **To-do List** | `ToDoList` | Add, edit, tick off and delete tasks. Ticked tasks stay until you clear them. |
-| **Checklists** | `CheckList` | Winter, Summer and First-Aid Kit lists, plus your own. Add, edit, tick and delete items; untick a whole list. |
-| **Capture Moments** | `PhotoGallery` | Take full-size photos with the camera, import photos from the phone, and view, share, save to the phone's gallery or delete them. |
+| **Home** | `MainActivity` | Today summary (events, tasks, chores, habits, lunch, running timer) and six areas: Daily Life, Family Planner, Smart Checklists, Hobbies & Business, Family Hub, Learning Hub. |
+| **Chores** | `ChoresActivity` | Household jobs for each family member, repeating daily/weekly/monthly, optional reminder, "do it tomorrow", and encouraging stars for the week. |
+| **Healthy Habits** | `HabitsActivity` | Daily habits (water, outdoor play, reading, bedtime…) ticked off each day, with a 7-day progress row. |
+| **Monthly Schedule** | `viewCalendar` | Family calendar: events with time, notes and who they're for; "Also add to phone calendar" on each event. |
+| **Meal Planner** | `MealPlanner` | Spin the wheel or pick today's lunch from the family's own menu (2–16 foods). |
+| **Timer** | `FamAppTimer` | Get Ready, Screen Time and Clean Up timers with editable lengths and an optional gentle chime. |
+| **To-do List** | `ToDoList` | Tasks with who they're for; ticked tasks stay until cleared. |
+| **Checklists** | `CheckList` | Winter, Summer, First-Aid Kit and your own lists, with an "Add new item" field in each. |
+| **Creative Whiteboard** | `whiteboard/` | Draw with pencils, brushes, an eraser, lines, rectangles, circles and stars in 13 colours; undo and redo; starter scenes (garden, nature, space, roads); save, reopen, rename, duplicate, delete and save to the Gallery. |
 | **Kids Activities** | `ActivitiesFun` | Random indoor and outdoor activity ideas. |
-| **Reading Log** | `Reading` | Books with pages read, total pages, progress bar, "Finished!" badge and family totals. |
-| **Contact Us** | `ContactUs` | Contact details (when set), a message form that opens the phone's email app, and the credits. |
+| **Reading Log** | `Reading` | Books, pages read and progress. |
+| **Family Members** | `FamilyMembersActivity` | Names or nicknames, an avatar and a role; archive or delete without losing anyone's items. |
+| **Settings** | `SettingsActivity` | Reminder alerts, alert time, lock-screen privacy, timer alerts and gentle sounds. |
+| **Contact Us / About** | `ContactUs`, `AboutActivity` | Message form via the phone's email app; branding, version, privacy and credits. |
 
 ### Design
 
@@ -45,10 +49,10 @@ Everything the family enters stays on the phone and works without internet:
 
 | What | Where it is kept |
 |---|---|
-| Schedule events, to-do tasks, checklist items, food menu, daily lunch picks, books | Room (SQLite) database `family.db` |
+| Schedule events, to-do tasks, checklist items, food menu, daily lunch picks, books, family members, reminders, chores, habits and their history, drawing names | Room (SQLite) database `family.db` |
+| Whiteboard drawings (editable strokes and shapes) and their previews | App-private files in `files/drawings/` |
 | Timer lengths and the running timer | SharedPreferences |
 | Unsent Contact Us message | SharedPreferences |
-| Photos (taken or imported) | The app's private Pictures folder |
 
 Rules the app follows:
 
@@ -56,7 +60,7 @@ Rules the app follows:
 - Default checklists and the food menu are added once, for first-time users, and never re-added over your changes.
 - Data saved by version 1.1 (SharedPreferences) is copied into the database once on the first launch after updating. The old copy is kept as a backup.
 - The database has no "destructive migration": a future version that changes the database must include a migration. The schema is exported to `app/schemas/`.
-- Deleting a photo removes only the app's copy. Copies saved to the phone's gallery stay.
+- Deleting a drawing removes only FamilyApp's copy. Pictures already saved to the Gallery stay.
 
 ## Contact details
 
@@ -74,11 +78,12 @@ When set, tapping them opens the email or phone app, and the message form addres
 - **Language:** Java 17, XML layouts
 - **UI:** Material Components 3, RecyclerView, CalendarView, custom `FoodWheelView`
 - **Storage:** Room 2.6 (SQLite), SharedPreferences, app-private files
-- **Photos:** camera app via `FileProvider`, Android Photo Picker, `MediaStore` for saving to the gallery
-- **Libraries:** AndroidX AppCompat 1.7, Activity 1.9, Material 1.12, ConstraintLayout 2.2, RecyclerView 1.3, Room 2.6, Lifecycle LiveData 2.6, ExifInterface 1.3 (all free and open source)
-- **Build:** Gradle 8.11.1, Android Gradle Plugin 8.7.3
+- **Whiteboard:** custom drawing view; editable JSON drawing files; `MediaStore` for Save to Gallery (Android 10+)
+- **Reminders:** WorkManager, local notifications, AlarmManager for the Timer
+- **Libraries:** AndroidX AppCompat, Activity, Core Splashscreen, Material Components, ConstraintLayout, RecyclerView, Room, Lifecycle, WorkManager (all free and open source)
+- **Build:** Gradle 8.14.3, Android Gradle Plugin 8.7.3
 - **SDK:** minimum Android 5.0 (API 21), target and compile Android 15 (API 35)
-- **Permissions:** only `WRITE_EXTERNAL_STORAGE` on Android 9 and older, for "Save to gallery". Camera, calendar, email and the Photo Picker are used through their own apps.
+- **Permissions:** notifications (asked only when alerts are turned on), exact alarms for the Timer (optional), and restoring the Timer alarm after a restart. No camera, storage, contacts, location or internet permission.
 - **Tests:** Robolectric
 
 ## Project structure
@@ -95,14 +100,16 @@ FamilyApp/
 │       │   │   ├── MainActivity.java       # Home screen
 │       │   │   ├── BaseActivity.java       # Title bar with Back arrow for every screen
 │       │   │   ├── viewCalendar.java       # Monthly Schedule
-│       │   │   ├── AddEvents.java          # Add an event to the phone's calendar
-│       │   │   ├── MealPlanner.java        # Lunch wheel and food menu
+│       │       │   │   ├── MealPlanner.java        # Lunch wheel and food menu
 │       │   │   ├── FoodWheelView.java      # The wheel, drawn in code
 │       │   │   ├── FamAppTimer.java        # Routine timers
 │       │   │   ├── ToDoList.java           # To-do list
 │       │   │   ├── CheckList.java          # Checklists
-│       │   │   ├── PhotoGallery.java       # Capture Moments
-│       │   │   ├── PhotoStore.java         # Photo files: list, import, save to gallery
+│       │   │   ├── ChoresActivity.java     # Chores
+│       │   │   ├── HabitsActivity.java     # Healthy habits
+│       │   │   ├── RoutineEditor.java      # Add/edit dialog for chores and habits
+│       │   │   ├── whiteboard/             # Creative Whiteboard: model, canvas, templates, files, screens
+│       │   │   ├── reminders/              # Reminder engine, notifications, sounds, timer alarm
 │       │   │   ├── ActivitiesFun.java      # Kids' activity ideas
 │       │   │   ├── Reading.java            # Reading log
 │       │   │   ├── ContactUs.java          # Contact form and credits
@@ -147,10 +154,13 @@ In Android Studio, right-click `app/src/test` and choose **Run 'Tests in test'**
 |---|---|
 | `ScreensTest` | Every screen: adding, editing, deleting (with Cancel), data kept after closing and reopening, rotation, landscape, small phone and tablet sizes, the timer's saved state, the meal wheel with 2, 3, 8 and 9 foods |
 | `DataStorageTest` | Default lists, copying data from version 1.1 exactly once, user changes never overwritten, data kept after a restart |
-| `PhotoAndContactTest` | Camera cancel and capture, photo import, share, delete confirmation, contact form validation and the email app |
+| `ContactTest` | Contact form validation, the email app and the saved draft |
+| `ChoresHabitsTest` | Chores (repeat, history, stars, filter), habits (check-ins, 7-day progress) and the Home summary |
+| `WhiteboardTest` | Drawing format, undo/redo, damaged files, saving and reopening, rotation, rename, duplicate, delete, Gallery export |
+| `ReminderSchedulingTest`, `RecurrenceTest`, `DatabaseMigrationTest`, `FamilyMembersTest`, `SettingsTest`, `SecurityTest` | Reminders and notifications, repeat dates, database upgrades and backups, family members, settings, security and privacy |
 | `ScreenshotTest` | Draws every screen to `app/build/screenshots/` in portrait, landscape, dark mode and on a small phone |
 
-These tests run on a simulated phone. The camera, Photo Picker, share sheet, email app, calendar app and notification sound are replaced by stand-ins, so they also need checking on a real device or emulator.
+These tests run on a simulated phone. Notifications, alarms, the email app, the calendar app, the Gallery and sounds are replaced by stand-ins, so they also need checking on a real device or emulator.
 
 ## Roadmap
 

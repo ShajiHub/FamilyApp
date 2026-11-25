@@ -72,10 +72,8 @@ public final class Reminders {
                 throw new InvalidReminderException("repeatUnit");
         }
         r.repeatInterval = Math.max(1, Math.min(r.repeatInterval, 365));
+        // Empty means "no alerts" (for example a chore or habit without a reminder).
         r.alertDays = Recurrence.formatAlertDays(Recurrence.parseAlertDays(r.alertDays));
-        if (r.alertDays.isEmpty()) {
-            r.alertDays = "0";
-        }
         if (r.anchorDay <= 0) {
             r.anchorDay = due.day;
         }
@@ -221,6 +219,85 @@ public final class Reminders {
         Notifications.cancelReminder(context, id);
         if (r != null) {
             dao(context).delete(r);
+        }
+    }
+
+    /**
+     * Moves just this occurrence to another day (for example "do this chore tomorrow"); the repeat
+     * pattern is unchanged and nothing is marked done.
+     */
+    @WorkerThread
+    public static void postponeOccurrence(@NonNull Context context, long id, @NonNull String newDueDate) {
+        Recurrence.Day day = Recurrence.Day.parse(newDueDate);
+        Reminder r = dao(context).reminderNow(id);
+        if (r == null || day == null || !Reminder.STATUS_ACTIVE.equals(r.status)) {
+            return;
+        }
+        r.dueDate = day.toString();
+        r.snoozedUntil = null;
+        r.updatedAt = ReminderScheduler.clock.now();
+        dao(context).update(r);
+        ReminderScheduler.schedule(context, r);
+    }
+
+    /**
+     * Habits: records that the habit was done on {@code date} (once per day). The habit's next
+     * reminder moves to the following day, so it doesn't nag after it's done.
+     */
+    @WorkerThread
+    public static void checkIn(@NonNull Context context, long id, @NonNull String date) {
+        Recurrence.Day day = Recurrence.Day.parse(date);
+        FamilyDao dao = dao(context);
+        Reminder[] updated = new Reminder[1];
+        AppDatabase.get(context).runInTransaction(() -> {
+            Reminder r = dao.reminderNow(id);
+            if (r == null || day == null || dao.historyOn(id, day.toString()) != null) {
+                return;
+            }
+            ReminderHistory h = new ReminderHistory();
+            h.reminderId = r.id;
+            h.title = r.title;
+            h.memberId = r.memberId;
+            h.dueDate = day.toString();
+            h.completedAt = ReminderScheduler.clock.now();
+            dao.insert(h);
+            Recurrence.Day due = Recurrence.Day.parse(r.dueDate);
+            if (due == null || due.compareTo(day) <= 0) {
+                r.dueDate = day.plusDays(1).toString();
+                r.updatedAt = h.completedAt;
+                dao.update(r);
+            }
+            updated[0] = r;
+        });
+        if (updated[0] != null) {
+            ReminderScheduler.schedule(context, updated[0]);
+            Notifications.cancelReminder(context, id);
+        }
+    }
+
+    /** Habits: un-ticks a day that was ticked by mistake (the person's own choice). */
+    @WorkerThread
+    public static void undoCheckIn(@NonNull Context context, long id, @NonNull String date) {
+        FamilyDao dao = dao(context);
+        Reminder[] updated = new Reminder[1];
+        AppDatabase.get(context).runInTransaction(() -> {
+            ReminderHistory h = dao.historyOn(id, date);
+            Reminder r = dao.reminderNow(id);
+            if (h == null || r == null) {
+                return;
+            }
+            dao.delete(h);
+            Recurrence.Day day = Recurrence.Day.parse(date);
+            Recurrence.Day due = Recurrence.Day.parse(r.dueDate);
+            if (day != null && due != null && due.equals(day.plusDays(1))) {
+                r.dueDate = day.toString(); // due again on that day
+                r.updatedAt = ReminderScheduler.clock.now();
+                dao.update(r);
+            }
+            updated[0] = r;
+        });
+        if (updated[0] != null) {
+            ReminderScheduler.schedule(context, updated[0]);
         }
     }
 

@@ -68,10 +68,9 @@ public class SecurityTest {
                 assertFalse(r.name + " must not be exported", r.exported);
             }
         }
-        for (ProviderInfo p : info.providers) {
-            if (p.name.contains("FileProvider")) {
-                assertFalse(p.exported);
-                assertTrue(p.grantUriPermissions);
+        if (info.providers != null) {
+            for (ProviderInfo p : info.providers) {
+                assertFalse("no file sharing provider is needed any more", p.name.contains("FileProvider"));
             }
         }
     }
@@ -79,7 +78,7 @@ public class SecurityTest {
     @Test
     public void permissionsAreOnlyTheExpectedOnes() throws Exception {
         PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
-        List<String> expected = Arrays.asList("android.permission.WRITE_EXTERNAL_STORAGE",
+        List<String> expected = Arrays.asList(
                 "android.permission.POST_NOTIFICATIONS", "android.permission.SCHEDULE_EXACT_ALARM",
                 "android.permission.RECEIVE_BOOT_COMPLETED",
                 // added by WorkManager (free Google library) to run reminders reliably
@@ -92,6 +91,8 @@ public class SecurityTest {
         List<String> requested = Arrays.asList(info.requestedPermissions);
         assertFalse(requested.contains("android.permission.INTERNET"));
         assertFalse(requested.contains("android.permission.CAMERA"));
+        assertFalse(requested.contains("android.permission.WRITE_EXTERNAL_STORAGE"));
+        assertFalse(requested.contains("android.permission.READ_MEDIA_IMAGES"));
         assertFalse(requested.contains("android.permission.READ_CONTACTS"));
         assertFalse(requested.contains("android.permission.ACCESS_FINE_LOCATION"));
     }
@@ -113,6 +114,26 @@ public class SecurityTest {
             }
         }
         assertTrue("logging found in " + offenders, offenders.isEmpty());
+    }
+
+    @Test
+    public void noCameraOrPhotoCodeRemains() throws IOException {
+        List<String> offenders = new ArrayList<>();
+        for (Path p : mainSources()) {
+            String code = new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
+            for (String banned : new String[]{"IMAGE_CAPTURE", "TakePicture", "PickVisualMedia", "PickMultipleVisualMedia",
+                    "ExifInterface", "FileProvider", "PhotoGallery", "PhotoStore", "CameraManager", "android.hardware.camera"}) {
+                if (code.contains(banned)) {
+                    offenders.add(p.getFileName() + ": " + banned);
+                }
+            }
+        }
+        String manifest = new String(Files.readAllBytes(Paths.get("src/main/AndroidManifest.xml")), StandardCharsets.UTF_8);
+        String gradle = new String(Files.readAllBytes(Paths.get("build.gradle")), StandardCharsets.UTF_8);
+        assertFalse(manifest.contains("camera"));
+        assertFalse(manifest.contains("FileProvider"));
+        assertFalse(gradle.contains("exifinterface"));
+        assertTrue(offenders.toString(), offenders.isEmpty());
     }
 
     @Test
@@ -143,6 +164,7 @@ public class SecurityTest {
         for (String file : new String[]{"src/main/res/xml/backup_rules.xml", "src/main/res/xml/data_extraction_rules.xml"}) {
             String xml = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertTrue(file, xml.contains("family-v1-backup.db"));
+            assertTrue(file, xml.contains("family-v2-backup.db"));
             assertTrue(file, xml.contains("androidx.work.workdb"));
             assertTrue(file, xml.contains("db_guard.xml"));
         }
