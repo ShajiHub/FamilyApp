@@ -79,5 +79,8 @@
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/ic_launcher_background</item>
         <item name="postSplashScreenTheme">@style/Theme.FamilyApp.NoActionBar</item>
+        <!-- Android 15 decides edge-to-edge when the window is created, using this starting theme,
+             so the opt-out must be here too or Home draws under the status and navigation bars. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 </resources>
