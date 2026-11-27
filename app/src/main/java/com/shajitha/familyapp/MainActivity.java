@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private List<com.shajitha.familyapp.data.Reminder> chores;
     private List<com.shajitha.familyapp.data.Reminder> habits;
     private List<com.shajitha.familyapp.data.ReminderHistory> habitsToday;
+    private List<com.shajitha.familyapp.data.Reminder> upcoming;
 
     /** Refreshes the timer line every second while a timer runs. */
     private final Runnable timerRefresh = new Runnable() {
@@ -116,6 +117,12 @@ public class MainActivity extends AppCompatActivity {
             habitsToday = list;
             showToday();
         });
+        // Family reminders in the next week (and any whose date has passed), as one gentle line.
+        dao.familyRemindersUntil(com.shajitha.familyapp.data.Recurrence.Day.parse(today).plusDays(7).toString())
+                .observe(this, list -> {
+                    upcoming = list;
+                    showToday();
+                });
     }
 
     @Override
@@ -239,6 +246,11 @@ public class MainActivity extends AppCompatActivity {
                 addRow(R.id.today_habits, R.drawable.ic_wb_sunny,
                         getString(R.string.today_habits, progress[0], progress[1]), HabitsActivity.class);
             }
+        }
+        // Reminders coming up this week, only when there are some
+        if (upcoming != null && !upcoming.isEmpty()) {
+            addRow(R.id.today_reminders, R.drawable.ic_notifications, getResources().getQuantityString(
+                    R.plurals.today_reminders, upcoming.size(), upcoming.size(), upcoming.get(0).title), RemindersActivity.class);
         }
         // Lunch
         addRow(R.id.today_lunch, R.drawable.ic_restaurant, todaysMeal == null ? getString(R.string.today_no_lunch)

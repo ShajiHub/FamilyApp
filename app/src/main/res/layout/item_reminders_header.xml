@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Top of Reminders & Renewals: intro, Add button, area filter and the area's note. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/remindersIntro"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_s"
+        android:text="@string/reminders_intro" />
+
+    <Button
+        android:id="@+id/remindersAdd"
+        style="@style/Widget.FamilyApp.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        android:text="@string/reminders_add"
+        app:icon="@drawable/ic_add" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/remindersFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/remindersNote"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_s"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/remindersEmpty"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_l"
+        android:gravity="center"
+        android:text="@string/reminders_empty"
+        android:visibility="gone" />
+</LinearLayout>

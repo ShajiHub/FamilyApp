@@ -17,6 +17,7 @@ public final class ReminderSettings {
     static final String KEY_TIMER_ALERTS = "timer_alerts";
     static final String KEY_TIMER_SOUND = "timer_sound";
     static final String KEY_REMINDER_SOUND = "reminder_sound";
+    static final String KEY_QUIET_AREAS = "quiet_areas";
     public static final String DEFAULT_ALERT_TIME = "09:00";
 
     private ReminderSettings() {
@@ -79,6 +80,28 @@ public final class ReminderSettings {
 
     public static void setReminderSound(Context context, boolean on) {
         prefs(context).edit().putBoolean(KEY_REMINDER_SOUND, on).apply();
+    }
+
+    /**
+     * Areas (Documents, Bills, Pets, ...) whose alerts are turned off. Their reminders stay in the
+     * list; they just don't send notifications.
+     */
+    @NonNull
+    public static java.util.Set<String> quietAreas(Context context) {
+        java.util.Set<String> saved = prefs(context).getStringSet(KEY_QUIET_AREAS, null);
+        return saved == null ? new java.util.HashSet<>() : new java.util.HashSet<>(saved);
+    }
+
+    public static void setQuietAreas(Context context, @NonNull java.util.Set<String> areas) {
+        prefs(context).edit().putStringSet(KEY_QUIET_AREAS, new java.util.HashSet<>(areas)).apply();
+    }
+
+    /** Whether reminders of this area may send alerts (chores and habits always may). */
+    public static boolean areaAlerts(Context context, @NonNull Reminder r) {
+        if (Reminder.TYPE_CHORE.equals(r.type) || Reminder.TYPE_HABIT.equals(r.type)) {
+            return true;
+        }
+        return !quietAreas(context).contains(ReminderTemplates.areaOf(r));
     }
 
     /** Suggested advance alerts (days before) for a new reminder of this type; always editable. */

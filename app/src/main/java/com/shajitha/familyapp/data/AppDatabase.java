@@ -21,13 +21,13 @@ import java.util.concurrent.Executors;
  */
 @Database(entities = {ScheduleEvent.class, TodoTask.class, ChecklistItem.class, Food.class,
         MealSelection.class, Book.class, FamilyMember.class, Reminder.class, ReminderHistory.class,
-        DrawingEntry.class}, version = 3, exportSchema = true)
+        DrawingEntry.class, Checklist.class}, version = 4, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract FamilyDao dao();
 
     public static final String NAME = "family.db";
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
     private static volatile AppDatabase instance;
     /** Set when the database must not be opened; the Home screen then shows the recovery screen. */
     @Nullable
@@ -70,7 +70,10 @@ public abstract class AppDatabase extends RoomDatabase {
                     }
                     instance = db;
                     // First thing on the database thread: default lists and copying older saved data.
-                    io.execute(() -> DataSetup.run(app, db));
+                    io.execute(() -> {
+                        DataSetup.run(app, db);
+                        DataSetup.linkChecklists(db);
+                    });
                 }
             }
         }

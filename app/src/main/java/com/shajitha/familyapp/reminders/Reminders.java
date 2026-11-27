@@ -77,6 +77,9 @@ public final class Reminders {
         if (r.anchorDay <= 0) {
             r.anchorDay = due.day;
         }
+        if (r.category != null && !ReminderTemplates.isArea(r.category)) {
+            r.category = ReminderTemplates.OTHER;
+        }
     }
 
     /** Adds or updates a reminder and schedules its next alert. Returns its id. */
@@ -134,6 +137,72 @@ public final class Reminders {
         if (updated[0] != null) {
             ReminderScheduler.schedule(context, updated[0]);
         }
+    }
+
+    /**
+     * "Renewed" (a document or card) or "Renewed" (a library book): the current date goes into the
+     * history and the reminder moves to the confirmed new date the person entered.
+     */
+    @WorkerThread
+    public static void renew(@NonNull Context context, long id, @NonNull String newDueDate) {
+        Recurrence.Day day = Recurrence.Day.parse(newDueDate);
+        if (day == null) {
+            throw new InvalidReminderException("dueDate");
+        }
+        FamilyDao dao = dao(context);
+        Reminder[] updated = new Reminder[1];
+        AppDatabase.get(context).runInTransaction(() -> {
+            Reminder r = dao.reminderNow(id);
+            if (r == null) {
+                return;
+            }
+            long now = ReminderScheduler.clock.now();
+            ReminderHistory h = new ReminderHistory();
+            h.reminderId = r.id;
+            h.title = r.title;
+            h.memberId = r.memberId;
+            h.dueDate = r.dueDate;
+            h.completedAt = now;
+            dao.insert(h);
+            r.dueDate = day.toString();
+            r.anchorDay = day.day;
+            r.snoozedUntil = null;
+            r.status = Reminder.STATUS_ACTIVE;
+            r.completedAt = null;
+            r.updatedAt = now;
+            dao.update(r);
+            updated[0] = r;
+        });
+        if (updated[0] != null) {
+            ReminderScheduler.schedule(context, updated[0]);
+            Notifications.cancelReminder(context, id);
+        }
+    }
+
+    /**
+     * True when text looks like it may contain an ID, card or account number (a run of 6 or more
+     * digits, ignoring spaces and dashes between them; dates such as 2026-03-14 don't count). Used to
+     * gently warn before saving.
+     */
+    public static boolean looksLikeIdNumber(@Nullable String text) {
+        if (text == null) {
+            return false;
+        }
+        text = text.replaceAll("\\b\\d{4}[-/.]\\d{1,2}[-/.]\\d{1,2}\\b", " ")
+                .replaceAll("\\b\\d{1,2}[-/.]\\d{1,2}[-/.]\\d{2,4}\\b", " ");
+        int run = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c >= '0' && c <= '9') {
+                run++;
+                if (run >= 6) {
+                    return true;
+                }
+            } else if (c != ' ' && c != '-' || run == 0) {
+                run = 0;
+            }
+        }
+        return false;
     }
 
     /** "Remind me later": the next alert comes at {@code untilMillis}; the due date doesn't change. */

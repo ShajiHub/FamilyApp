@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One reminder: area icon, title, details, its main action (Done / Returned / Renewed) and ⋮. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_s">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/touch_target"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_m"
+        android:paddingTop="@dimen/space_s"
+        android:paddingBottom="@dimen/space_s">
+
+        <ImageView
+            android:id="@+id/reminderIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_icon_circle"
+            android:backgroundTint="?attr/colorSecondaryContainer"
+            android:importantForAccessibility="no"
+            android:padding="8dp"
+            app:tint="?attr/colorOnSecondaryContainer" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_m"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/reminderTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/reminderDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <Button
+                android:id="@+id/reminderAction"
+                style="@style/Widget.FamilyApp.Button.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                app:icon="@drawable/ic_check" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/reminderMore"
+            style="@style/Widget.FamilyApp.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_more_vert" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -50,6 +50,20 @@
         android:layout_marginTop="@dimen/space_s"
         android:orientation="vertical" />
 
+    <!-- Family reminders due on this day (Reminders & Renewals), shown under the events. -->
+    <TextView
+        android:id="@+id/scheduleRemindersTitle"
+        style="@style/FamilyApp.SectionTitle"
+        android:layout_marginTop="@dimen/space_l"
+        android:text="@string/schedule_reminders_title"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/scheduleReminders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
     <TextView
         android:id="@+id/scheduleEmpty"
         style="@style/FamilyApp.Hint"

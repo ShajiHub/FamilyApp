@@ -79,6 +79,64 @@ public interface FamilyDao {
     @Query("UPDATE checklist_items SET checked = 0 WHERE section = :section")
     void uncheckSection(String section);
 
+    // ---------- Checklists (lists of items) ----------
+    @Query("SELECT * FROM checklists ORDER BY archived, position, id")
+    LiveData<List<Checklist>> checklists();
+
+    @Query("SELECT * FROM checklists ORDER BY archived, position, id")
+    List<Checklist> checklistsNow();
+
+    @Query("SELECT * FROM checklists WHERE id = :id")
+    LiveData<Checklist> checklist(long id);
+
+    @Query("SELECT * FROM checklists WHERE id = :id")
+    Checklist checklistNow(long id);
+
+    @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM checklists")
+    int nextListPosition();
+
+    @Insert
+    long insert(Checklist checklist);
+
+    @Update
+    void update(Checklist checklist);
+
+    @Delete
+    void delete(Checklist checklist);
+
+    @Query("SELECT * FROM checklist_items WHERE checklistId = :checklistId ORDER BY position, id")
+    LiveData<List<ChecklistItem>> itemsOf(long checklistId);
+
+    @Query("SELECT * FROM checklist_items WHERE checklistId = :checklistId ORDER BY position, id")
+    List<ChecklistItem> itemsOfNow(long checklistId);
+
+    @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM checklist_items WHERE checklistId = :checklistId")
+    int nextItemPosition(long checklistId);
+
+    @Query("UPDATE checklist_items SET checked = 0 WHERE checklistId = :checklistId")
+    void uncheckChecklist(long checklistId);
+
+    @Query("DELETE FROM checklist_items WHERE checklistId = :checklistId")
+    void deleteItemsOf(long checklistId);
+
+    @Query("SELECT checklistId, SUM(checked) AS done, COUNT(*) AS total FROM checklist_items GROUP BY checklistId")
+    LiveData<List<ChecklistCount>> checklistCounts();
+
+    /** Sections whose items aren't linked to an existing checklist (safety net; normally none). */
+    @Query("SELECT DISTINCT section FROM checklist_items WHERE checklistId NOT IN (SELECT id FROM checklists)")
+    List<String> unlinkedSections();
+
+    @Query("UPDATE checklist_items SET checklistId = :checklistId WHERE section = :section "
+            + "AND checklistId NOT IN (SELECT id FROM checklists)")
+    void linkSection(String section, long checklistId);
+
+    /** Removes a checklist and its items in one step (screens ask first). */
+    @Transaction
+    default void deleteChecklist(Checklist checklist) {
+        deleteItemsOf(checklist.id);
+        delete(checklist);
+    }
+
     // ---------- Meal planner ----------
     @Query("SELECT * FROM foods ORDER BY position, id")
     LiveData<List<Food>> foods();
@@ -209,6 +267,21 @@ public interface FamilyDao {
 
     @Query("SELECT * FROM reminder_history ORDER BY completedAt DESC, id DESC")
     List<ReminderHistory> allHistoryNow();
+
+    // ---------- Reminders & Renewals (everything except chores and habits) ----------
+    @Query("SELECT * FROM reminders WHERE type NOT IN ('CHORE', 'HABIT') ORDER BY dueDate, dueTime, title")
+    LiveData<List<Reminder>> familyReminders();
+
+    @Query("SELECT * FROM reminders WHERE type NOT IN ('CHORE', 'HABIT') ORDER BY dueDate, dueTime, title")
+    List<Reminder> familyRemindersNow();
+
+    @Query("SELECT * FROM reminders WHERE type NOT IN ('CHORE', 'HABIT') AND status = 'ACTIVE' "
+            + "AND dueDate = :day ORDER BY dueTime, title")
+    LiveData<List<Reminder>> familyRemindersOn(String day);
+
+    @Query("SELECT * FROM reminders WHERE type NOT IN ('CHORE', 'HABIT') AND status = 'ACTIVE' "
+            + "AND dueDate <= :lastDay ORDER BY dueDate, dueTime, title")
+    LiveData<List<Reminder>> familyRemindersUntil(String lastDay);
 
     // ---------- Chores and habits (reminders of type CHORE / HABIT) ----------
     @Query("SELECT * FROM reminders WHERE type = :type AND status != 'ARCHIVED' ORDER BY status, dueDate, title")

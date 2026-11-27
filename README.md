@@ -1,6 +1,6 @@
 # FamilyApp
 
-FamilyApp is an Android app that helps a family organise everyday life in one place: schedules, meals, chores, healthy habits, to-dos, checklists, reading and drawing.
+FamilyApp is an Android app that helps a family organise everyday life in one place: schedules, reminders and renewals, meals, chores, healthy habits, to-dos, smart checklists, reading and drawing.
 
 It is written in Java with XML layouts, works fully offline, needs no account, and uses only free, open-source components.
 
@@ -21,19 +21,20 @@ It is written in Java with XML layouts, works fully offline, needs no account, a
 
 | Feature | Screen | What it does |
 |---|---|---|
-| **Home** | `MainActivity` | Today summary (events, tasks, chores, habits, lunch, running timer) and six areas: Daily Life, Family Planner, Smart Checklists, Hobbies & Business, Family Hub, Learning Hub. |
+| **Home** | `MainActivity` | Today summary (events, tasks, chores, habits, reminders coming up this week, lunch, running timer) and six areas: Daily Life, Family Planner, Smart Checklists, Hobbies & Business, Family Hub, Learning Hub. |
 | **Chores** | `ChoresActivity` | Household jobs for each family member, repeating daily/weekly/monthly, optional reminder, "do it tomorrow", and encouraging stars for the week. |
 | **Healthy Habits** | `HabitsActivity` | Daily habits (water, outdoor play, reading, bedtime…) ticked off each day, with a 7-day progress row. |
-| **Monthly Schedule** | `viewCalendar` | Family calendar: events with time, notes and who they're for; "Also add to phone calendar" on each event. |
+| **Monthly Schedule** | `viewCalendar` | Family calendar: events with time, notes and who they're for; "Also add to phone calendar" on each event; the day's reminders below its events. |
+| **Reminders & Renewals** | `RemindersActivity`, `ReminderEditor` | One simple screen for every family reminder, with optional ready-made ideas in 13 areas: documents and cards (passport, health card, driver's licence...), library, health appointments, home and safety, school, bills, vehicle, family time, pets, garden, hobbies, digital life, food and supplies. Done / Returned / Renewed, remind me tomorrow, choose another date, history, archive, restore, delete (asks first). Gentle wording; alerts can be turned off per area. Library, Family Time and Hobby Reminders open it filtered to their area. |
 | **Meal Planner** | `MealPlanner` | Spin the wheel or pick today's lunch from the family's own menu (2–16 foods). |
 | **Timer** | `FamAppTimer` | Get Ready, Screen Time and Clean Up timers with editable lengths and an optional gentle chime. |
 | **To-do List** | `ToDoList` | Tasks with who they're for; ticked tasks stay until cleared. |
-| **Checklists** | `CheckList` | Winter, Summer, First-Aid Kit and your own lists, with an "Add new item" field in each. |
+| **Smart Checklists** | `CheckList`, `ChecklistActivity`, `ChecklistTemplatesActivity` | Every list with its progress ("5 of 12 completed"). Clean tick boxes, an "Add new item" field, and a ⋮ menu for edit (with a short note) and delete. Rename, duplicate (for example for each child), start again, archive, restore and delete. 12 templates: Spring, Summer, Fall, Winter, Back to school, Grocery, Travel, Birthday and holidays, First aid, Emergency, Household maintenance, Family celebration. |
 | **Creative Whiteboard** | `whiteboard/` | Draw with pencils, brushes, an eraser, lines, rectangles, circles and stars in 13 colours; undo and redo; starter scenes (garden, nature, space, roads); save, reopen, rename, duplicate, delete and save to the Gallery. |
 | **Kids Activities** | `ActivitiesFun` | Random indoor and outdoor activity ideas. |
 | **Reading Log** | `Reading` | Books, pages read and progress. |
 | **Family Members** | `FamilyMembersActivity` | Names or nicknames, an avatar and a role; archive or delete without losing anyone's items. |
-| **Settings** | `SettingsActivity` | Reminder alerts, alert time, lock-screen privacy, timer alerts and gentle sounds. |
+| **Settings** | `SettingsActivity` | Reminder alerts, alert time, lock-screen privacy, alerts per reminder area, timer alerts and gentle sounds. |
 | **Contact Us / About** | `ContactUs`, `AboutActivity` | Message form via the phone's email app; branding, version, privacy and credits. |
 
 ### Design
@@ -49,7 +50,7 @@ Everything the family enters stays on the phone and works without internet:
 
 | What | Where it is kept |
 |---|---|
-| Schedule events, to-do tasks, checklist items, food menu, daily lunch picks, books, family members, reminders, chores, habits and their history, drawing names | Room (SQLite) database `family.db` |
+| Schedule events, to-do tasks, checklists and their items, food menu, daily lunch picks, books, family members, reminders, chores, habits and their history, drawing names | Room (SQLite) database `family.db` |
 | Whiteboard drawings (editable strokes and shapes) and their previews | App-private files in `files/drawings/` |
 | Timer lengths and the running timer | SharedPreferences |
 | Unsent Contact Us message | SharedPreferences |
@@ -61,6 +62,8 @@ Rules the app follows:
 - Data saved by version 1.1 (SharedPreferences) is copied into the database once on the first launch after updating. The old copy is kept as a backup.
 - The database has no "destructive migration": a future version that changes the database must include a migration. The schema is exported to `app/schemas/`.
 - Deleting a drawing removes only FamilyApp's copy. Pictures already saved to the Gallery stay.
+- Reminders store only a title, a date (and optional time), an optional nickname and an optional short note. FamilyApp never asks for ID, card, licence or account numbers, passwords, medical records, addresses or birthdays, and gently warns if a title or note looks like an ID or account number.
+- If the phone is lost, broken or reset, FamilyApp's data can only come back from Android's own backup (if it was on). A FamilyApp backup file is designed (see `docs/BACKUP_RESTORE_DESIGN.md`) and planned before public release.
 
 ## Contact details
 
@@ -104,12 +107,16 @@ FamilyApp/
 │       │   │   ├── FoodWheelView.java      # The wheel, drawn in code
 │       │   │   ├── FamAppTimer.java        # Routine timers
 │       │   │   ├── ToDoList.java           # To-do list
-│       │   │   ├── CheckList.java          # Checklists
+│       │   │   ├── CheckList.java          # Smart Checklists: all lists
+│       │   │   ├── ChecklistActivity.java  # One checklist
+│       │   │   ├── ChecklistTemplates*.java # Checklist templates and their screen
+│       │   │   ├── RemindersActivity.java  # Reminders & Renewals
+│       │   │   ├── ReminderEditor.java     # The one add/edit reminder form
 │       │   │   ├── ChoresActivity.java     # Chores
 │       │   │   ├── HabitsActivity.java     # Healthy habits
 │       │   │   ├── RoutineEditor.java      # Add/edit dialog for chores and habits
 │       │   │   ├── whiteboard/             # Creative Whiteboard: model, canvas, templates, files, screens
-│       │   │   ├── reminders/              # Reminder engine, notifications, sounds, timer alarm
+│       │   │   ├── reminders/              # Reminder engine, templates, notifications, sounds, timer alarm
 │       │   │   ├── ActivitiesFun.java      # Kids' activity ideas
 │       │   │   ├── Reading.java            # Reading log
 │       │   │   ├── ContactUs.java          # Contact form and credits
@@ -155,6 +162,8 @@ In Android Studio, right-click `app/src/test` and choose **Run 'Tests in test'**
 | `ScreensTest` | Every screen: adding, editing, deleting (with Cancel), data kept after closing and reopening, rotation, landscape, small phone and tablet sizes, the timer's saved state, the meal wheel with 2, 3, 8 and 9 foods |
 | `DataStorageTest` | Default lists, copying data from version 1.1 exactly once, user changes never overwritten, data kept after a restart |
 | `ContactTest` | Contact form validation, the email app and the saved draft |
+| `ChecklistsTest` | Checklists, ticks, add/edit/delete through the ⋮ menu, start again, duplicate, archive, restore, delete, templates for a child |
+| `RemindersTest` | Reminder templates, the add form, the ID-number warning, Done / Returned / Renewed and history, remind later, archive, restore, delete, gentle wording, quiet areas, Home and Schedule |
 | `ChoresHabitsTest` | Chores (repeat, history, stars, filter), habits (check-ins, 7-day progress) and the Home summary |
 | `WhiteboardTest` | Drawing format, undo/redo, damaged files, saving and reopening, rotation, rename, duplicate, delete, Gallery export |
 | `ReminderSchedulingTest`, `RecurrenceTest`, `DatabaseMigrationTest`, `FamilyMembersTest`, `SettingsTest`, `SecurityTest` | Reminders and notifications, repeat dates, database upgrades and backups, family members, settings, security and privacy |
@@ -166,11 +175,10 @@ These tests run on a simulated phone. Notifications, alarms, the email app, the 
 
 Ideas for future versions:
 
-- Family member profiles and tasks assigned to each person
-- Chore chart with points and rewards
-- Reminders and notifications for to-dos, events and finished timers
-- Backup and restore of family data
-- Shared family sync across phones
+- Encrypted backup and restore to a file you choose (designed in `docs/BACKUP_RESTORE_DESIGN.md`)
+- Creative Whiteboard: movable objects and sticker templates
+- Hobby Projects and Passion to Business
+- Optional shared family sync across phones
 
 ## Credits
 

@@ -79,22 +79,53 @@ public final class DataSetup {
     }
 
     private static void seedChecklist(FamilyDao dao) {
-        addItems(dao, SECTION_WINTER, "Winter boots", "Thermal wear", "Cardigan/Winter coat", "Sleepwear",
-                "Scarfs", "Gloves", "Ear muffs");
-        addItems(dao, SECTION_SUMMER, "Sunscreen/sunblock", "Packing cubes", "Exercise/Active time", "Swimsuits",
-                "Boots/Sports shoe");
-        addItems(dao, SECTION_FIRST_AID, "Medication", "Lip balm", "Instant cold ice packs", "Antiseptic wipes",
-                "Adhesive plasters large/small");
+        addList(dao, "Winter", Checklist.KIND_SEASON, "winter", SECTION_WINTER, "Winter boots", "Thermal wear",
+                "Cardigan/Winter coat", "Sleepwear", "Scarfs", "Gloves", "Ear muffs");
+        addList(dao, "Summer", Checklist.KIND_SEASON, "summer", SECTION_SUMMER, "Sunscreen/sunblock", "Packing cubes",
+                "Exercise/Active time", "Swimsuits", "Boots/Sports shoe");
+        addList(dao, "First-aid kit", Checklist.KIND_LIST, "first_aid", SECTION_FIRST_AID, "Medication", "Lip balm",
+                "Instant cold ice packs", "Antiseptic wipes", "Adhesive plasters large/small");
     }
 
-    private static void addItems(FamilyDao dao, String section, String... titles) {
+    private static void addList(FamilyDao dao, String name, String kind, String template, String section, String... titles) {
+        long now = System.currentTimeMillis();
+        Checklist list = new Checklist();
+        list.name = name;
+        list.kind = kind;
+        list.template = template;
+        list.position = dao.nextListPosition();
+        list.createdAt = list.updatedAt = now;
+        long id = dao.insert(list);
         for (String title : titles) {
             ChecklistItem item = new ChecklistItem();
-            item.section = section;
+            item.section = section; // the original section name, as older versions saved it
+            item.checklistId = id;
             item.title = title;
-            item.position = dao.nextChecklistPosition(section);
+            item.position = dao.nextItemPosition(id);
             dao.insert(item);
         }
+    }
+
+    /**
+     * Safety net, run at every start: any checklist item that isn't linked to a checklist (which
+     * should never happen) gets a checklist named after its section, so no item is ever hidden.
+     */
+    public static void linkChecklists(AppDatabase db) {
+        FamilyDao dao = db.dao();
+        List<String> sections = dao.unlinkedSections();
+        if (sections.isEmpty()) {
+            return;
+        }
+        db.runInTransaction(() -> {
+            long now = System.currentTimeMillis();
+            for (String section : sections) {
+                Checklist list = new Checklist();
+                list.name = section.isEmpty() ? "Checklist" : section;
+                list.position = dao.nextListPosition();
+                list.createdAt = list.updatedAt = now;
+                dao.linkSection(section, dao.insert(list));
+            }
+        });
     }
 
     /** Copies everything the previous version stored with FamilyStore. */

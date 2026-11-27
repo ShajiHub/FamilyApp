@@ -86,4 +86,11 @@ public class Reminder {
     public long createdAt;
 
     public long updatedAt;
+
+    /**
+     * Which area it belongs to (DOCUMENTS, LIBRARY, HEALTH, HOME, ...; see ReminderTemplates), so a
+     * whole area's alerts can be turned off. Null for chores, habits and older reminders without one.
+     */
+    @Nullable
+    public String category;
 }

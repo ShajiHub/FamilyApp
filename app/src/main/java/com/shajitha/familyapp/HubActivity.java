@@ -90,7 +90,13 @@ public class HubActivity extends BaseActivity {
             view.setClickable(ready);
             view.setContentDescription(getString(feature.title) + ". "
                     + (ready ? getString(feature.subtitle) : getString(R.string.coming_soon)));
-            view.setOnClickListener(ready ? v -> startActivity(new Intent(HubActivity.this, feature.screen)) : null);
+            view.setOnClickListener(ready ? v -> {
+                Intent open = new Intent(HubActivity.this, feature.screen);
+                if (feature.area != null) {
+                    open.putExtra(RemindersActivity.EXTRA_AREA, feature.area);
+                }
+                startActivity(open);
+            } : null);
         }
 
         @Override

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Top of the Checklists and Templates screens: a short intro and the main button. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/listsIntro"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_s" />
+
+    <Button
+        android:id="@+id/listsNew"
+        style="@style/Widget.FamilyApp.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m"
+        android:text="@string/lists_new"
+        app:icon="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/listsEmpty"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_l"
+        android:gravity="center"
+        android:text="@string/lists_empty"
+        android:visibility="gone" />
+</LinearLayout>

@@ -4,6 +4,7 @@
     <cloud-backup>
         <exclude domain="database" path="family-v1-backup.db" />
         <exclude domain="database" path="family-v2-backup.db" />
+        <exclude domain="database" path="family-v3-backup.db" />
         <exclude domain="database" path="family-replaced.db" />
         <exclude domain="database" path="androidx.work.workdb" />
         <exclude domain="database" path="androidx.work.workdb-wal" />
@@ -14,6 +15,7 @@
     <device-transfer>
         <exclude domain="database" path="family-v1-backup.db" />
         <exclude domain="database" path="family-v2-backup.db" />
+        <exclude domain="database" path="family-v3-backup.db" />
         <exclude domain="database" path="family-replaced.db" />
         <exclude domain="database" path="androidx.work.workdb" />
         <exclude domain="database" path="androidx.work.workdb-wal" />

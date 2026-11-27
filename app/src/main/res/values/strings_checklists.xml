@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Smart Checklists (Phase 4): screens and reusable templates. -->
+<resources>
+    <!-- Checklists screen -->
+    <string name="lists_intro">Tick things off as you go. Your lists, items and ticks stay on this phone until you change them.</string>
+    <string name="lists_new">New checklist</string>
+    <string name="lists_empty">No checklists yet. Tap New checklist to start one from a template or a blank page.</string>
+    <string name="lists_archived">Archived</string>
+    <string name="lists_progress">%1$d of %2$d completed</string>
+    <string name="lists_no_items">No items yet</string>
+    <string name="lists_for">For %1$s</string>
+    <string name="lists_open">Open %1$s</string>
+    <string name="lists_choose_template">Start a checklist</string>
+    <string name="lists_blank">Blank checklist</string>
+    <string name="lists_name_hint">Checklist name</string>
+    <string name="lists_name_too_long">Please keep the name under 60 characters</string>
+    <string name="lists_create">Create</string>
+    <string name="lists_new_title">New checklist</string>
+    <plurals name="lists_items_count">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+    <string name="lists_templates_intro">Ready-made lists to copy and change as you like. The templates themselves never change, and nothing is added until you choose one.</string>
+    <string name="lists_for_hint">For (optional)</string>
+    <string name="lists_nickname_hint">A nickname is enough, for example \"Kid 1\".</string>
+
+    <!-- One checklist -->
+    <string name="list_item_more">More options for %1$s</string>
+    <string name="list_item_edit">Edit item</string>
+    <string name="list_item_delete">Delete item</string>
+    <string name="list_item_note_hint">Note (optional), for example \"2 pairs\"</string>
+    <string name="list_item_hint">Item</string>
+    <string name="list_rename">Rename</string>
+    <string name="list_duplicate">Duplicate</string>
+    <string name="list_duplicate_title">Duplicate checklist</string>
+    <string name="list_copy_name">%1$s (copy)</string>
+    <string name="list_reset">Start again (untick all)</string>
+    <string name="list_reset_title">Untick everything in %1$s?</string>
+    <string name="list_reset_message">All items stay in the list; only the ticks are cleared. Handy for the next season or trip.</string>
+    <string name="list_reset_confirm">Untick all</string>
+    <string name="list_archive">Archive</string>
+    <string name="list_restore">Restore</string>
+    <string name="list_archived_note">This checklist is archived. Restore it to show it with your other lists.</string>
+    <string name="list_delete">Delete checklist</string>
+    <string name="list_delete_title">Delete this checklist?</string>
+    <string name="list_delete_message">%1$s and everything in it will be deleted. This can\'t be undone. To keep it out of the way instead, use Archive.</string>
+    <string name="list_all_done">All done. Well done!</string>
+    <string name="list_hold_hint">Tap an item to tick it. Use ⋮ to edit or delete it.</string>
+
+    <!-- Templates -->
+    <string name="tpl_spring">Spring</string>
+    <string name="tpl_summer">Summer</string>
+    <string name="tpl_fall">Fall</string>
+    <string name="tpl_winter">Winter</string>
+    <string name="tpl_school">Back to school</string>
+    <string name="tpl_grocery">Grocery shopping</string>
+    <string name="tpl_travel">Travel and packing</string>
+    <string name="tpl_birthday">Birthday and holiday preparation</string>
+    <string name="tpl_first_aid">First-aid supplies</string>
+    <string name="tpl_emergency">Emergency preparedness</string>
+    <string name="tpl_household">Household maintenance</string>
+    <string name="tpl_celebration">Family celebration</string>
+
+    <string-array name="tpl_items_spring">
+        <item>Spring cleaning: windows, closets and cupboards</item>
+        <item>Wash winter coats and put them away</item>
+        <item>Rain jackets and rain boots fit everyone</item>
+        <item>Umbrellas by the door</item>
+        <item>Plan the garden and buy seeds</item>
+        <item>Clean garden tools and planters</item>
+        <item>Check gutters and outdoor taps</item>
+        <item>Test smoke and carbon monoxide alarms</item>
+        <item>Bikes, helmets and outdoor toys ready</item>
+        <item>Sunhats and light jackets for outdoor play</item>
+    </string-array>
+    <string-array name="tpl_items_summer">
+        <item>Sunscreen and sunhats</item>
+        <item>Summer clothes and swimsuits fit everyone</item>
+        <item>Water bottles for everyone</item>
+        <item>Insect repellent</item>
+        <item>Picnic and outdoor supplies</item>
+        <item>Vacation dates and bookings</item>
+        <item>Summer camp forms and packing</item>
+        <item>Family activity ideas for the holidays</item>
+        <item>Water the garden and plants</item>
+        <item>Someone to care for plants or pets while away</item>
+    </string-array>
+    <string-array name="tpl_items_fall">
+        <item>Back-to-school supplies</item>
+        <item>Fall jackets, sweaters and boots fit everyone</item>
+        <item>Clean gutters and rake leaves</item>
+        <item>Bring in garden hoses and outdoor furniture</item>
+        <item>Check windows and doors for drafts</item>
+        <item>Furnace check and new filter</item>
+        <item>Winter tires booked</item>
+        <item>Winter coats and boots checked</item>
+        <item>School activities and club sign-ups</item>
+        <item>Fall celebrations and family plans</item>
+    </string-array>
+    <string-array name="tpl_items_winter">
+        <item>Winter jackets fit everyone</item>
+        <item>Snow boots</item>
+        <item>Hats, gloves and scarves</item>
+        <item>Snow shovel and ice melt</item>
+        <item>Winter tires on the car</item>
+        <item>Car emergency kit: blanket, scraper, booster cables</item>
+        <item>Windshield washer fluid for winter</item>
+        <item>Heating check and furnace filter</item>
+        <item>Smoke and carbon monoxide alarms tested</item>
+        <item>Holiday plans and family activities</item>
+    </string-array>
+    <string-array name="tpl_items_school">
+        <item>Pencils, pens and erasers</item>
+        <item>Notebooks and folders</item>
+        <item>Ruler, scissors and glue stick</item>
+        <item>Backpack</item>
+        <item>Lunch box and water bottle</item>
+        <item>Indoor shoes</item>
+        <item>Clothes and uniform</item>
+        <item>School forms and permission slips signed</item>
+        <item>School schedule saved</item>
+        <item>Registration done</item>
+        <item>Extracurricular activities chosen</item>
+        <item>Labels on everything</item>
+    </string-array>
+    <string-array name="tpl_items_grocery">
+        <item>Fruit</item>
+        <item>Vegetables</item>
+        <item>Milk</item>
+        <item>Bread</item>
+        <item>Eggs</item>
+        <item>Rice or pasta</item>
+        <item>Snacks for lunches</item>
+        <item>Cleaning supplies</item>
+        <item>Reusable bags</item>
+    </string-array>
+    <string-array name="tpl_items_travel">
+        <item>Travel documents ready</item>
+        <item>Clothes for each day</item>
+        <item>Pyjamas</item>
+        <item>Toothbrushes and toiletries</item>
+        <item>Medicines</item>
+        <item>Phone chargers</item>
+        <item>Snacks and water bottles</item>
+        <item>Books and games for the trip</item>
+        <item>Someone to care for plants or pets</item>
+        <item>Lock the doors and windows</item>
+    </string-array>
+    <string-array name="tpl_items_birthday">
+        <item>Choose the date</item>
+        <item>Guest list</item>
+        <item>Invitations sent</item>
+        <item>Cake or treats</item>
+        <item>Decorations</item>
+        <item>Food and drinks</item>
+        <item>Games and activities</item>
+        <item>Gifts wrapped</item>
+        <item>Thank-you notes</item>
+    </string-array>
+    <string-array name="tpl_items_first_aid">
+        <item>Adhesive bandages, large and small</item>
+        <item>Gauze and medical tape</item>
+        <item>Antiseptic wipes</item>
+        <item>Instant cold packs</item>
+        <item>Tweezers and scissors</item>
+        <item>Thermometer</item>
+        <item>Disposable gloves</item>
+        <item>Everyday medicines checked (follow the label and your pharmacist)</item>
+        <item>Expiry dates checked</item>
+    </string-array>
+    <string-array name="tpl_items_emergency">
+        <item>Water for 3 days</item>
+        <item>Food that keeps for 3 days</item>
+        <item>Flashlight and spare batteries</item>
+        <item>Battery or wind-up radio</item>
+        <item>First-aid kit</item>
+        <item>Phone chargers and a power bank</item>
+        <item>Warm blankets</item>
+        <item>Copies of important contacts written down</item>
+        <item>Family meeting place agreed</item>
+        <item>Pet supplies</item>
+    </string-array>
+    <string-array name="tpl_items_household">
+        <item>Change light bulbs that are out</item>
+        <item>Test smoke and carbon monoxide alarms</item>
+        <item>Clean the fridge and freezer</item>
+        <item>Check under sinks for leaks</item>
+        <item>Clean dryer lint and vents</item>
+        <item>Replace the furnace filter</item>
+        <item>Tidy and organize storage spaces</item>
+        <item>Check the first-aid and emergency kits</item>
+    </string-array>
+    <string-array name="tpl_items_celebration">
+        <item>Pick a date that suits everyone</item>
+        <item>Invite family and friends</item>
+        <item>Plan the food</item>
+        <item>Decorations</item>
+        <item>Music and games</item>
+        <item>Photos and memories</item>
+        <item>Help with tidying up</item>
+    </string-array>
+</resources>

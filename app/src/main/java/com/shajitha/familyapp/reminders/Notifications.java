@@ -151,7 +151,7 @@ public final class Notifications {
 
     /** Shows a reminder if alerts are turned on and allowed. Returns whether it was shown. */
     public static boolean showReminder(@NonNull Context context, @NonNull Reminder r) {
-        if (!ReminderSettings.alertsEnabled(context) || !allowed(context)) {
+        if (!ReminderSettings.alertsEnabled(context) || !allowed(context) || !ReminderSettings.areaAlerts(context, r)) {
             return false;
         }
         ensureChannels(context);
@@ -195,8 +195,8 @@ public final class Notifications {
         }
     }
 
-    /** "Due today", "Due tomorrow", "Due in 7 days", "Overdue". */
-    static String dueText(Context context, String dueDate, long now) {
+    /** "Today", "Tomorrow", "Coming up in 7 days", or (gently) "Whenever you're ready" once the date has passed. */
+    public static String dueText(Context context, String dueDate, long now) {
         Recurrence.Day due = Recurrence.Day.parse(dueDate);
         if (due == null) {
             return "";

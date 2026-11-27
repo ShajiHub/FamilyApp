@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Show done and archived (3)" / "Hide done and archived". -->
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/remindersShowAll"
+    style="@style/Widget.FamilyApp.Button.Text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_l" />

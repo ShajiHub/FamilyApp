@@ -179,10 +179,10 @@ public class ReminderSchedulingTest {
         assertEquals(1, list.size());
         Notification n = list.get(0);
         assertEquals("Dentist", n.extras.getString(NotificationCompat.EXTRA_TITLE));
-        assertEquals("Due in 7 days · for Mia", n.extras.getString(NotificationCompat.EXTRA_TEXT));
+        assertEquals("Coming up in 7 days · for Mia", n.extras.getString(NotificationCompat.EXTRA_TEXT));
         assertEquals("details hidden on the lock screen", Notification.VISIBILITY_PRIVATE, n.visibility);
         assertNotNull(n.publicVersion);
-        assertEquals("You have a reminder", n.publicVersion.extras.getString(NotificationCompat.EXTRA_TEXT));
+        assertEquals("A little reminder from FamilyApp", n.publicVersion.extras.getString(NotificationCompat.EXTRA_TEXT));
         assertFalse(n.publicVersion.extras.toString().contains("Dentist"));
         assertFalse("notes never shown", n.extras.toString().contains("Private note"));
         assertEquals(2, n.actions.length);

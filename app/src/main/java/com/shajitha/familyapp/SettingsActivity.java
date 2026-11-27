@@ -74,6 +74,7 @@ public class SettingsActivity extends BaseActivity {
         findViewById(R.id.previewChime).setOnClickListener(v -> com.shajitha.familyapp.reminders.Sounds.playChime(this));
 
         findViewById(R.id.settingAlertTime).setOnClickListener(v -> pickAlertTime());
+        findViewById(R.id.settingAreas).setOnClickListener(v -> pickAreas());
         findViewById(R.id.exactAllow).setOnClickListener(v -> openExactAlarmSettings());
         findViewById(R.id.openNotificationSettings).setOnClickListener(v -> openNotificationSettings());
 
@@ -165,6 +166,7 @@ public class SettingsActivity extends BaseActivity {
     private void refresh() {
         String time = ReminderSettings.alertTime(this);
         ((TextView) findViewById(R.id.alertTimeValue)).setText(formatTime(time));
+        ((TextView) findViewById(R.id.settingAreasValue)).setText(areasText());
         boolean blocked = (alerts.isChecked() || timerAlerts.isChecked() || Build.VERSION.SDK_INT < 33)
                 && !Notifications.allowed(this);
         findViewById(R.id.notificationsBlocked).setVisibility(blocked ? View.VISIBLE : View.GONE);
@@ -179,6 +181,46 @@ public class SettingsActivity extends BaseActivity {
         } catch (Exception e) {
             return hhmm;
         }
+    }
+
+    /** Turn alerts on or off for whole areas (Documents, Bills, Pets, ...). Reminders themselves stay. */
+    void pickAreas() {
+        java.util.List<com.shajitha.familyapp.reminders.ReminderTemplates.Area> areas =
+                com.shajitha.familyapp.reminders.ReminderTemplates.AREAS;
+        java.util.Set<String> quiet = ReminderSettings.quietAreas(this);
+        String[] names = new String[areas.size()];
+        boolean[] on = new boolean[areas.size()];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = getString(areas.get(i).name);
+            on[i] = !quiet.contains(areas.get(i).key);
+        }
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.settings_areas_title)
+                .setMultiChoiceItems(names, on, (d, which, checked) -> on[which] = checked)
+                .setPositiveButton(R.string.save, (d, w) -> {
+                    java.util.Set<String> off = new java.util.HashSet<>();
+                    for (int i = 0; i < on.length; i++) {
+                        if (!on[i]) {
+                            off.add(areas.get(i).key);
+                        }
+                    }
+                    ReminderSettings.setQuietAreas(this, off);
+                    refresh();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /** "All areas can send alerts" or "Alerts off for: Bills & budget, Pet care". */
+    String areasText() {
+        java.util.Set<String> quiet = ReminderSettings.quietAreas(this);
+        StringBuilder sb = new StringBuilder();
+        for (com.shajitha.familyapp.reminders.ReminderTemplates.Area a : com.shajitha.familyapp.reminders.ReminderTemplates.AREAS) {
+            if (quiet.contains(a.key)) {
+                sb.append(sb.length() == 0 ? "" : ", ").append(getString(a.name));
+            }
+        }
+        return sb.length() == 0 ? getString(R.string.settings_areas_all_on) : getString(R.string.settings_areas_some_off, sb);
     }
 
     private void pickAlertTime() {

@@ -173,7 +173,8 @@ public class ScreensTest {
         }
         for (Class<?> screen : new Class<?>[]{viewCalendar.class, MealPlanner.class, FamAppTimer.class,
                 ToDoList.class, CheckList.class, ActivitiesFun.class, Reading.class, ChoresActivity.class,
-                HabitsActivity.class, FamilyMembersActivity.class, com.shajitha.familyapp.whiteboard.WhiteboardActivity.class}) {
+                HabitsActivity.class, FamilyMembersActivity.class, com.shajitha.familyapp.whiteboard.WhiteboardActivity.class,
+                RemindersActivity.class, ChecklistTemplatesActivity.class}) {
             assertTrue(screen.getSimpleName(), reachable.contains(screen));
         }
         for (Features.Category category : Features.Category.values()) {
@@ -412,62 +413,6 @@ public class ScreensTest {
         }
     }
 
-    // ---------- Checklist ----------
-
-    @Test
-    public void checklistTicksAndItemsAreSaved() {
-        try (ActivityScenario<CheckList> scenario = ActivityScenario.launch(CheckList.class)) {
-            scenario.onActivity(a -> {
-                idle();
-                RecyclerView rv = a.findViewById(R.id.rView);
-                // Row 0 is the Winter heading, row 1 "Winter boots".
-                assertEquals("Winter", ((TextView) row(rv, 0).itemView.findViewById(R.id.sectionTitle)).getText());
-                row(rv, 1).itemView.performClick();
-                idle();
-                assertTrue(((CheckBox) row(rv, 1).itemView.findViewById(R.id.rowCheck)).isChecked());
-                assertEquals("1 of 7 packed", ((TextView) row(rv, 0).itemView.findViewById(R.id.sectionProgress)).getText());
-
-                // Add an item to Winter with its "Add new item" field (row 8, after the 7 items).
-                View addRow = row(rv, 8).itemView;
-                ((EditText) addRow.findViewById(R.id.addItemInput)).setText("  ");
-                addRow.findViewById(R.id.addItemButton).performClick(); // blank: ignored
-                ((EditText) addRow.findViewById(R.id.addItemInput)).setText("Hand warmers");
-                addRow.findViewById(R.id.addItemButton).performClick();
-                idle();
-                assertEquals("1 of 8 packed", ((TextView) row(rv, 0).itemView.findViewById(R.id.sectionProgress)).getText());
-                assertTrue(dao().checklistItemsNow().stream().anyMatch(i -> i.title.equals("Hand warmers") && i.section.equals("Winter Checklist")));
-                assertEquals("field cleared", "", ((EditText) row(rv, 9).itemView.findViewById(R.id.addItemInput)).getText().toString());
-
-                // Rename and delete "Thermal wear" (row 2).
-                row(rv, 2).itemView.findViewById(R.id.rowEdit).performClick();
-                typeAndSave("Thermal underwear");
-                row(rv, 2).itemView.findViewById(R.id.rowDelete).performClick();
-                confirm(true);
-                assertFalse(dao().checklistItemsNow().stream().anyMatch(i -> i.title.startsWith("Thermal")));
-            });
-        }
-        try (ActivityScenario<CheckList> scenario = ActivityScenario.launch(CheckList.class)) {
-            scenario.onActivity(a -> {
-                idle();
-                RecyclerView rv = a.findViewById(R.id.rView);
-                assertTrue("tick kept after reopening",
-                        ((CheckBox) row(rv, 1).itemView.findViewById(R.id.rowCheck)).isChecked());
-                // Untick all asks first, and keeps the items.
-                row(rv, 0).itemView.findViewById(R.id.sectionReset).performClick();
-                confirm(true);
-                assertEquals(0, dao().checklistItemsNow().stream().filter(i -> i.checked).count());
-                assertEquals(17, dao().checklistItemsNow().size());
-
-                // A new checklist of the family's own.
-                int footer = rv.getAdapter().getItemCount() - 1;
-                row(rv, footer).itemView.findViewById(R.id.newChecklist).performClick();
-                typeAndSave("Camping");
-                typeAndSave("Tent");
-                assertTrue(dao().checklistItemsNow().stream().anyMatch(i -> i.section.equals("Camping") && i.title.equals("Tent")));
-            });
-        }
-    }
-
     // ---------- Meal planner ----------
 
     @Test
@@ -686,8 +631,8 @@ public class ScreensTest {
     // ---------- Every screen ----------
 
     static final Class<?>[] SCREENS = {MainActivity.class, viewCalendar.class, MealPlanner.class,
-            FamAppTimer.class, ToDoList.class, CheckList.class, ChoresActivity.class, HabitsActivity.class,
-            com.shajitha.familyapp.whiteboard.WhiteboardActivity.class,
+            FamAppTimer.class, ToDoList.class, CheckList.class, ChecklistTemplatesActivity.class, RemindersActivity.class,
+            ChoresActivity.class, HabitsActivity.class, com.shajitha.familyapp.whiteboard.WhiteboardActivity.class,
             ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class,
             FamilyMembersActivity.class, SettingsActivity.class};
 

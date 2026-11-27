@@ -180,7 +180,7 @@ public class DatabaseMigrationTest {
                 db.execSQL("CREATE TABLE half_done (id INTEGER)");
                 throw new IllegalStateException("simulated upgrade failure");
             }
-        }, Migrations.MIGRATION_2_3};
+        }, Migrations.MIGRATION_2_3, Migrations.MIGRATION_3_4};
         try {
             AppDatabase.get(context);
             fail("should not open");
@@ -198,17 +198,73 @@ public class DatabaseMigrationTest {
     }
 
     @Test
-    public void version1UpgradesAllTheWayTo3() throws Exception {
+    public void version1UpgradesAllTheWayToTheLatest() throws Exception {
         createVersion1("chain.db");
-        SupportSQLiteDatabase v3 = helper.runMigrationsAndValidate("chain.db", 3, true,
-                Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3);
-        assertEquals(List.of("3"), rows(v3, "SELECT COUNT(*) FROM todo_tasks"));
-        assertEquals(List.of("0"), rows(v3, "SELECT COUNT(*) FROM drawings"));
+        SupportSQLiteDatabase v4 = helper.runMigrationsAndValidate("chain.db", 4, true,
+                Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3, Migrations.MIGRATION_3_4);
+        assertEquals(List.of("3"), rows(v4, "SELECT COUNT(*) FROM todo_tasks"));
+        assertEquals(List.of("0"), rows(v4, "SELECT COUNT(*) FROM drawings"));
+        // The tick on Gloves and the family's own Camping list are kept, now as checklists.
+        assertEquals(List.of("Winter|SEASON|winter", "Camping|CUSTOM|NULL"),
+                rows(v4, "SELECT name, kind, template FROM checklists ORDER BY position"));
+        assertEquals(List.of("1|Winter Checklist|Gloves|1|Winter", "2|Camping|Tent|0|Camping"),
+                rows(v4, "SELECT i.id, i.section, i.title, i.checked, c.name FROM checklist_items i "
+                        + "JOIN checklists c ON c.id = i.checklistId ORDER BY i.id"));
+        v4.close();
+    }
+
+    /** A realistic version-3 database: the three original lists, a list of the family's own, reminders. */
+    @Test
+    public void version3UpgradesTo4KeepingEveryChecklistAndTick() throws Exception {
+        SupportSQLiteDatabase v3 = helper.createDatabase("v3.db", 3);
+        v3.execSQL("INSERT INTO checklist_items (id, section, title, checked, position) VALUES "
+                + "(1, 'Winter Checklist', 'Winter boots', 1, 0), (2, 'Winter Checklist', 'Hand warmers', 0, 7), "
+                + "(3, 'Summer Checklist', 'Swimsuits', 0, 3), (4, 'FirstAid kit Checklist', 'Lip balm', 1, 1), "
+                + "(5, 'Camping', 'Tent', 1, 0), (6, 'Camping', 'Torch ''big''', 0, 1)");
+        v3.execSQL("INSERT INTO reminders (id, title, type, memberId, dueDate, dueTime, notes, repeatUnit, repeatInterval, "
+                + "anchorDay, alertDays, alertTime, snoozedUntil, status, completedAt, createdAt, updatedAt) VALUES "
+                + "(1, 'Passport', 'RENEWAL', NULL, '2027-05-01', NULL, NULL, 'NONE', 1, 1, '30,7', NULL, NULL, 'ACTIVE', NULL, 1, 1), "
+                + "(2, 'Make the bed', 'CHORE', NULL, '2026-11-27', NULL, NULL, 'DAY', 1, 27, '', NULL, NULL, 'ACTIVE', NULL, 1, 1), "
+                + "(3, 'Dentist', 'APPOINTMENT', NULL, '2026-12-03', '10:00', NULL, 'NONE', 1, 3, '1', NULL, NULL, 'ACTIVE', NULL, 1, 1), "
+                + "(4, 'Test reminder', 'OTHER', NULL, '2026-11-20', NULL, NULL, 'NONE', 1, 20, '0', NULL, NULL, 'COMPLETED', 5, 1, 1)");
+        List<String> itemsBefore = rows(v3, "SELECT id, section, title, checked, position FROM checklist_items ORDER BY id");
+        List<String> remindersBefore = rows(v3, "SELECT id, title, type, dueDate, dueTime, alertDays, status FROM reminders ORDER BY id");
         v3.close();
+
+        SupportSQLiteDatabase v4 = helper.runMigrationsAndValidate("v3.db", 4, true, Migrations.MIGRATION_3_4);
+        assertEquals("every item, tick and order kept exactly", itemsBefore,
+                rows(v4, "SELECT id, section, title, checked, position FROM checklist_items ORDER BY id"));
+        assertEquals(remindersBefore, rows(v4, "SELECT id, title, type, dueDate, dueTime, alertDays, status FROM reminders ORDER BY id"));
+        assertEquals(List.of("Winter|SEASON|winter|0", "Summer|SEASON|summer|0", "First-aid kit|LIST|first_aid|0", "Camping|CUSTOM|NULL|0"),
+                rows(v4, "SELECT name, kind, template, archived FROM checklists ORDER BY position"));
+        assertEquals(List.of("1|Winter", "2|Winter", "3|Summer", "4|First-aid kit", "5|Camping", "6|Camping"),
+                rows(v4, "SELECT i.id, c.name FROM checklist_items i JOIN checklists c ON c.id = i.checklistId ORDER BY i.id"));
+        assertEquals(List.of("NULL", "NULL", "NULL", "NULL", "NULL", "NULL"), rows(v4, "SELECT note FROM checklist_items"));
+        assertEquals(List.of("1|DOCUMENTS", "2|NULL", "3|HEALTH", "4|OTHER"),
+                rows(v4, "SELECT id, category FROM reminders ORDER BY id"));
+        v4.close();
     }
 
     @Test
-    public void version2UpgradesTo3WithItsOwnCheckedBackup() throws Exception {
+    public void version3UpgradesWithItsOwnCheckedBackupAndTheAppSeesEveryList() throws Exception {
+        SupportSQLiteDatabase v3 = helper.createDatabase(AppDatabase.NAME, 3);
+        v3.execSQL("INSERT INTO checklist_items (id, section, title, checked, position) VALUES "
+                + "(1, 'Winter Checklist', 'Gloves', 1, 0), (2, 'Camping', 'Tent', 0, 0)");
+        v3.close();
+        FamilyDao dao = AppDatabase.get(context).dao();
+        File backup = DatabaseGuard.backupFile(context, AppDatabase.NAME, 3);
+        assertTrue("version-3 safety copy made", backup.exists());
+        assertTrue(DatabaseGuard.verify(backup, 3, null));
+        List<Checklist> lists = dao.checklistsNow();
+        assertEquals(2, lists.size());
+        assertEquals("Winter", lists.get(0).name);
+        assertTrue(dao.itemsOfNow(lists.get(0).id).get(0).checked);
+        assertEquals("Tent", dao.itemsOfNow(lists.get(1).id).get(0).title);
+        assertEquals("nothing is left unlinked", 0, dao.unlinkedSections().size());
+    }
+
+    @Test
+    public void version2UpgradesWithItsOwnCheckedBackup() throws Exception {
         SupportSQLiteDatabase v2 = helper.createDatabase(AppDatabase.NAME, 2);
         v2.execSQL("INSERT INTO family_members (id, name, avatar, colorIndex, role, position, archived, createdAt) "
                 + "VALUES (1, 'Mia', '👧', 1, 'CHILD', 0, 0, 1)");
@@ -228,6 +284,7 @@ public class DatabaseMigrationTest {
         assertEquals("Library books", dao.reminderNow(1).title);
         assertEquals(1, dao.historyNow(1).size());
         assertTrue(dao.drawingsNow().isEmpty());
+        assertEquals("the old library reminder gets the Library area", "LIBRARY", dao.reminderNow(1).category);
         assertEquals("the recovery screen offers the newest copy", 2,
                 DatabaseGuard.newestBackupVersion(context, AppDatabase.NAME, AppDatabase.VERSION));
     }

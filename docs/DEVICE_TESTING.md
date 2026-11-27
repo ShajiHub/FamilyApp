@@ -56,12 +56,9 @@ If the previous version (1.1) is installed with some data in it:
 - [ ] Edit and delete a task (delete asks first).
 - [ ] "Clear completed" asks first, then removes only ticked tasks.
 
-## 7. Checklists
+## 7. Checklists and Reminders
 
-- [ ] Tick items; the heading shows "x of y packed".
-- [ ] Add, edit and delete items (delete asks first).
-- [ ] Untick all (↺) asks first and keeps the items.
-- [ ] "New checklist" creates your own list.
+See `docs/PHASE4_DEVICE_TESTING.md`.
 
 ## 8. Creative Whiteboard
 

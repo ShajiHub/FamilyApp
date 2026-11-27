@@ -73,6 +73,7 @@ public class viewCalendar extends BaseActivity {
         });
         LiveData<List<ScheduleEvent>> events = Transformations.switchMap(selectedDay, dao::eventsOn);
         events.observe(this, this::showEvents);
+        Transformations.switchMap(selectedDay, dao::familyRemindersOn).observe(this, this::showReminders);
         LiveData<String> month = Transformations.distinctUntilChanged(
                 Transformations.map(selectedDay, day -> day.substring(0, 8)));
         Transformations.switchMap(month, dao::eventCountInMonth).observe(this, count -> {
@@ -139,6 +140,24 @@ public class viewCalendar extends BaseActivity {
             list.addView(card);
         }
         empty.setVisibility(events.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    /** Family reminders due on the selected day; tapping one opens Reminders & Renewals. */
+    private void showReminders(List<com.shajitha.familyapp.data.Reminder> reminders) {
+        LinearLayout box = findViewById(R.id.scheduleReminders);
+        box.removeAllViews();
+        findViewById(R.id.scheduleRemindersTitle).setVisibility(reminders.isEmpty() ? View.GONE : View.VISIBLE);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (com.shajitha.familyapp.data.Reminder r : reminders) {
+            View row = inflater.inflate(R.layout.item_today_row, box, false);
+            ((android.widget.ImageView) row.findViewById(R.id.todayIcon)).setImageResource(
+                    com.shajitha.familyapp.reminders.ReminderTemplates.area(
+                            com.shajitha.familyapp.reminders.ReminderTemplates.areaOf(r)).icon);
+            String text = r.dueTime == null ? r.title : formatTime(r.dueTime) + " · " + r.title;
+            ((TextView) row.findViewById(R.id.todayText)).setText(text);
+            row.setOnClickListener(v -> startActivity(RemindersActivity.intent(this, null)));
+            box.addView(row);
+        }
     }
 
     /**

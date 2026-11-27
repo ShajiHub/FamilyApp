@@ -4,7 +4,8 @@
      and WorkManager's schedule, which rebuilds itself. -->
 <full-backup-content>
     <exclude domain="database" path="family-v1-backup.db" />
-        <exclude domain="database" path="family-v2-backup.db" />
+    <exclude domain="database" path="family-v2-backup.db" />
+    <exclude domain="database" path="family-v3-backup.db" />
     <exclude domain="database" path="family-replaced.db" />
     <exclude domain="database" path="androidx.work.workdb" />
     <exclude domain="database" path="androidx.work.workdb-wal" />

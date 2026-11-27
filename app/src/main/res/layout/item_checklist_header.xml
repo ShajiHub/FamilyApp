@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Top of one checklist: who it's for, progress, and a short tip. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/space_s"
+    android:paddingBottom="@dimen/space_s">
+
+    <TextView
+        android:id="@+id/listArchivedNote"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginBottom="@dimen/space_s"
+        android:text="@string/list_archived_note"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/listFor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/listProgressText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textColor="?attr/colorOnBackground" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/listProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:importantForAccessibility="no"
+        app:trackCornerRadius="4dp" />
+
+    <TextView
+        style="@style/FamilyApp.Hint"
+        android:layout_marginTop="@dimen/space_s"
+        android:text="@string/list_hold_hint" />
+</LinearLayout>

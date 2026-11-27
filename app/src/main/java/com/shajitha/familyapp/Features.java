@@ -79,14 +79,21 @@ public final class Features {
         @DrawableRes public final int icon;
         /** The screen to open, or null for a feature that is planned but not built yet ("Coming soon"). */
         @Nullable public final Class<?> screen;
+        /** For Reminders shortcuts: the area to show (for example LIBRARY), or null. */
+        @Nullable public final String area;
 
         Feature(Category category, int id, int title, int subtitle, int icon, @Nullable Class<?> screen) {
+            this(category, id, title, subtitle, icon, screen, null);
+        }
+
+        Feature(Category category, int id, int title, int subtitle, int icon, @Nullable Class<?> screen, @Nullable String area) {
             this.category = category;
             this.id = id;
             this.title = title;
             this.subtitle = subtitle;
             this.icon = icon;
             this.screen = screen;
+            this.area = area;
         }
 
         public boolean isAvailable() {
@@ -103,19 +110,24 @@ public final class Features {
             new Feature(Category.DAILY_LIFE, R.id.feat_habits, R.string.feat_habits, R.string.feat_habits_sub, R.drawable.ic_wb_sunny, HabitsActivity.class),
             // Family Planner
             new Feature(Category.FAMILY_PLANNER, R.id.feat_schedule, R.string.title_schedule, R.string.home_schedule_sub, R.drawable.ic_calendar_month, viewCalendar.class),
-            new Feature(Category.FAMILY_PLANNER, R.id.feat_reminders, R.string.feat_reminders, R.string.feat_reminders_sub, R.drawable.ic_schedule, null),
-            new Feature(Category.FAMILY_PLANNER, R.id.feat_library, R.string.feat_library, R.string.feat_library_sub, R.drawable.ic_auto_stories, null),
+            new Feature(Category.FAMILY_PLANNER, R.id.feat_reminders, R.string.feat_reminders, R.string.feat_reminders_sub, R.drawable.ic_schedule, RemindersActivity.class),
+            new Feature(Category.FAMILY_PLANNER, R.id.feat_library, R.string.feat_library, R.string.feat_library_sub, R.drawable.ic_auto_stories, RemindersActivity.class,
+                    com.shajitha.familyapp.reminders.ReminderTemplates.LIBRARY),
             // Smart Checklists
             new Feature(Category.CHECKLISTS, R.id.feat_checklists, R.string.title_checklist, R.string.home_checklist_sub, R.drawable.ic_fact_check, CheckList.class),
-            new Feature(Category.CHECKLISTS, R.id.feat_templates, R.string.feat_templates, R.string.feat_templates_sub, R.drawable.ic_cake, null),
+            new Feature(Category.CHECKLISTS, R.id.feat_templates, R.string.feat_templates, R.string.feat_templates_sub, R.drawable.ic_cake, ChecklistTemplatesActivity.class),
             // Hobbies & Business
             new Feature(Category.HOBBIES, R.id.feat_whiteboard, R.string.title_whiteboard, R.string.feat_whiteboard_sub, R.drawable.ic_palette, com.shajitha.familyapp.whiteboard.WhiteboardActivity.class),
             new Feature(Category.HOBBIES, R.id.feat_activities, R.string.title_activities, R.string.home_activities_sub, R.drawable.ic_sports_handball, ActivitiesFun.class),
+            new Feature(Category.HOBBIES, R.id.feat_hobby_reminders, R.string.feat_hobby_reminders, R.string.feat_hobby_reminders_sub, R.drawable.ic_notifications, RemindersActivity.class,
+                    com.shajitha.familyapp.reminders.ReminderTemplates.HOBBIES),
             new Feature(Category.HOBBIES, R.id.feat_projects, R.string.feat_projects, R.string.feat_projects_sub, R.drawable.ic_palette, null),
             new Feature(Category.HOBBIES, R.id.feat_business, R.string.feat_business, R.string.feat_business_sub, R.drawable.ic_lightbulb, null),
             new Feature(Category.HOBBIES, R.id.feat_resources, R.string.feat_resources, R.string.feat_resources_sub, R.drawable.ic_share, null),
             // Family Hub
             new Feature(Category.FAMILY_HUB, R.id.feat_members, R.string.feat_members, R.string.feat_members_sub, R.drawable.ic_family_restroom, FamilyMembersActivity.class),
+            new Feature(Category.FAMILY_HUB, R.id.feat_family_time, R.string.feat_family_time, R.string.feat_family_time_sub, R.drawable.ic_favorite, RemindersActivity.class,
+                    com.shajitha.familyapp.reminders.ReminderTemplates.FAMILY),
             new Feature(Category.FAMILY_HUB, R.id.feat_rules, R.string.feat_rules, R.string.feat_rules_sub, R.drawable.ic_fact_check, null),
             // Learning Hub
             new Feature(Category.LEARNING, R.id.feat_reading, R.string.title_reading, R.string.home_reading_sub, R.drawable.ic_auto_stories, Reading.class),

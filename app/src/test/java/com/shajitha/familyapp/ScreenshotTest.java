@@ -139,6 +139,23 @@ public class ScreenshotTest {
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
+        // Family reminders from the templates, and a back-to-school list for Mia.
+        com.shajitha.familyapp.data.Recurrence.Day day = com.shajitha.familyapp.data.Recurrence.Day.parse(today);
+        Object[][] samples = {{"DOCUMENTS", 0, 150, 0L}, {"LIBRARY", 0, 2, 2L}, {"HEALTH", 2, 1, 1L},
+                {"HOME", 0, 0, 0L}, {"BILLS", 0, 12, 0L}, {"FAMILY", 0, -2, 0L}};
+        for (Object[] sample : samples) {
+            com.shajitha.familyapp.reminders.ReminderTemplates.Template t = com.shajitha.familyapp.reminders.ReminderTemplates
+                    .area((String) sample[0]).templates(c).get((Integer) sample[1]);
+            com.shajitha.familyapp.data.Reminder r = t.newReminder(day.plusDays((Integer) sample[2]).toString());
+            long who = (Long) sample[3];
+            r.memberId = who == 0 || first == 0 ? null : first + who;
+            if (sample[0].equals("LIBRARY")) {
+                r.title = "Return \"Matilda\"";
+            }
+            com.shajitha.familyapp.reminders.Reminders.save(c, r);
+        }
+        com.shajitha.familyapp.ChecklistTemplates.create(c, dao, com.shajitha.familyapp.ChecklistTemplates.find("school"),
+                "Back to school", first == 0 ? null : first + 1);
         com.shajitha.familyapp.data.MealSelection meal = new com.shajitha.familyapp.data.MealSelection();
         meal.date = today;
         meal.food = "Burger";
@@ -151,14 +168,30 @@ public class ScreenshotTest {
     }
 
     static final Class<?>[] SCREENS = {MainActivity.class, viewCalendar.class, MealPlanner.class,
-            FamAppTimer.class, ToDoList.class, CheckList.class, ChoresActivity.class, HabitsActivity.class,
-            com.shajitha.familyapp.whiteboard.WhiteboardActivity.class,
+            FamAppTimer.class, ToDoList.class, CheckList.class, ChecklistTemplatesActivity.class, RemindersActivity.class,
+            ChoresActivity.class, HabitsActivity.class, com.shajitha.familyapp.whiteboard.WhiteboardActivity.class,
             ActivitiesFun.class, Reading.class, ContactUs.class, AboutActivity.class,
             FamilyMembersActivity.class, SettingsActivity.class};
 
     static void capture(String prefix) {
         for (Class<?> screen : SCREENS) {
             capture(prefix, screen, null);
+        }
+        // One checklist (Winter, with its photo and two ticks).
+        android.content.Context app = androidx.test.core.app.ApplicationProvider.getApplicationContext();
+        long winter = com.shajitha.familyapp.data.AppDatabase.get(app).dao().checklistsNow().get(0).id;
+        try (ActivityScenario<Activity> scenario = ActivityScenario.launch(ChecklistActivity.intent(app, winter))) {
+            scenario.onActivity(activity -> {
+                for (int i = 0; i < 20; i++) {
+                    shadowOf(Looper.getMainLooper()).idle();
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+                shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(300));
+                save(activity, prefix + "_ChecklistActivity");
+            });
         }
         for (Features.Category category : Features.Category.values()) {
             android.content.Intent intent = HubActivity.intent(

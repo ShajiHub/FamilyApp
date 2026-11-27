@@ -78,7 +78,7 @@
     <string name="about_purpose_title">What FamilyApp is for</string>
     <string name="about_purpose">FamilyApp helps families organise everyday life, build healthy habits, share responsibilities, keep track of important dates, explore hobbies and learn together. It is designed for parents and children to use side by side.</string>
     <string name="about_privacy_title">Your privacy</string>
-    <string name="about_privacy">• Everything you enter stays on this phone. FamilyApp has no account, no ads and no tracking.\n• It works offline. Sharing, email and opening links use other apps on your phone, only when you choose to.\n• Pictures you save to the Gallery from the Creative Whiteboard stay in your phone\'s Gallery.\n• Android may include FamilyApp\'s data in your phone\'s backup if backup is turned on in your phone\'s settings.\n• Uninstalling FamilyApp or clearing its storage deletes the data saved in the app.</string>
+    <string name="about_privacy">• Everything you enter stays on this phone. FamilyApp has no account, no ads and no tracking.\n• It works offline. Sharing, email and opening links use other apps on your phone, only when you choose to.\n• Pictures you save to the Gallery from the Creative Whiteboard stay in your phone\'s Gallery.\n• Android may include FamilyApp\'s data in your phone\'s backup if backup is turned on in your phone\'s settings.\n• FamilyApp stores only what you type: names or nicknames, titles, dates and short notes. It never asks for ID, card, licence or account numbers, passwords, medical records, addresses or birthdays.\n• Uninstalling FamilyApp or clearing its storage deletes the data saved in the app.\n• If this phone is lost, broken or reset, FamilyApp\'s information can only come back if your phone\'s own Android backup was turned on. A FamilyApp backup you can save yourself is planned for a later version.</string>
     <string name="about_developer_title">Developer</string>
     <string name="about_credits_title">Credits</string>
     <string name="about_credits">FamilyApp is developed by Shajis Creative Labs.\nFont: Poppins, SIL Open Font License 1.1.\nIcons: Material Icons, Apache License 2.0.\nBuilt with open-source AndroidX, Material Components and Room libraries (Apache License 2.0).</string>
@@ -100,7 +100,7 @@
     <string name="home_meals_sub">Spin the wheel for lunch</string>
     <string name="home_timer_sub">Get ready, screen time, clean up</string>
     <string name="home_todo_sub">Family tasks to tick off</string>
-    <string name="home_checklist_sub">Packing and first-aid lists</string>
+    <string name="home_checklist_sub">Seasons, school, packing and more</string>
     <string name="home_activities_sub">Indoor and outdoor ideas</string>
     <string name="home_reading_sub">Books and pages read</string>
     <string name="home_contact_sub">Get in touch and credits</string>
@@ -134,20 +134,7 @@
     <string name="meal_wheel_description">Lunch wheel with %1$d foods</string>
 
     <!-- Checklists -->
-    <string name="checklist_winter">Winter</string>
-    <string name="checklist_summer">Summer</string>
-    <string name="checklist_first_aid">First-Aid Kit</string>
-    <string name="checklist_progress">%1$d of %2$d packed</string>
-    <string name="checklist_empty_section">No items yet</string>
     <string name="checklist_add_item">Add item</string>
-    <string name="checklist_edit_item">Edit item</string>
-    <string name="checklist_delete_item">Delete this item?</string>
-    <string name="checklist_item_hint">Item</string>
-    <string name="checklist_untick_all">Untick all</string>
-    <string name="checklist_untick_title">Untick everything in %1$s?</string>
-    <string name="checklist_untick_message">The items stay on the list; only the ticks are cleared.</string>
-    <string name="checklist_new">New checklist</string>
-    <string name="checklist_name_hint">Checklist name</string>
 
     <!-- Phone calendar -->
     <string name="events_add_to_phone">Also add to phone calendar</string>
@@ -335,7 +322,7 @@
     <string name="settings_alerts_summary">Notifications before appointments, renewals and other reminders</string>
     <string name="settings_alert_time">Alert time</string>
     <string name="settings_lock_details">Show details on the lock screen</string>
-    <string name="settings_lock_details_summary">Off: the lock screen only says \"You have a reminder\" until the phone is unlocked</string>
+    <string name="settings_lock_details_summary">Off: the lock screen only says \"A little reminder from FamilyApp\" until the phone is unlocked</string>
     <string name="settings_timer_alerts">Alert when the timer finishes</string>
     <string name="settings_timer_alerts_summary">Even when FamilyApp is closed</string>
     <string name="settings_exact_on">Exact timing is allowed.</string>
@@ -356,16 +343,16 @@
     <string name="channel_reminders_description">Appointments, renewals and other family reminders</string>
     <string name="channel_timer">Timer</string>
     <string name="channel_timer_description">When a routine timer finishes</string>
-    <string name="notify_private_text">You have a reminder</string>
+    <string name="notify_private_text">A little reminder from FamilyApp</string>
     <string name="notify_for_member">%1$s · for %2$s</string>
     <string name="notify_action_done">Done</string>
     <string name="notify_action_tomorrow">Tomorrow</string>
-    <string name="notify_due_today">Due today</string>
-    <string name="notify_due_tomorrow">Due tomorrow</string>
-    <string name="notify_overdue">Overdue</string>
+    <string name="notify_due_today">Today</string>
+    <string name="notify_due_tomorrow">Tomorrow</string>
+    <string name="notify_overdue">Whenever you\'re ready</string>
     <plurals name="notify_due_in">
-        <item quantity="one">Due in %1$d day</item>
-        <item quantity="other">Due in %1$d days</item>
+        <item quantity="one">Coming up in %1$d day</item>
+        <item quantity="other">Coming up in %1$d days</item>
     </plurals>
 
     <!-- Database recovery -->

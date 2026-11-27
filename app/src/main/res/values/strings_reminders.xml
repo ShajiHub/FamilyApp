@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reminders & Renewals: areas and optional templates (Phase 4). The order of each array matches
+     the suggestions in ReminderTemplates.java. -->
+<resources>
+    <!-- Areas -->
+    <string name="area_documents">Documents &amp; cards</string>
+    <string name="area_library">Library</string>
+    <string name="area_health">Health &amp; appointments</string>
+    <string name="area_home">Home &amp; safety</string>
+    <string name="area_school">School &amp; activities</string>
+    <string name="area_bills">Bills &amp; budget</string>
+    <string name="area_vehicle">Vehicle &amp; travel</string>
+    <string name="area_family">Family time</string>
+    <string name="area_pets">Pet care</string>
+    <string name="area_garden">Garden &amp; environment</string>
+    <string name="area_hobbies">Hobbies &amp; growth</string>
+    <string name="area_digital">Digital life</string>
+    <string name="area_food">Food &amp; supplies</string>
+    <string name="area_other">Other</string>
+
+    <string name="area_documents_note">Only the date is saved. Please don\'t enter passport, card, licence or account numbers. Renewal rules differ between countries, so check the dates that apply to you.</string>
+    <string name="area_library_note">Just the book title and its return date. No library card number is needed.</string>
+    <string name="area_health_note">A simple date reminder, not a medical record. Use the dates your healthcare provider gives you; FamilyApp doesn\'t suggest medical schedules.</string>
+    <string name="area_home_note">Suggested schedules only. For alarms, heating and other safety equipment, follow the manufacturer\'s instructions and local guidance.</string>
+    <string name="area_school_note">No school names or full names needed. A nickname is enough.</string>
+    <string name="area_bills_note">FamilyApp only reminds you. It never asks for bank or card details and never makes payments.</string>
+    <string name="area_vehicle_note">Use your own service intervals. No plate or vehicle numbers are needed.</string>
+    <string name="area_family_note">Friendly ideas for time together, whenever it suits you.</string>
+    <string name="area_pets_note">Simple care reminders. No veterinary records are needed.</string>
+    <string name="area_garden_note">Change the schedule to suit your plants and your weather.</string>
+    <string name="area_hobbies_note">A gentle nudge for things you enjoy. Skip any week you like.</string>
+    <string name="area_digital_note">FamilyApp never asks for passwords, codes or security answers, and never changes anything on your devices.</string>
+    <string name="area_food_note">Daily habits like drinking water are in Healthy Habits, and lunch ideas are in Meal Planner.</string>
+
+    <!-- Templates -->
+    <string-array name="tpl_documents">
+        <item>Passport renewal</item>
+        <item>Health card renewal</item>
+        <item>Driver\'s licence renewal</item>
+        <item>Vehicle registration renewal</item>
+        <item>Professional licence renewal</item>
+        <item>Membership renewal</item>
+        <item>Other document renewal</item>
+    </string-array>
+    <string-array name="tpl_library">
+        <item>Return a library book</item>
+        <item>Library card renewal</item>
+        <item>Library membership renewal</item>
+    </string-array>
+    <string-array name="tpl_health">
+        <item>Vaccination appointment</item>
+        <item>General check-up</item>
+        <item>Dental visit</item>
+        <item>Eye examination</item>
+        <item>Follow-up appointment</item>
+        <item>Haircut</item>
+        <item>Personal care appointment</item>
+    </string-array>
+    <string-array name="tpl_home">
+        <item>Test smoke alarms</item>
+        <item>Test carbon monoxide alarms</item>
+        <item>Replace the furnace filter</item>
+        <item>Heating and cooling maintenance</item>
+        <item>Check for water leaks</item>
+        <item>Appliance maintenance</item>
+        <item>Review the emergency kit</item>
+        <item>Check first-aid supplies</item>
+        <item>Seasonal home inspection</item>
+        <item>Clean and organize storage</item>
+    </string-array>
+    <string-array name="tpl_school">
+        <item>School registration deadline</item>
+        <item>Permission slip</item>
+        <item>School trip</item>
+        <item>Parent-teacher meeting</item>
+        <item>Homework or project due</item>
+        <item>Extracurricular activity</item>
+        <item>Sports practice</item>
+        <item>School event</item>
+        <item>Get school supplies ready</item>
+        <item>After-school program</item>
+    </string-array>
+    <string-array name="tpl_bills">
+        <item>Rent or mortgage payment</item>
+        <item>Electricity and water bills</item>
+        <item>Internet and phone bills</item>
+        <item>Insurance renewal</item>
+        <item>Subscription renewal or cancellation</item>
+        <item>Warranty ends</item>
+        <item>Household budget review</item>
+        <item>Yearly financial planning</item>
+    </string-array>
+    <string-array name="tpl_vehicle">
+        <item>Vehicle service</item>
+        <item>Oil change</item>
+        <item>Tire check</item>
+        <item>Seasonal tire change</item>
+        <item>Vehicle insurance renewal</item>
+        <item>Parking permit renewal</item>
+        <item>Transit pass renewal</item>
+        <item>Bicycle maintenance</item>
+        <item>Other transportation task</item>
+    </string-array>
+    <string-array name="tpl_family">
+        <item>Family game night</item>
+        <item>Outdoor activity together</item>
+        <item>Family walk</item>
+        <item>Visit grandparents or relatives</item>
+        <item>Birthday</item>
+        <item>Anniversary</item>
+        <item>Family meeting</item>
+        <item>Read together</item>
+        <item>Screen-free family time</item>
+        <item>Family celebration</item>
+        <item>Community activity</item>
+    </string-array>
+    <string-array name="tpl_pets">
+        <item>Pet feeding routine</item>
+        <item>Pet grooming</item>
+        <item>Vet appointment</item>
+        <item>Pet vaccination appointment</item>
+        <item>Buy pet supplies</item>
+        <item>Pet care time</item>
+    </string-array>
+    <string-array name="tpl_garden">
+        <item>Water the plants</item>
+        <item>Plant seeds</item>
+        <item>Garden maintenance</item>
+        <item>Seasonal planting</item>
+        <item>Composting</item>
+        <item>Recycling day</item>
+        <item>Community cleanup</item>
+        <item>Outdoor family project</item>
+    </string-array>
+    <string-array name="tpl_hobbies">
+        <item>Reading time</item>
+        <item>Drawing or painting</item>
+        <item>Music practice</item>
+        <item>Craft project</item>
+        <item>Sewing</item>
+        <item>Gardening time</item>
+        <item>Creative Whiteboard time</item>
+        <item>Learn a new skill</item>
+        <item>Programming practice</item>
+        <item>Personal project</item>
+        <item>Review small business goals</item>
+    </string-array>
+    <string-array name="tpl_digital">
+        <item>Back up important files</item>
+        <item>Update apps and devices</item>
+        <item>Review account security</item>
+        <item>Organize digital files</item>
+        <item>Review subscriptions</item>
+        <item>Check device storage</item>
+        <item>Update important contact information</item>
+    </string-array>
+    <string-array name="tpl_food">
+        <item>Grocery shopping</item>
+        <item>Meal preparation</item>
+        <item>Check food expiry dates</item>
+        <item>Plan healthy meals</item>
+        <item>Restock household supplies</item>
+        <item>Replace toothbrushes</item>
+        <item>Seasonal clothing check</item>
+        <item>Pack lunches</item>
+    </string-array>
+    <!-- Reminders & Renewals screen -->
+    <string name="reminders_intro">Add a reminder in a few seconds and get a gentle nudge when it\'s near. Pick a ready-made idea or start from scratch.</string>
+    <string name="reminders_add">Add a reminder</string>
+    <string name="reminders_empty">Nothing here yet. Tap Add a reminder to choose from ideas like a passport renewal, a library book or a dentist visit.</string>
+    <string name="reminders_filter_all">All</string>
+    <string name="reminders_choose_area">What kind of reminder?</string>
+    <string name="reminders_blank">My own reminder</string>
+    <string name="reminders_section_ready">Whenever you\'re ready</string>
+    <string name="reminders_section_coming_up">Coming up</string>
+    <string name="reminders_section_later">Later on</string>
+    <string name="reminders_section_done">Done</string>
+    <string name="reminders_show_done">Show done and archived (%1$d)</string>
+    <string name="reminders_hide_done">Hide done and archived</string>
+    <string name="reminders_done">Done</string>
+    <string name="reminders_returned">Returned</string>
+    <string name="reminders_renewed">Renewed</string>
+    <string name="reminders_restore">Restore</string>
+    <string name="reminders_later">Remind me tomorrow</string>
+    <string name="reminders_later_done">OK, a little reminder tomorrow.</string>
+    <string name="reminders_move">Choose another date</string>
+    <string name="reminders_new_expiry_date">New expiry date</string>
+    <string name="reminders_new_return_date">New return date</string>
+    <string name="reminders_history">History</string>
+    <string name="reminders_history_title">History: %1$s</string>
+    <string name="reminders_history_empty">Nothing recorded yet. Dates are added here when you tick Done, Returned or Renewed.</string>
+    <string name="reminders_delete_title">Delete this reminder?</string>
+    <string name="reminders_delete_message">%1$s will be deleted. Its history is kept. To keep it out of the way instead, use Archive.</string>
+    <string name="reminders_done_label">Done</string>
+    <string name="reminders_no_alert_short">No alert</string>
+
+    <!-- Reminder form -->
+    <string name="reminder_add_title">New reminder</string>
+    <string name="reminder_edit_title">Edit reminder</string>
+    <string name="reminder_title_hint">What to remember</string>
+    <string name="reminder_date">Date</string>
+    <string name="reminder_time_optional">Time (optional)</string>
+    <string name="reminder_notify">Send me a reminder</string>
+    <string name="reminder_no_alerts">No notification. It will still show in your list.</string>
+    <string name="reminder_alert_summary">%1$s, at %2$s</string>
+    <string name="reminder_more_options">More options</string>
+    <string name="reminder_fewer_options">Fewer options</string>
+    <string name="reminder_alert_days">When to remind me</string>
+    <string name="reminder_area">Kind of reminder</string>
+    <string name="reminder_note_hint">Short note (optional)</string>
+    <string name="reminder_privacy_hint">Please don\'t enter ID, card, licence or account numbers. FamilyApp only needs the date.</string>
+    <string name="reminder_number_title">Is that an ID or account number?</string>
+    <string name="reminder_number_message">It looks like there may be an ID, card or account number here. FamilyApp only needs the date, so it\'s safer to leave numbers out.</string>
+    <string name="reminder_number_edit">Change it</string>
+    <string name="reminder_number_save">Save anyway</string>
+    <string name="reminder_alerts_off_hint">Saved. To get notifications, turn on Reminder alerts in Settings.</string>
+
+    <string name="repeat_quarterly">Every 3 months</string>
+    <string name="repeat_half_yearly">Every 6 months</string>
+    <string name="repeat_yearly">Every year</string>
+    <string name="repeat_custom">Repeats every %1$d</string>
+
+    <string name="alert_same_day">On the day</string>
+    <string name="alert_1_day">1 day before</string>
+    <string name="alert_2_days">2 days before</string>
+    <string name="alert_3_days">3 days before</string>
+    <string name="alert_1_week">1 week before</string>
+    <string name="alert_2_weeks">2 weeks before</string>
+    <string name="alert_30_days">30 days before</string>
+    <string name="alert_60_days">60 days before</string>
+    <string name="alert_3_months">About 3 months before</string>
+    <string name="alert_6_months">About 6 months before</string>
+    <plurals name="alert_days_before">
+        <item quantity="one">%1$d day before</item>
+        <item quantity="other">%1$d days before</item>
+    </plurals>
+
+    <!-- Home, Schedule, Settings -->
+    <plurals name="today_reminders">
+        <item quantity="one">%1$d reminder coming up · %2$s</item>
+        <item quantity="other">%1$d reminders coming up · first: %2$s</item>
+    </plurals>
+    <string name="schedule_reminders_title">Reminders on this day</string>
+    <string name="settings_areas">Reminder areas</string>
+    <string name="settings_areas_summary">Turn off alerts for whole areas, such as Bills or Pets. Their reminders stay in your list.</string>
+    <string name="settings_areas_all_on">All areas can send alerts</string>
+    <string name="settings_areas_some_off">Alerts off for: %1$s</string>
+    <string name="settings_areas_title">Which areas can send alerts?</string>
+    <string name="feat_family_time">Family Time</string>
+    <string name="feat_family_time_sub">Game nights, walks and visits</string>
+    <string name="feat_hobby_reminders">Hobby Reminders</string>
+    <string name="feat_hobby_reminders_sub">Time for reading, music, crafts and projects</string>
+</resources>

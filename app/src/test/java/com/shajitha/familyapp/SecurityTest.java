@@ -165,6 +165,7 @@ public class SecurityTest {
             String xml = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
             assertTrue(file, xml.contains("family-v1-backup.db"));
             assertTrue(file, xml.contains("family-v2-backup.db"));
+            assertTrue(file, xml.contains("family-v3-backup.db"));
             assertTrue(file, xml.contains("androidx.work.workdb"));
             assertTrue(file, xml.contains("db_guard.xml"));
         }
