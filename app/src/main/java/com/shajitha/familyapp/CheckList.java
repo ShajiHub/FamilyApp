@@ -1,63 +1,293 @@
 package com.shajitha.familyapp;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
+import com.shajitha.familyapp.data.AppDatabase;
+import com.shajitha.familyapp.data.ChecklistItem;
+import com.shajitha.familyapp.data.DataSetup;
+import com.shajitha.familyapp.data.FamilyDao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class CheckList extends AppCompatActivity {
-    RecyclerView recyclerView;
-    LinearLayoutManager layoutManager;
+/** Checklists: packing and first-aid lists. Items and ticks are saved; items can be added, edited and deleted. */
+public class CheckList extends BaseActivity {
+
+    /** The original lists, shown first and with their pictures. */
+    private static final List<String> BUILT_IN = Arrays.asList(
+            DataSetup.SECTION_WINTER, DataSetup.SECTION_SUMMER, DataSetup.SECTION_FIRST_AID);
+
+    private FamilyDao dao;
+    private final ChecklistAdapter adapter = new ChecklistAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_list);
-        getSupportActionBar().hide();
+        dao = AppDatabase.get(this).dao();
 
-        recyclerView = findViewById(R.id.rView);
-
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-
-        List<ChecklistItems> items = new ArrayList<>();
-
-        // pass the arguments
-        items.add(new ChecklistItems(ChecklistItems.imageLayout,R.drawable.winter,"Winter Checklist"));
-
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Winter boots"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Thermal wear"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Cardigan/Winter coat"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Sleepwear"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Scarfs"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Gloves"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Ear muffs"));
-
-
-        items.add(new ChecklistItems(ChecklistItems.imageLayout,R.drawable.done, "Summer Checklist"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Sunscreen/sunblock"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Packing cubes"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Exercise/Active time"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Swimsuits"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Boots/Sports shoe"));
-
-
-        items.add(new ChecklistItems(ChecklistItems.imageLayout,R.drawable.firstaidkit, "FirstAid kit Checklist"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Medication"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Lip balm"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Instant cold ice packs"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Antiseptic wipes"));
-        items.add(new ChecklistItems(ChecklistItems.listLayout, "Adhesive plasters large/small"));
-
-
-        ChecklistAdapter adapter = new ChecklistAdapter(items);
-
+        RecyclerView recyclerView = findViewById(R.id.rView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        dao.checklistItems().observe(this, adapter::setItems);
+    }
+
+    /** Friendly name for a section. */
+    String displayName(String section) {
+        if (DataSetup.SECTION_WINTER.equals(section)) {
+            return getString(R.string.checklist_winter);
+        } else if (DataSetup.SECTION_SUMMER.equals(section)) {
+            return getString(R.string.checklist_summer);
+        } else if (DataSetup.SECTION_FIRST_AID.equals(section)) {
+            return getString(R.string.checklist_first_aid);
+        }
+        return section;
+    }
+
+    private static int imageFor(String section) {
+        if (DataSetup.SECTION_WINTER.equals(section)) {
+            return R.drawable.winter;
+        } else if (DataSetup.SECTION_SUMMER.equals(section)) {
+            return R.drawable.done;
+        } else if (DataSetup.SECTION_FIRST_AID.equals(section)) {
+            return R.drawable.firstaidkit;
+        }
+        return 0;
+    }
+
+    /** Adds an item typed into a list's "Add new item" field. */
+    void addItem(String section, String text) {
+        String title = text.trim();
+        if (title.isEmpty()) {
+            return;
+        }
+        ChecklistItem item = new ChecklistItem();
+        item.section = section;
+        item.title = title.length() > 120 ? title.substring(0, 120) : title;
+        AppDatabase.write(() -> {
+            item.position = dao.nextChecklistPosition(section);
+            dao.insert(item);
+        });
+    }
+
+    private void editItem(ChecklistItem item) {
+        Dialogs.editText(this, R.string.checklist_edit_item, R.string.checklist_item_hint, item.title, null, text -> {
+            ChecklistItem copy = copy(item);
+            copy.title = text;
+            AppDatabase.write(() -> dao.update(copy));
+        });
+    }
+
+    private void deleteItem(ChecklistItem item) {
+        Dialogs.confirmDelete(this, getString(R.string.checklist_delete_item), item.title,
+                () -> AppDatabase.write(() -> dao.delete(item)));
+    }
+
+    private void setChecked(ChecklistItem item, boolean checked) {
+        if (item.checked == checked) {
+            return;
+        }
+        ChecklistItem copy = copy(item);
+        copy.checked = checked;
+        AppDatabase.write(() -> dao.update(copy));
+    }
+
+    private void untickAll(String section) {
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.checklist_untick_title, displayName(section)))
+                .setMessage(R.string.checklist_untick_message)
+                .setPositiveButton(R.string.checklist_untick_all, (d, w) -> AppDatabase.write(() -> dao.uncheckSection(section)))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /** Creates a new checklist: asks for its name, then its first item. */
+    private void newChecklist() {
+        Dialogs.editText(this, R.string.checklist_new, R.string.checklist_name_hint, null,
+                name -> adapter.hasSection(name) ? getString(R.string.error_duplicate) : null,
+                name -> Dialogs.editText(this, R.string.checklist_add_item, R.string.checklist_item_hint, null, null,
+                        first -> {
+                            ChecklistItem item = new ChecklistItem();
+                            item.section = name;
+                            item.title = first;
+                            AppDatabase.write(() -> dao.insert(item));
+                        }));
+    }
+
+    private static ChecklistItem copy(ChecklistItem i) {
+        ChecklistItem c = new ChecklistItem();
+        c.id = i.id;
+        c.section = i.section;
+        c.title = i.title;
+        c.checked = i.checked;
+        c.position = i.position;
+        return c;
+    }
+
+    /** Marks the "Add new item" row at the end of a section. */
+    private static final class AddRow {
+        final String section;
+
+        AddRow(String section) {
+            this.section = section;
+        }
+    }
+
+    /** Rows: a heading per section, its items, an "Add new item" field, and a "New checklist" button at the end. */
+    private final class ChecklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final int HEADER = 0, ITEM = 1, FOOTER = 2, ADD = 3;
+        private final List<Object> rows = new ArrayList<>();
+        private final Map<String, int[]> progress = new LinkedHashMap<>();
+
+        void setItems(List<ChecklistItem> items) {
+            // Built-in lists first, in their usual order, then the family's own lists A–Z.
+            Map<String, List<ChecklistItem>> bySection = new LinkedHashMap<>();
+            for (String section : BUILT_IN) {
+                bySection.put(section, new ArrayList<>());
+            }
+            Map<String, List<ChecklistItem>> custom = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            for (ChecklistItem item : items) {
+                Map<String, List<ChecklistItem>> target = bySection.containsKey(item.section) ? bySection : custom;
+                List<ChecklistItem> sectionItems = target.get(item.section);
+                if (sectionItems == null) {
+                    sectionItems = new ArrayList<>();
+                    target.put(item.section, sectionItems);
+                }
+                sectionItems.add(item);
+            }
+            bySection.putAll(custom);
+
+            rows.clear();
+            progress.clear();
+            for (Map.Entry<String, List<ChecklistItem>> e : bySection.entrySet()) {
+                List<ChecklistItem> sectionItems = e.getValue();
+                if (sectionItems.isEmpty() && !BUILT_IN.contains(e.getKey())) {
+                    continue;
+                }
+                int done = 0;
+                for (ChecklistItem item : sectionItems) {
+                    if (item.checked) {
+                        done++;
+                    }
+                }
+                progress.put(e.getKey(), new int[]{done, sectionItems.size()});
+                rows.add(e.getKey());
+                rows.addAll(sectionItems);
+                rows.add(new AddRow(e.getKey()));
+            }
+            rows.add(FOOTER);
+            notifyDataSetChanged();
+        }
+
+        boolean hasSection(String name) {
+            for (String s : progress.keySet()) {
+                if (s.equalsIgnoreCase(name) || displayName(s).equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            Object row = rows.get(position);
+            if (row instanceof String) {
+                return HEADER;
+            }
+            if (row instanceof AddRow) {
+                return ADD;
+            }
+            return row instanceof ChecklistItem ? ITEM : FOOTER;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            if (viewType == ITEM) {
+                return new ToDoList.RowHolder(inflater.inflate(R.layout.item_list_row, parent, false));
+            }
+            int layout = viewType == HEADER ? R.layout.item_checklist_section
+                    : viewType == ADD ? R.layout.item_checklist_add : R.layout.item_checklist_footer;
+            return new RecyclerView.ViewHolder(inflater.inflate(layout, parent, false)) {
+            };
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            Object row = rows.get(position);
+            View view = holder.itemView;
+            if (row instanceof String) {
+                String section = (String) row;
+                int[] p = progress.get(section);
+                ((TextView) view.findViewById(R.id.sectionTitle)).setText(displayName(section));
+                ((TextView) view.findViewById(R.id.sectionProgress)).setText(p[1] == 0
+                        ? getString(R.string.checklist_empty_section)
+                        : getString(R.string.checklist_progress, p[0], p[1]));
+                ImageView image = view.findViewById(R.id.sectionImage);
+                int res = imageFor(section);
+                if (res != 0) {
+                    image.setImageResource(res);
+                    image.setPadding(0, 0, 0, 0);
+                } else {
+                    image.setImageResource(R.drawable.ic_fact_check);
+                    int pad = (int) (14 * getResources().getDisplayMetrics().density);
+                    image.setPadding(pad, pad, pad, pad);
+                }
+                View reset = view.findViewById(R.id.sectionReset);
+                reset.setVisibility(p[0] > 0 ? View.VISIBLE : View.INVISIBLE);
+                reset.setOnClickListener(v -> untickAll(section));
+            } else if (row instanceof ChecklistItem) {
+                ChecklistItem item = (ChecklistItem) row;
+                ToDoList.RowHolder h = (ToDoList.RowHolder) holder;
+                h.title.setText(item.title);
+                h.check.setOnCheckedChangeListener(null);
+                h.check.setChecked(item.checked);
+                h.check.setContentDescription(item.title);
+                h.check.setOnCheckedChangeListener((b, checked) -> setChecked(item, checked));
+                h.itemView.setOnClickListener(v -> h.check.toggle());
+                h.edit.setOnClickListener(v -> editItem(item));
+                h.delete.setOnClickListener(v -> deleteItem(item));
+            } else if (row instanceof AddRow) {
+                String section = ((AddRow) row).section;
+                android.widget.EditText input = view.findViewById(R.id.addItemInput);
+                input.setText("");
+                ((com.google.android.material.textfield.TextInputLayout) view.findViewById(R.id.addItemLayout))
+                        .setHint(getString(R.string.checklist_add_to, displayName(section)));
+                Runnable add = () -> {
+                    addItem(section, input.getText().toString());
+                    input.setText("");
+                };
+                view.findViewById(R.id.addItemButton).setOnClickListener(v -> add.run());
+                input.setOnEditorActionListener((v, actionId, event) -> {
+                    if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                        add.run();
+                        return true;
+                    }
+                    return false;
+                });
+            } else {
+                view.findViewById(R.id.newChecklist).setOnClickListener(v -> newChecklist());
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return rows.size();
+        }
     }
 }

@@ -1,109 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#93BAB5"
-    tools:context=".ContactUs">
+    android:background="?android:attr/colorBackground">
 
+    <LinearLayout style="@style/FamilyApp.ScreenContent">
 
-    <Spinner
-        android:id="@+id/mealspinner1"
-        android:layout_width="131dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:background="#D89E9E"
-        android:backgroundTint="#E1B8B8"
-        android:spinnerMode="dropdown"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/menutxt"
-        app:layout_constraintTop_toTopOf="@+id/menutxt"
-        app:layout_constraintVertical_bias="0.0" />
+        <include layout="@layout/meal_wheel_panel" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Meal Planner"
-        android:textAlignment="center"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/spintext"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/spinBoard"
-        android:layout_width="314dp"
-        android:layout_height="170dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/spin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinBoardPointer"
-        app:srcCompat="@drawable/foodspinner" />
-
-    <ImageView
-        android:id="@+id/spinBoardPointer"
-        android:layout_width="17dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/spinBoard"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spintext"
-        app:srcCompat="@drawable/pointer" />
-
-    <TextView
-        android:id="@+id/spintext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Spin to choose your lunch to school"
-        android:textColor="#254E36"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/spinBoardPointer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <TextView
-        android:id="@+id/menutxt"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:text="Select Menu"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@+id/mealspinner1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spin" />
-
-    <Button
-        android:id="@+id/spin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
-        android:backgroundTint="#950C0C"
-        android:text="spin"
-        app:layout_constraintBottom_toTopOf="@+id/menutxt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinBoard" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-
-
+        <include
+            layout="@layout/meal_menu_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

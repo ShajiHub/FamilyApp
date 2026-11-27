@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <LinearLayout style="@style/FamilyApp.ScreenContent">
+
+        <!-- Notifications turned off in Android: explain and link to settings -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/notificationsBlocked"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_l"
+            android:visibility="gone"
+            app:cardBackgroundColor="?attr/colorTertiaryContainer"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_blocked"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnTertiaryContainer" />
+
+                <Button
+                    android:id="@+id/openNotificationSettings"
+                    style="@style/Widget.FamilyApp.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_open_android" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/FamilyApp.SectionTitle"
+            android:layout_marginTop="0dp"
+            android:text="@string/settings_reminders" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/space_l"
+                android:paddingEnd="@dimen/space_l">
+
+                <include
+                    android:id="@+id/settingAlerts"
+                    layout="@layout/item_setting_switch" />
+
+                <LinearLayout
+                    android:id="@+id/settingAlertTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:minHeight="56dp"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/space_s"
+                    android:paddingBottom="@dimen/space_s">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_alert_time"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/alertTimeValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorPrimary" />
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/settingLockDetails"
+                    layout="@layout/item_setting_switch" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/FamilyApp.SectionTitle"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/title_timer" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/space_l"
+                android:paddingEnd="@dimen/space_l"
+                android:paddingBottom="@dimen/space_s">
+
+                <include
+                    android:id="@+id/settingTimerAlerts"
+                    layout="@layout/item_setting_switch" />
+
+                <TextView
+                    android:id="@+id/exactStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <Button
+                    android:id="@+id/exactAllow"
+                    style="@style/Widget.FamilyApp.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_exact_allow"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/FamilyApp.SectionTitle"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/settings_sounds" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/space_l"
+                android:paddingEnd="@dimen/space_l">
+
+                <include
+                    android:id="@+id/settingTimerSound"
+                    layout="@layout/item_setting_switch" />
+
+                <include
+                    android:id="@+id/settingReminderSound"
+                    layout="@layout/item_setting_switch" />
+
+                <Button
+                    android:id="@+id/previewChime"
+                    style="@style/Widget.FamilyApp.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_preview_chime"
+                    app:icon="@drawable/ic_play_arrow" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Debug builds only: lets a tester check real reminder notifications on a device. -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/developerCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_developer"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    style="@style/FamilyApp.Hint"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/settings_test_reminder_summary" />
+
+                <Button
+                    android:id="@+id/testReminder"
+                    style="@style/Widget.FamilyApp.Button.Tonal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:text="@string/settings_test_reminder" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/FamilyApp.Hint"
+            android:layout_marginTop="@dimen/space_xl"
+            android:drawablePadding="@dimen/space_s"
+            android:text="@string/settings_privacy_note"
+            app:drawableStartCompat="@drawable/ic_lock"
+            app:drawableTint="?attr/colorPrimary" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tools, colours, size and fill: used in portrait (below the canvas) and landscape (beside it). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/drawingIdea"
+        style="@style/FamilyApp.Hint"
+        android:layout_marginBottom="@dimen/space_xs"
+        android:drawablePadding="@dimen/space_xs"
+        android:textAppearance="?attr/textAppearanceBodySmall" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toolGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <Button
+                android:id="@+id/toolPencil"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tool_pencil"
+                app:icon="@drawable/ic_create"
+                app:iconPadding="0dp" />
+
+            <Button
+                android:id="@+id/toolBrush"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tool_brush"
+                app:icon="@drawable/ic_brush"
+                app:iconPadding="0dp" />
+
+            <Button
+                android:id="@+id/toolEraser"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tool_eraser"
+                app:icon="@drawable/ic_auto_fix_normal"
+                app:iconPadding="0dp" />
+
+            <Button
+                android:id="@+id/toolLine"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tool_line"
+                app:icon="@drawable/ic_horizontal_rule"
+                app:iconPadding="0dp" />
+
+            <Button
+                android:id="@+id/toolRect"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tool_rect"
+                app:icon="@drawable/ic_crop_square"
+                app:iconPadding="0dp" />
+
+            <Button
+                android:id="@+id/toolOval"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tool_oval"
+                app:icon="@drawable/ic_radio_button_unchecked"
+                app:iconPadding="0dp" />
+
+            <Button
+                android:id="@+id/toolStar"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/tool_star"
+                app:icon="@drawable/ic_star_border"
+                app:iconPadding="0dp" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:scrollbars="none">
+
+        <!-- Colour swatches are added by the code. -->
+        <LinearLayout
+            android:id="@+id/colourRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/whiteboard_size"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sizeSlider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/whiteboard_size"
+            android:stepSize="1"
+            android:value="3"
+            android:valueFrom="1"
+            android:valueTo="10" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/fillSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/whiteboard_fill" />
+    </LinearLayout>
+</LinearLayout>

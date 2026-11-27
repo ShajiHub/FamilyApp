@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fourth accent colour for Home tiles (purple), defined per light/dark theme. -->
+    <attr name="colorAccent4Container" format="color" />
+    <attr name="colorOnAccent4Container" format="color" />
+</resources>

@@ -1,0 +1,298 @@
+package com.shajitha.familyapp.data;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import androidx.annotation.NonNull;
+import androidx.room.migration.Migration;
+import androidx.room.testing.MigrationTestHelper;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Database version 1 to 2: every existing record is kept exactly, a verified backup is made first,
+ * and failures leave the original data untouched.
+ */
+@RunWith(AndroidJUnit4.class)
+public class DatabaseMigrationTest {
+
+    @Rule
+    public MigrationTestHelper helper = new MigrationTestHelper(InstrumentationRegistry.getInstrumentation(),
+            AppDatabase.class, new ArrayList<>(), new FrameworkSQLiteOpenHelperFactory());
+
+    private Context context;
+
+    @Before
+    public void setUp() {
+        context = ApplicationProvider.getApplicationContext();
+        AppDatabase.useDirectExecutorsForTests();
+        AppDatabase.resetForTests();
+        // A real version-1 user already has their defaults and old data copied.
+        context.getSharedPreferences(DataSetup.META, Context.MODE_PRIVATE).edit()
+                .putBoolean(DataSetup.SEEDED_CHECKLIST, true).putBoolean(DataSetup.SEEDED_FOODS, true)
+                .putBoolean(DataSetup.MIGRATED_V1, true).commit();
+    }
+
+    @After
+    public void tearDown() {
+        AppDatabase.resetForTests();
+    }
+
+    /** A realistic version-1 database, created from the saved version-1 schema. */
+    private void createVersion1(String name) throws Exception {
+        SupportSQLiteDatabase db = helper.createDatabase(name, 1);
+        db.execSQL("INSERT INTO todo_tasks (id, title, done, createdAt) VALUES (1, 'Pack school bags', 0, 100), "
+                + "(2, 'Call grandma', 1, 200), (3, 'Emoji 👧 and \"quotes\" and ''apostrophes''', 0, 300)");
+        db.execSQL("INSERT INTO schedule_events (id, date, time, title, notes, createdAt) VALUES "
+                + "(1, '2026-11-25', '08:30', 'Swimming', 'Bring goggles', 1), (2, '2026-12-01', NULL, 'Birthday', NULL, 2)");
+        db.execSQL("INSERT INTO checklist_items (id, section, title, checked, position) VALUES "
+                + "(1, 'Winter Checklist', 'Gloves', 1, 0), (2, 'Camping', 'Tent', 0, 0)");
+        db.execSQL("INSERT INTO foods (id, name, position) VALUES (1, 'Tacos', 0), (2, 'Pizza', 1)");
+        db.execSQL("INSERT INTO meal_selections (date, food) VALUES ('2026-11-24', 'Tacos')");
+        db.execSQL("INSERT INTO books (id, title, totalPages, pagesRead, createdAt, updatedAt) VALUES (1, 'Matilda', 240, 120, 5, 6)");
+        db.close();
+    }
+
+    private static List<String> rows(SupportSQLiteDatabase db, String sql) {
+        List<String> out = new ArrayList<>();
+        try (Cursor c = db.query(sql)) {
+            while (c.moveToNext()) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < c.getColumnCount(); i++) {
+                    sb.append(i == 0 ? "" : "|").append(c.isNull(i) ? "NULL" : c.getString(i));
+                }
+                out.add(sb.toString());
+            }
+        }
+        return out;
+    }
+
+    @Test
+    public void upgradeKeepsEveryRecordExactly() throws Exception {
+        createVersion1("migration-test.db");
+        SupportSQLiteDatabase v1 = helper.runMigrationsAndValidate("migration-test.db", 1, false);
+        List<String> tasksBefore = rows(v1, "SELECT id, title, done, createdAt FROM todo_tasks ORDER BY id");
+        List<String> eventsBefore = rows(v1, "SELECT id, date, time, title, notes, createdAt FROM schedule_events ORDER BY id");
+        List<String> othersBefore = new ArrayList<>();
+        for (String t : new String[]{"checklist_items", "foods", "meal_selections", "books"}) {
+            othersBefore.addAll(rows(v1, "SELECT * FROM " + t));
+        }
+        v1.close();
+
+        // Validates the upgraded schema matches version 2 exactly.
+        SupportSQLiteDatabase v2 = helper.runMigrationsAndValidate("migration-test.db", 2, true, Migrations.MIGRATION_1_2);
+        assertEquals(tasksBefore, rows(v2, "SELECT id, title, done, createdAt FROM todo_tasks ORDER BY id"));
+        assertEquals(eventsBefore, rows(v2, "SELECT id, date, time, title, notes, createdAt FROM schedule_events ORDER BY id"));
+        List<String> othersAfter = new ArrayList<>();
+        for (String t : new String[]{"checklist_items", "foods", "meal_selections", "books"}) {
+            othersAfter.addAll(rows(v2, "SELECT * FROM " + t));
+        }
+        assertEquals(othersBefore, othersAfter);
+        // New "for whom" fields start empty (Everyone).
+        assertEquals(List.of("NULL", "NULL", "NULL"), rows(v2, "SELECT memberId FROM todo_tasks"));
+        assertEquals(List.of("NULL", "NULL"), rows(v2, "SELECT memberId FROM schedule_events"));
+        // New tables exist and are empty.
+        assertEquals(List.of("0"), rows(v2, "SELECT COUNT(*) FROM family_members"));
+        assertEquals(List.of("0"), rows(v2, "SELECT COUNT(*) FROM reminders"));
+        assertEquals(List.of("0"), rows(v2, "SELECT COUNT(*) FROM reminder_history"));
+        v2.close();
+    }
+
+    @Test
+    public void appStartMakesAVerifiedBackupThenUpgrades() throws Exception {
+        createVersion1(AppDatabase.NAME);
+        FamilyDao dao = AppDatabase.get(context).dao(); // the real start-up path
+
+        File backup = DatabaseGuard.backupFile(context, AppDatabase.NAME, 1);
+        assertTrue("backup made", backup.exists());
+        assertTrue("backup passes integrity, version and count checks", DatabaseGuard.verify(backup, 1, null));
+        SQLiteDatabase b = SQLiteDatabase.openDatabase(backup.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+        Map<String, Long> backupCounts = DatabaseGuard.countRows(b);
+        b.close();
+        assertEquals(Long.valueOf(3), backupCounts.get("todo_tasks"));
+        assertEquals(Long.valueOf(2), backupCounts.get("schedule_events"));
+
+        // Everything is there after the upgrade.
+        assertEquals(3, dao.tasksNow().size());
+        assertEquals("Pack school bags", dao.tasksNow().get(0).title);
+        assertNull(dao.tasksNow().get(0).memberId);
+        assertEquals(2, dao.allEventsNow().size());
+        assertEquals("Bring goggles", dao.allEventsNow().get(0).notes);
+        assertEquals(2, dao.foodsNow().size());
+        assertEquals("Tacos", dao.mealOnNow("2026-11-24").food);
+        assertEquals(120, dao.booksNow().get(0).pagesRead);
+        assertFalse("after-upgrade check passed", DatabaseGuard.upgradeCheckFailed(context));
+        // Defaults weren't added again for an existing user.
+        assertEquals(2, dao.checklistItemsNow().size());
+
+        // Opening again: no new backup needed, nothing changes.
+        long backupTime = backup.lastModified();
+        AppDatabase.resetForTests();
+        assertEquals(3, AppDatabase.get(context).dao().tasksNow().size());
+        assertEquals(backupTime, backup.lastModified());
+    }
+
+    @Test
+    public void noUpgradeWhenTheBackupCannotBeMade() throws Exception {
+        createVersion1(AppDatabase.NAME);
+        // Simulate a full disk: the backup file can't be written.
+        File partial = new File(DatabaseGuard.backupFile(context, AppDatabase.NAME, 1).getPath() + ".partial");
+        assertTrue(partial.mkdirs());
+        try {
+            AppDatabase.get(context);
+            fail("should not open");
+        } catch (DatabaseGuard.UnavailableException e) {
+            assertEquals(DatabaseGuard.Problem.NO_SPACE_FOR_BACKUP, e.problem);
+        }
+        assertEquals(DatabaseGuard.Problem.NO_SPACE_FOR_BACKUP, AppDatabase.problem());
+        assertOriginalUntouched();
+    }
+
+    @Test
+    public void aFailedUpgradeIsRolledBackAndTheBackupCanBeRestored() throws Exception {
+        createVersion1(AppDatabase.NAME);
+        AppDatabase.migrations = new Migration[]{new Migration(1, 2) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase db) {
+                db.execSQL("CREATE TABLE half_done (id INTEGER)");
+                throw new IllegalStateException("simulated upgrade failure");
+            }
+        }, Migrations.MIGRATION_2_3};
+        try {
+            AppDatabase.get(context);
+            fail("should not open");
+        } catch (DatabaseGuard.UnavailableException e) {
+            assertEquals(DatabaseGuard.Problem.UPGRADE_FAILED, e.problem);
+        }
+        assertOriginalUntouched();
+        assertTrue(DatabaseGuard.backupFile(context, AppDatabase.NAME, 1).exists());
+
+        // Recovery: restore the safety copy, then a working version upgrades normally.
+        assertTrue(DatabaseGuard.restoreBackup(context, AppDatabase.NAME, 1));
+        assertTrue(context.getDatabasePath("family-replaced.db").exists());
+        AppDatabase.resetForTests(); // back to the real upgrade
+        assertEquals(3, AppDatabase.get(context).dao().tasksNow().size());
+    }
+
+    @Test
+    public void version1UpgradesAllTheWayTo3() throws Exception {
+        createVersion1("chain.db");
+        SupportSQLiteDatabase v3 = helper.runMigrationsAndValidate("chain.db", 3, true,
+                Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3);
+        assertEquals(List.of("3"), rows(v3, "SELECT COUNT(*) FROM todo_tasks"));
+        assertEquals(List.of("0"), rows(v3, "SELECT COUNT(*) FROM drawings"));
+        v3.close();
+    }
+
+    @Test
+    public void version2UpgradesTo3WithItsOwnCheckedBackup() throws Exception {
+        SupportSQLiteDatabase v2 = helper.createDatabase(AppDatabase.NAME, 2);
+        v2.execSQL("INSERT INTO family_members (id, name, avatar, colorIndex, role, position, archived, createdAt) "
+                + "VALUES (1, 'Mia', '👧', 1, 'CHILD', 0, 0, 1)");
+        v2.execSQL("INSERT INTO todo_tasks (id, title, done, createdAt, memberId) VALUES (1, 'Tidy room', 0, 1, 1)");
+        v2.execSQL("INSERT INTO reminders (id, title, type, memberId, dueDate, dueTime, notes, repeatUnit, repeatInterval, "
+                + "anchorDay, alertDays, alertTime, snoozedUntil, status, completedAt, createdAt, updatedAt) VALUES "
+                + "(1, 'Library books', 'LIBRARY', 1, '2026-12-05', NULL, NULL, 'NONE', 1, 5, '2', NULL, NULL, 'ACTIVE', NULL, 1, 1)");
+        v2.execSQL("INSERT INTO reminder_history (id, reminderId, title, memberId, dueDate, completedAt) VALUES (1, 1, 'Library books', 1, '2026-11-01', 5)");
+        v2.close();
+
+        FamilyDao dao = AppDatabase.get(context).dao();
+        File backup = DatabaseGuard.backupFile(context, AppDatabase.NAME, 2);
+        assertTrue("version-2 safety copy made", backup.exists());
+        assertTrue(DatabaseGuard.verify(backup, 2, null));
+        assertEquals("Mia", dao.allMembersNow().get(0).name);
+        assertEquals(Long.valueOf(1), dao.tasksNow().get(0).memberId);
+        assertEquals("Library books", dao.reminderNow(1).title);
+        assertEquals(1, dao.historyNow(1).size());
+        assertTrue(dao.drawingsNow().isEmpty());
+        assertEquals("the recovery screen offers the newest copy", 2,
+                DatabaseGuard.newestBackupVersion(context, AppDatabase.NAME, AppDatabase.VERSION));
+    }
+
+    @Test
+    public void dataFromANewerVersionIsNeverTouched() {
+        File file = context.getDatabasePath(AppDatabase.NAME);
+        //noinspection ResultOfMethodCallIgnored
+        file.getParentFile().mkdirs();
+        SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(file, null);
+        db.execSQL("CREATE TABLE future (x TEXT)");
+        db.execSQL("INSERT INTO future VALUES ('keep me')");
+        db.setVersion(AppDatabase.VERSION + 1);
+        db.close();
+        try {
+            AppDatabase.get(context);
+            fail("should not open");
+        } catch (DatabaseGuard.UnavailableException e) {
+            assertEquals(DatabaseGuard.Problem.NEWER_VERSION, e.problem);
+        }
+        SQLiteDatabase check = SQLiteDatabase.openDatabase(file.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+        assertEquals(AppDatabase.VERSION + 1, check.getVersion());
+        try (Cursor c = check.rawQuery("SELECT x FROM future", null)) {
+            assertTrue(c.moveToFirst());
+            assertEquals("keep me", c.getString(0));
+        }
+        check.close();
+    }
+
+    @Test
+    public void aDamagedBackupFailsVerification() throws Exception {
+        createVersion1("other.db");
+        File copy = context.getDatabasePath("other.db");
+        assertTrue(DatabaseGuard.verify(copy, 1, null));
+        assertFalse("wrong version", DatabaseGuard.verify(copy, 2, null));
+        java.nio.file.Files.write(copy.toPath(), "not a database".getBytes());
+        assertFalse(DatabaseGuard.verify(copy, 1, null));
+    }
+
+    @Test
+    public void newInstallNeedsNoBackup() {
+        AppDatabase.get(context).dao().tasksNow();
+        assertFalse(DatabaseGuard.backupFile(context, AppDatabase.NAME, 1).exists());
+        SharedPreferences prefs = DatabaseGuard.prefs(context);
+        assertFalse(prefs.contains("pending_from"));
+    }
+
+    private void assertOriginalUntouched() {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(context.getDatabasePath(AppDatabase.NAME).getPath(), null,
+                SQLiteDatabase.OPEN_READONLY);
+        try {
+            assertEquals("still version 1", 1, db.getVersion());
+            Map<String, Long> counts = DatabaseGuard.countRows(db);
+            assertEquals(Long.valueOf(3), counts.get("todo_tasks"));
+            assertEquals(Long.valueOf(2), counts.get("schedule_events"));
+            assertEquals(Long.valueOf(1), counts.get("books"));
+            assertNull("no half-finished tables", counts.get("half_done"));
+            assertNull(counts.get("reminders"));
+            try (Cursor c = db.rawQuery("SELECT title FROM todo_tasks WHERE id = 3", null)) {
+                assertTrue(c.moveToFirst());
+                assertEquals("Emoji 👧 and \"quotes\" and 'apostrophes'", c.getString(0));
+            }
+        } finally {
+            db.close();
+        }
+        assertNotNull(context);
+    }
+}

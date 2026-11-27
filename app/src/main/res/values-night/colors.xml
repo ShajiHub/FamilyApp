@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shajis Creative Labs palette (dark mode). -->
+<resources>
+    <color name="fa_primary">#9FD3A6</color>
+    <color name="fa_on_primary">#003920</color>
+    <color name="fa_primary_container">#1E5A3B</color>
+    <color name="fa_on_primary_container">#CFEBD2</color>
+
+    <color name="fa_secondary">#B6CAB8</color>
+    <color name="fa_on_secondary">#213528</color>
+    <color name="fa_secondary_container">#2F4B36</color>
+    <color name="fa_on_secondary_container">#D2E6D4</color>
+
+    <color name="fa_tertiary">#E0B84E</color>
+    <color name="fa_on_tertiary">#3D2E00</color>
+    <color name="fa_tertiary_container">#5A4410</color>
+    <color name="fa_on_tertiary_container">#FBE3A6</color>
+
+    <color name="fa_error">#FFB4AB</color>
+    <color name="fa_on_error">#690005</color>
+    <color name="fa_error_container">#93000A</color>
+    <color name="fa_on_error_container">#FFDAD6</color>
+
+    <color name="fa_background">#0F1A14</color>
+    <color name="fa_on_background">#E3EDE4</color>
+    <color name="fa_surface">#0F1A14</color>
+    <color name="fa_on_surface">#E3EDE4</color>
+    <color name="fa_surface_variant">#2A3A2F</color>
+    <color name="fa_on_surface_variant">#B6CAB8</color>
+    <color name="fa_surface_container">#17251C</color>
+    <color name="fa_outline">#8A9A8C</color>
+    <color name="fa_outline_variant">#34463A</color>
+
+    <!-- Title bar and status bar -->
+    <color name="fa_bar">#06422D</color>
+    <color name="fa_on_bar">#FFFFFF</color>
+
+    <color name="fa_accent4">#D6EBC9</color>
+    <color name="fa_accent4_container">#2E4A2A</color>
+</resources>
