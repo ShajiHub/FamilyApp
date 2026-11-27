@@ -83,7 +83,7 @@ When set, tapping them opens the email or phone app, and the message form addres
 - **Libraries:** AndroidX AppCompat, Activity, Core Splashscreen, Material Components, ConstraintLayout, RecyclerView, Room, Lifecycle, WorkManager (all free and open source)
 - **Build:** Gradle 8.14.3, Android Gradle Plugin 8.7.3
 - **SDK:** minimum Android 5.0 (API 21), target and compile Android 15 (API 35)
-- **Permissions:** notifications (asked only when alerts are turned on), exact alarms for the Timer (optional), and restoring the Timer alarm after a restart. No camera, storage, contacts, location or internet permission.
+- **Permissions:** notifications (asked only when alerts are turned on), exact alarms for the Timer (optional), and restoring the Timer alarm after a restart. WorkManager (the reminder library) also adds wake-lock, network-state and foreground-service permissions, which it uses only to run reminders reliably. No camera, storage, contacts, location or internet permission.
 - **Tests:** Robolectric
 
 ## Project structure
